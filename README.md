@@ -153,6 +153,43 @@ uv run clashpy "AI Regulation" --model test
 
 ---
 
+## Showcase: Real-World Example Output
+
+To illustrate the output of `clashpy`, see the comprehensive analysis of the German sports & urban policy debate **"Olympia-Bewerbung Münchens" (German Olympic Bid)**:
+
+- 🇩🇪 **[German Showcase Report (`docs/example_showcase_de.md`)](docs/example_showcase_de.md)**
+- 🇬🇧 **[English Showcase Report (`docs/example_showcase_en.md`)](docs/example_showcase_en.md)**
+- 📦 **[Raw Machine-Readable JSON DTO (`docs/example_showcase.json`)](docs/example_showcase.json)**
+
+### Sample Rendered Output
+
+```mermaid
+graph TD
+    A1["A1: Existing venues & infrastructure from the 1972 Olympic Park enable truly sustainable games"]
+    A2["A2: Unpredictable budget overruns and security costs impose excessive burdens on taxpayers"]
+    A3["A3: Mandatory financial buffers, transparent oversight, and IOC grants mitigate fiscal risks"]
+    A4["A4: A binding citizen referendum prior to bidding ensures democratic legitimacy"]
+    A5["A5: Rigid IOC commercialization conflicts with municipal climate and social goals"]
+    A6["A6: Modernizing public transit and housing creates decades of lasting urban value for Munich"]
+    A7["A7: Past referendums in Munich and Hamburg reflect deep-seated public skepticism toward mega-events"]
+    A8["A8: Strict net-zero carbon neutrality and zero new construction in green belts set new benchmarks"]
+
+    A2 --> A1
+    A1 --> A2
+    A3 --> A2
+    A5 --> A1
+    A7 --> A4
+    A8 --> A5
+    A2 --> A3
+    A6 --> A2
+```
+
+- **Perspective 1 (Sustainable Transformation & Civic Pride):** `{A1, A3, A4, A6, A8}` – Focuses on existing infrastructure reuse (1972 Olympic Park), transparent financial risk caps, transit expansion, and climate neutrality.
+- **Perspective 2 (Fiscal Discipline & Democratic Skepticism):** `{A2, A4, A5, A6, A7}` – Focuses on inevitable cost escalation, commercial IOC friction, and voter skepticism documented in previous regional referendums.
+- **Detected Dilemma Axis:** `A1 ↔ A2` – Fundamental trade-off between transformative urban legacy through major sports events versus safeguarding municipal public funds against speculative budget deficits.
+
+---
+
 ## Documentation & Poster Generator
 
 `clashpy` includes an automated visual documentation generator:

@@ -1,0 +1,131 @@
+{
+  "topic": "Deutsche Olympia-Bewerbung Münchens",
+  "solver": "naive",
+  "semantics": "PR",
+  "arguments": [
+    {
+      "id": "A1",
+      "claim": "Bestehende Sportstätten und Infrastruktur des Olympiaparks 1972 ermöglichen nachhaltige Spiele",
+      "source_url": "https://www.br.de/nachrichten/sport/olympia-bewerbung-muenchen-chancen"
+    },
+    {
+      "id": "A2",
+      "claim": "Unkalkulierbare Kostenexplosionen und Sicherheitsausgaben belasten Kommunalhaushalt und Steuerzahler",
+      "source_url": "https://www.sueddeutsche.de/muenchen/olympia-kosten-steuerzahler"
+    },
+    {
+      "id": "A3",
+      "claim": "Verbindlicher finanzieller Puffer, Transparenzregeln und IOC-Zuschüsse sichern Haushaltsrisiken ab",
+      "source_url": "https://www.dosb.de/sonderseiten/news/olympia-kriterien"
+    },
+    {
+      "id": "A4",
+      "claim": "Ein Bürgervotum vor der finalen Bewerbung garantiert demokratische Legitimation",
+      "source_url": "https://www.br.de/nachrichten/bayern/buergerentscheid-olympia"
+    },
+    {
+      "id": "A5",
+      "claim": "Kommerzialisierung durch das IOC widerspricht kommunalen Nachhaltigkeits- und Klimazielen",
+      "source_url": "https://www.sueddeutsche.de/sport/ioc-knebelvertraege-kritik"
+    },
+    {
+      "id": "A6",
+      "claim": "Modernisierung von Nahverkehr und Wohnraum schafft jahrzehntelangen Mehrwert für München",
+      "source_url": "https://www.muenchen.de/stadtpolitik/stadtentwicklung-olympia"
+    },
+    {
+      "id": "A7",
+      "claim": "Vorherige Bürgerentscheide in München und Hamburg zeigten wiederholt Skepsis gegen Großevents",
+      "source_url": "https://www.br.de/nachrichten/deutschland/geschichte-buergerentscheide"
+    },
+    {
+      "id": "A8",
+      "claim": "Strikte CO2-Neutralität und Verzicht auf Neubauten im Grüngürtel setzen neue ökologische Maßstäbe",
+      "source_url": "https://www.dosb.de/nachhaltigkeit-olympia"
+    }
+  ],
+  "attacks": [
+    {
+      "attacker_id": "A2",
+      "target_id": "A1",
+      "reason": "Hohe Sanierungskosten alter Stätten relativieren Nachhaltigkeitsvorteil"
+    },
+    {
+      "attacker_id": "A1",
+      "target_id": "A2",
+      "reason": "Reale Bausubstanz vermeidet die typischen Milliarden-Neubauten"
+    },
+    {
+      "attacker_id": "A3",
+      "target_id": "A2",
+      "reason": "Vertragliche Deckelungen entlasten den städtischen Haushalt"
+    },
+    {
+      "attacker_id": "A5",
+      "target_id": "A1",
+      "reason": "IOC-Auflagen erzwingen teure temporäre Sonderbauten"
+    },
+    {
+      "attacker_id": "A7",
+      "target_id": "A4",
+      "reason": "Historische Ablehnungsquoten gefährden Durchführbarkeit des Votums"
+    },
+    {
+      "attacker_id": "A8",
+      "target_id": "A5",
+      "reason": "Strikte Umweltstandards neutralisieren Vorwurf der reinen Kommerzialisierung"
+    },
+    {
+      "attacker_id": "A2",
+      "target_id": "A3",
+      "reason": "Historische Erfahrung zeigt, dass finanzielle Puffer fast immer gerissen werden"
+    },
+    {
+      "attacker_id": "A6",
+      "target_id": "A2",
+      "reason": "Infrastrukturinvestitionen fließen nachhaltig in die städtische Daseinsvorsorge"
+    }
+  ],
+  "extensions": [
+    ["A1", "A3", "A4", "A6", "A8"],
+    ["A2", "A4", "A5", "A6", "A7"]
+  ],
+  "scores": {
+    "A1": 0.5,
+    "A2": 0.5,
+    "A3": 0.5,
+    "A4": 1.0,
+    "A5": 0.5,
+    "A6": 1.0,
+    "A7": 0.5,
+    "A8": 1.0
+  },
+  "classification": {
+    "A1": "contested",
+    "A2": "contested",
+    "A3": "contested",
+    "A4": "core",
+    "A5": "contested",
+    "A6": "core",
+    "A7": "contested",
+    "A8": "core"
+  },
+  "degrees": {
+    "A1": { "in_degree": 2, "out_degree": 1 },
+    "A2": { "in_degree": 2, "out_degree": 2 },
+    "A3": { "in_degree": 1, "out_degree": 1 },
+    "A4": { "in_degree": 1, "out_degree": 0 },
+    "A5": { "in_degree": 1, "out_degree": 1 },
+    "A6": { "in_degree": 0, "out_degree": 1 },
+    "A7": { "in_degree": 0, "out_degree": 1 },
+    "A8": { "in_degree": 0, "out_degree": 1 }
+  },
+  "dilemma_axes": [
+    [
+      "A1",
+      "A2",
+      "Reale Bausubstanz vermeidet die typischen Milliarden-Neubauten",
+      "Hohe Sanierungskosten alter Stätten relativieren Nachhaltigkeitsvorteil"
+    ]
+  ]
+}
