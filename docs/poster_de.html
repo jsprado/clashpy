@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <title>clashpy – End-to-End Datenpipeline, KI-Integration & Architektur</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Inter:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0b0f19;
+      --card-bg: rgba(22, 30, 49, 0.95);
+      --card-border: rgba(255, 255, 255, 0.08);
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+      --accent-blue: #38bdf8;
+      --accent-purple: #818cf8;
+      --accent-emerald: #34d399;
+      --accent-amber: #fbbf24;
+      --accent-rose: #f43f5e;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    @page {
+      size: 1600px 1200px;
+      margin: 0;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      width: 1600px;
+      min-height: 1200px;
+      padding: 40px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 2px solid rgba(255, 255, 255, 0.08);
+      padding-bottom: 24px;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 6px 14px;
+      background: rgba(56, 189, 248, 0.12);
+      border: 1px solid rgba(56, 189, 248, 0.35);
+      border-radius: 9999px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--accent-blue);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 8px;
+    }
+
+    h1 {
+      font-size: 2.8rem;
+      font-weight: 900;
+      letter-spacing: -0.02em;
+      background: linear-gradient(135deg, #ffffff 40%, var(--accent-blue) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .header-p {
+      font-size: 1.15rem;
+      color: var(--text-muted);
+    }
+
+    .tags {
+      display: flex;
+      gap: 10px;
+    }
+
+    .tag {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      padding: 8px 16px;
+      border-radius: 10px;
+      font-family: 'Fira Code', monospace;
+      font-size: 0.9rem;
+      color: var(--accent-purple);
+    }
+
+    .pipeline-section {
+      background: rgba(15, 23, 42, 0.8);
+      border: 1px solid var(--card-border);
+      border-radius: 20px;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .section-title {
+      font-size: 1.3rem;
+      font-weight: 800;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .pipeline-steps {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 14px;
+    }
+
+    .step-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 14px;
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .step-num {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: rgba(56, 189, 248, 0.2);
+      color: var(--accent-blue);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 0.8rem;
+    }
+
+    .step-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .step-header h3 {
+      font-size: 1.05rem;
+      color: #fff;
+    }
+
+    .step-card p {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      line-height: 1.45;
+    }
+
+    .code-pill {
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 6px;
+      padding: 8px;
+      font-family: 'Fira Code', monospace;
+      font-size: 0.75rem;
+      color: var(--accent-blue);
+      margin-top: auto;
+    }
+
+    .scenario-container {
+      background: linear-gradient(180deg, rgba(22, 30, 49, 0.95) 0%, rgba(15, 23, 42, 0.95) 100%);
+      border: 1px solid rgba(56, 189, 248, 0.25);
+      border-radius: 20px;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .scenario-grid {
+      display: grid;
+      grid-template-columns: 1.2fr 1.3fr 1.2fr;
+      gap: 20px;
+    }
+
+    .sc-box {
+      background: rgba(0, 0, 0, 0.25);
+      border-left: 3px solid var(--accent-blue);
+      padding: 12px 14px;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      line-height: 1.45;
+      margin-bottom: 10px;
+    }
+
+    .graph-visual {
+      background: rgba(11, 15, 25, 0.8);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 12px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 200px;
+    }
+
+    .bottom-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+
+    .info-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .info-card h3 {
+      font-size: 1.1rem;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .pill-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 4px;
+    }
+
+    .pill {
+      padding: 5px 12px;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+
+    .pill-green { background: rgba(52, 211, 153, 0.12); color: var(--accent-emerald); border: 1px solid rgba(52, 211, 153, 0.3); }
+    .pill-amber { background: rgba(251, 191, 36, 0.12); color: var(--accent-amber); border: 1px solid rgba(251, 191, 36, 0.3); }
+    .pill-red { background: rgba(244, 63, 94, 0.12); color: var(--accent-rose); border: 1px solid rgba(244, 63, 94, 0.3); }
+
+    .footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-top: 1px solid var(--card-border);
+      padding-top: 18px;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header class="header">
+    <div>
+      <div class="badge">KI-Orchestrierung & Formale Inferenz</div>
+      <h1>clashpy ⚡</h1>
+      <p class="header-p">Vom heterogenen News-Datenstrom zum beweisbar konsistenten Argumentationsgraphen</p>
+    </div>
+    <div class="tags">
+      <div class="tag">uv stack</div>
+      <div class="tag">Pydantic v2</div>
+      <div class="tag">DuckDB Cache</div>
+      <div class="tag">Dung 1995 Semantik</div>
+    </div>
+  </header>
+
+  <!-- PIPELINE PHASES -->
+  <section class="pipeline-section">
+    <div class="section-title">⚡ End-to-End Datenpipeline & KI-Caching-Architektur</div>
+    <div class="pipeline-steps">
+      
+      <div class="step-card">
+        <div class="step-header">
+          <div class="step-num">1</div>
+          <h3>News Ingestion</h3>
+        </div>
+        <p>RSS / Atom Feeds oder Web-APIs werden per NewsSource-Adapter abgerufen und thematisch vorgefiltert.</p>
+        <div class="code-pill">DuckDB: news:rss [TTL]</div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-header">
+          <div class="step-num">2</div>
+          <h3>KI-Graph-Extraktion</h3>
+        </div>
+        <p>Pydantic-AI Agent zerlegt Text in Argumente (Claims) & Angriffsrelationen (Attacks). Kein Halluzinieren von URLs.</p>
+        <div class="code-pill">DuckDB: framework:key</div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-header">
+          <div class="step-num">3</div>
+          <h3>Formale Inferenz</h3>
+        </div>
+        <p>Mathematische Berechnung der Preferred Extensions nach Dung (1995) via Backtracking oder SAT-Solver.</p>
+        <div class="code-pill">DuckDB: extensions:naive</div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-header">
+          <div class="step-num">4</div>
+          <h3>Topologie & Metriken</h3>
+        </div>
+        <p>Graphentheoretische Scores (Akzeptanzrate), Streitachsen (A ↔ B) und Knotengrade (In/Out-Degrees).</p>
+        <div class="code-pill">In-Memory (Pure Functions)</div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-header">
+          <div class="step-num">5</div>
+          <h3>KI-Synthese & Export</h3>
+        </div>
+        <p>Zweiter Pydantic-AI Agent formuliert Perspektiventhesen. Automatischer Export mit Datumsstempel nach output/.</p>
+        <div class="code-pill">output/YYYYMMDD_*.md</div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- SCENARIO SHOWCASE -->
+  <section class="scenario-container">
+    <div class="section-title">📰 Konkretes Pipeline-Szenario: „Olympia-Bewerbung München“</div>
+    <div class="scenario-grid">
+      
+      <div>
+        <h4 style="color: var(--accent-blue); margin-bottom: 10px; font-size: 0.95rem;">1. EXTRAHIERTE ARGUMENTE (A)</h4>
+        <div class="sc-box"><strong>A1 (Wirtschaft):</strong> Nachnutzung bestehender Sportstätten stärkt Wirtschaft & Infrastruktur.</div>
+        <div class="sc-box"><strong>A2 (Finanzkritik):</strong> Kostenexplosionen belasten Steuerzahler unkalkulierbar.</div>
+        <div class="sc-box"><strong>A3 (Absicherung):</strong> Hoher Puffer & Transparenzregeln sichern vor finanziellen Risiken ab.</div>
+      </div>
+
+      <div>
+        <h4 style="color: var(--accent-blue); margin-bottom: 10px; font-size: 0.95rem; text-align: center;">2. GRAPH-RELATIONEN (R)</h4>
+        <div class="graph-visual">
+          <svg width="420" height="180" viewBox="0 0 420 180">
+            <!-- Node A2 -->
+            <rect x="20" y="20" width="160" height="45" rx="8" fill="#1e293b" stroke="#f43f5e" stroke-width="2"/>
+            <text x="100" y="47" fill="#fff" font-size="12" font-family="sans-serif" text-anchor="middle" font-weight="bold">A2: Kostenexplosion</text>
+
+            <!-- Node A1 -->
+            <rect x="240" y="20" width="160" height="45" rx="8" fill="#1e293b" stroke="#34d399" stroke-width="2"/>
+            <text x="320" y="47" fill="#fff" font-size="12" font-family="sans-serif" text-anchor="middle" font-weight="bold">A1: Stätten-Nachnutzung</text>
+
+            <!-- Node A3 -->
+            <rect x="130" y="115" width="160" height="45" rx="8" fill="#1e293b" stroke="#38bdf8" stroke-width="2"/>
+            <text x="210" y="142" fill="#fff" font-size="12" font-family="sans-serif" text-anchor="middle" font-weight="bold">A3: Transparenter Puffer</text>
+
+            <!-- Arrow A2 -> A1 -->
+            <defs>
+              <marker id="arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                <path d="M 0 0 L 10 5 L 0 10 z" fill="#f43f5e"/>
+              </marker>
+              <marker id="arrow-blue" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                <path d="M 0 0 L 10 5 L 0 10 z" fill="#38bdf8"/>
+              </marker>
+            </defs>
+            <line x1="180" y1="42" x2="232" y2="42" stroke="#f43f5e" stroke-width="2" marker-end="url(#arrow)"/>
+
+            <!-- Arrow A3 -> A2 -->
+            <path d="M 170 115 L 120 70" stroke="#38bdf8" stroke-width="2" marker-end="url(#arrow-blue)"/>
+            <!-- Arrow A2 -> A3 (Mutual) -->
+            <path d="M 100 65 L 150 110" stroke="#f43f5e" stroke-width="2" stroke-dasharray="4" marker-end="url(#arrow)"/>
+          </svg>
+          <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 6px;">
+            A2 greift A1 an | A3 verteidigt A1 gegen A2 | A2 ↔ A3 bilden Streitachse
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <h4 style="color: var(--accent-blue); margin-bottom: 10px; font-size: 0.95rem;">3. SYNTHETISIERTE PERSPEKTIVEN</h4>
+        <div class="sc-box" style="border-left-color: var(--accent-emerald);">
+          <strong style="color: var(--accent-emerald);">Perspektive 1 (Pro): {A1, A3}</strong><br>
+          <em>KI-These:</em> Nachhaltige Chance für Sport und Stadt bei kontrollierbarem Haushaltsrisiko.
+        </div>
+        <div class="sc-box" style="border-left-color: var(--accent-amber);">
+          <strong style="color: var(--accent-amber);">Perspektive 2 (Contra): {A2}</strong><br>
+          <em>KI-These:</em> Unkalkulierbare Kostenfallen übersteigen jeden potenziellen Nutzen.
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ARCHITECTURE & METRICS -->
+  <section class="bottom-grid">
+    <div class="info-card">
+      <h3>🤖 Zweistufige KI-Verdrahtung</h3>
+      <p style="font-size: 0.88rem; color: var(--text-muted); line-height: 1.5;">
+        <strong>Pydantic-AI Nativ:</strong> Stufe 1 wandelt Freitext in streng typisierte <code>ArgumentationFramework</code>-Objekte. Stufe 2 verdichtet berechnete mathematische Extensions in verständliche Meta-Thesen.
+      </p>
+      <div class="code-pill">uv run clashpy --solver naive</div>
+    </div>
+
+    <div class="info-card">
+      <h3>🏷️ Strukturelle Rollen</h3>
+      <p style="font-size: 0.88rem; color: var(--text-muted); line-height: 1.5;">
+        Mathematische Klassifikation nach Akzeptanz-Score über alle Extensions:
+      </p>
+      <div class="pill-group">
+        <span class="pill pill-green">Basis-Konsens (Score = 1.0)</span>
+        <span class="pill pill-amber">Umstritten (0 < Score < 1)</span>
+        <span class="pill pill-red">Isoliert / Verworfen (Score = 0)</span>
+      </div>
+    </div>
+
+    <div class="info-card">
+      <h3>🔒 Zero-Leakage Secrets</h3>
+      <p style="font-size: 0.88rem; color: var(--text-muted); line-height: 1.5;">
+        Vollautomatische Auflösung von API-Keys ohne Hardcoding:<br>1. <code>os.environ</code><br>2. Lokale <code>.env</code> Datei<br>3. Verschlüsselter OS Keyring (<code>db.syst.datahub</code>)
+      </p>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div><strong>clashpy</strong> • Data Engineering, KI-Extraktion & Formale Inferenz</div>
+    <div>Spezifikation: <code>spec/system_specification.md</code> • Generiert: September 2026</div>
+  </footer>
+
+</body>
+</html>
