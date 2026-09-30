@@ -67,6 +67,7 @@ clashpy/
 
 ## Key Features & Highlights
 
+- **Multi-Feed Ingestion & Bias Mitigation**: Automatically aggregates across multiple distinct RSS news feeds (e.g. Heise, Tagesschau, Zeit, TechCrunch) simultaneously to eliminate single-source editorial bias.
 - **Decoupled Hexagonal Architecture (Ports & Adapters)**: Core graph reasoning is strictly decoupled from ingestion and solvers. Switch from the naive backtracking solver to an external SAT solver (`pygarg`) via a CLI flag without modifying pipeline code.
 - **Zero-Leakage Secret Resolution**: Automatically loads API keys using a multi-tier fallback: `os.environ` → local `.env` → encrypted OS Keyring (`service="db.syst.datahub"`).
 - **Deterministic DuckDB Caching**: All news queries, LLM extraction calls, and solver computations are hashed via SHA-256 and cached in DuckDB to minimize latency and eliminate redundant LLM API costs.
