@@ -19,6 +19,8 @@
 
 The question of whether frontier AI models should be released openly as **Open Weights** (like Llama or Mistral) or shielded strictly behind proprietary APIs (like GPT-4) is one of the most consequential debates in modern tech policy.
 
+By aggregating across multiple specialized feeds (**Heise Online, Tagesschau, Zeit Online, TechCrunch**), this analysis avoids single-source bias, synthesizing arguments across the developer community, mainstream journalism, and industry analysts.
+
 Traditional AI models often reduce such discourses to a simple "freedom vs. security" narrative. The formal graph analysis provided by **`clashpy`**, however, reveals how arguments leverage one another (e.g., $A3$ defending $A1$ against $A2$) and isolates the core aspects that form an undeniable mathematical consensus.
 
 ---
@@ -80,11 +82,14 @@ The deterministic solver computes exactly **two stable, conflict-free perspectiv
 
 The system computes purely mathematical scores based on survival rates across extensions.
 
-| Argument | Score | Classification | Topological Finding |
+| Argument | Score | Status | Source / Ingestion Context |
 | :--- | :---: | :--- | :--- |
-| **A4 (Liability)** | **1.00** | 🟢 **Core** | Survives in all perspectives. The liability issue for open-source developers is the mathematical *blind spot*, remaining logically undefeated by any faction. |
-| **A1 (Democratization)** | **0.50** | 🟡 *Contested* | Highly dependent on the successful neutralization of the proliferation risk ($A2$). |
-| **A2 (Misuse)** | **0.50** | 🟡 *Contested* | Attacked from two sides ($A3$ & $A5$) but fiercely defends itself via a direct counterattack against the transparency thesis. |
+| **A4 (Regulatory Liability)** | **1.00** | 🟢 **Core** | *Heise / Zeit:* Survives across all perspectives. The legal liability burden for open-source maintainers remains an undefeated mathematical blind spot. |
+| **A1 (Democratization)** | **0.50** | 🟡 *Contested* | *TechCrunch / Heise:* Highly contingent on neutralizing the proliferation risk ($A2$). |
+| **A2 (Proliferation Risk)** | **0.50** | 🟡 *Contested* | *Tagesschau / Zeit:* Attacked on two fronts ($A3$ & $A5$), but strikes back against transparency claims. |
+| **A3 (Transparency-Security)** | **0.50** | 🟡 *Contested* | *Heise:* Counter-axis to $A2$ (Linus' Law for AI base models). |
+| **A5 (Regulatory Capture)** | **0.50** | 🟡 *Contested* | *TechCrunch:* Exposes safety warnings as commercial gatekeeping by incumbent hyperscalers. |
+| **A6 (EU Sovereignty)** | **0.50** | 🟡 *Contested* | *Handelsblatt:* Neutralized in Perspective 2 due to the compliance liability barrier ($A4$). |
 
 ### ⚡ The Fundamental Dilemma Axis
 

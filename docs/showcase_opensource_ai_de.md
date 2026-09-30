@@ -17,9 +17,11 @@
 
 ## 1. Executive Summary
 
-Die Frage, ob hochleistungsfähige KI-Basismodelle (Frontier Models) quelloffen als **Open Weights** (wie Llama oder Mistral) bereitgestellt oder strikt hinter proprietären APIs (wie GPT-4) abgeschirmt werden sollten, prägt die aktuelle Technologiepolitik.
+Die Frage, ob hochleistungsfähige KI-Basismodelle (Frontier Models) quelloffen als **Open Weights** (wie Llama oder Mistral) bereitgestellt oder strikt hinter proprietären APIs (wie GPT-4) abgeschirmt werden sollten, prägt die globale Technologiepolitik.
 
-Klassische KI-Modelle geben bei der Zusammenfassung solcher Diskurse oft nur ein narratives "Freiheit vs. Sicherheit" aus. Die formale Graph-Analyse von **`clashpy`** deckt jedoch auf, wie sich Argumente über Bande gegenseitig aushebeln und welche Kernaspekte einen mathematisch unbestreitbaren Konsens bilden.
+Durch die Aggregation diverser Quellen (**Heise Online, Tagesschau, Zeit Online, TechCrunch**) stützt sich die Analyse nicht auf ein einzelnes Medium, sondern erfasst das gesamte Diskursfeld zwischen Entwickler-Community, Regulierern und Wirtschaft.
+
+Klassische KI-Modelle geben bei solchen Diskursen oft nur ein narratives "Freiheit vs. Sicherheit" aus. Die formale Graph-Analyse von **`clashpy`** deckt auf, wie sich Argumente über Bande gegenseitig aushebeln und welche Kernaspekte einen mathematisch unbestreitbaren Konsens bilden.
 
 ---
 
@@ -80,11 +82,14 @@ Der deterministische Solver ermittelt aus dem Graphen exakt **zwei stabile, konf
 
 Das System berechnet rein mathematische Scores (Auftreten in Extensions / Akzeptanz). 
 
-| Argument | Score | Klassifikation | Topologischer Befund |
+| Argument | Score | Status | Quelle / Kontext |
 | :--- | :---: | :--- | :--- |
-| **A4 (Haftungslast)** | **1.00** | 🟢 **Core** | Überlebt in allen Perspektiven. Die Haftungsfrage für Open-Source-Entwickler ist der eigentliche mathematische *Blind Spot*, der von keiner Fraktion logisch entkräftet werden kann. |
-| **A1 (Demokratisierung)** | **0.50** | 🟡 *Contested* | Hochgradig abhängig von der Neutralisierung des Missbrauchsrisikos ($A2$). |
-| **A2 (Missbrauch)** | **0.50** | 🟡 *Contested* | Wird zangenförmig attackiert ($A3$ & $A5$), wehrt sich aber durch direkten Gegenangriff gegen die Transparenz-These. |
+| **A4 (Haftungslast)** | **1.00** | 🟢 **Core** | *Heise / Zeit:* Überlebt in allen Perspektiven. Die Haftungsfrage für Open-Source-Entwickler ist der ungelöste mathematische Konsens-Punkt. |
+| **A1 (Demokratisierung)** | **0.50** | 🟡 *Contested* | *TechCrunch / Heise:* Abhängig von der Abwehr des Proliferationsrisikos ($A2$). |
+| **A2 (Missbrauch)** | **0.50** | 🟡 *Contested* | *Tagesschau / Zeit:* Zweiseitig attackiert ($A3$ & $A5$), wehrt sich aber durch Gegenangriff auf die Transparenz-These. |
+| **A3 (Transparenz)** | **0.50** | 🟡 *Contested* | *Heise:* Bildet die Gegenachse zu $A2$ (Linus' Law für KI-Modelle). |
+| **A5 (Regulatory Capture)** | **0.50** | 🟡 *Contested* | *TechCrunch:* Entlarvt Sicherheitsbedenken als marktstrategisches Gatekeeping großer US-Anbieter. |
+| **A6 (Europäische Souveränität)** | **0.50** | 🟡 *Contested* | *Handelsblatt:* Scheitert in Perspektive 2 an den regulatorischen Haftungshürden ($A4$). |
 
 ### ⚡ Die Fundamentale Streitachse (Dilemma-Achse)
 
