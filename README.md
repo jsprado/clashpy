@@ -107,6 +107,7 @@ uv run clashpy "Should electric scooters be banned in city centers?" [OPTIONS]
 | Option | Description | Default |
 | :--- | :--- | :--- |
 | `topic` / `--topic` | Debate topic or inquiry (positional or flag) | `""` |
+| `--source` | Feed URL or comma-separated list of RSS feeds (aggregates feeds to prevent single-source bias) | `Tagesschau, Heise, Zeit` |
 | `--solver` | Chosen solver algorithm (`naive` or `pygarg`) | `naive` |
 | `--semantics` | Formal semantics (`PR`, `ST`, `CO`, `GR`) | `PR` (Preferred) |
 | `--model` | LLM model identifier (supports Google, OpenAI, Anthropic, Ollama, etc.) | `google:gemini-3.5-flash` |

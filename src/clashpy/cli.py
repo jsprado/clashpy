@@ -21,7 +21,7 @@ from clashpy.adapters.news_sources.rss_source import RSSNewsSource
 from clashpy.core.solver import Semantics, Solver
 from clashpy.pipeline import run_pipeline
 
-DEFAULT_RSS = "https://www.tagesschau.de/index~rss2.xml"
+DEFAULT_RSS = "https://www.tagesschau.de/index~rss2.xml,https://www.heise.de/rss/heise-atom.xml,https://www.zeit.de/news/index"
 DEFAULT_MODEL = "google:gemini-3.5-flash"
 
 
@@ -44,7 +44,11 @@ def parse_args() -> argparse.Namespace:
 
     parser.add_argument("topic", nargs="?", default="")
     parser.add_argument("--topic", dest="topic_opt", default=None, help="Alternative flag for topic")
-    parser.add_argument("--source", default=DEFAULT_RSS)
+    parser.add_argument(
+        "--source",
+        default=DEFAULT_RSS,
+        help="Single feed URL or comma-separated list of RSS feeds (e.g., Tagesschau, Heise, Zeit)",
+    )
     parser.add_argument("--model", default=DEFAULT_MODEL)
     parser.add_argument(
         "--solver",
