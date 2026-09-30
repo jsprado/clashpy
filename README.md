@@ -155,38 +155,36 @@ uv run clashpy "AI Regulation" --model test
 
 ## Showcase: Real-World Example Output
 
-To illustrate the output of `clashpy`, see the comprehensive analysis of the German sports & urban policy debate **"Olympia-Bewerbung Münchens" (German Olympic Bid)**:
+To illustrate the output of `clashpy`, see the comprehensive analysis of the fundamental tech debate **"Open-Source AI (Open Weights) vs. Closed-Source Gatekeeping"**:
 
-- 🇩🇪 **[German Showcase Report (`docs/example_showcase_de.md`)](docs/example_showcase_de.md)**
-- 🇬🇧 **[English Showcase Report (`docs/example_showcase_en.md`)](docs/example_showcase_en.md)**
-- 📦 **[Raw Machine-Readable JSON DTO (`docs/example_showcase.json`)](docs/example_showcase.json)**
+- 🇩🇪 **[German Showcase Report (`docs/showcase_opensource_ai_de.md`)](docs/showcase_opensource_ai_de.md)**
+- 🇬🇧 **[English Showcase Report (`docs/showcase_opensource_ai_en.md`)](docs/showcase_opensource_ai_en.md)**
 
 ### Sample Rendered Output
 
 ```mermaid
 graph TD
-    A1["A1: Existing venues & infrastructure from the 1972 Olympic Park enable truly sustainable games"]
-    A2["A2: Unpredictable budget overruns and security costs impose excessive burdens on taxpayers"]
-    A3["A3: Mandatory financial buffers, transparent oversight, and IOC grants mitigate fiscal risks"]
-    A4["A4: A binding citizen referendum prior to bidding ensures democratic legitimacy"]
-    A5["A5: Rigid IOC commercialization conflicts with municipal climate and social goals"]
-    A6["A6: Modernizing public transit and housing creates decades of lasting urban value for Munich"]
-    A7["A7: Past referendums in Munich and Hamburg reflect deep-seated public skepticism toward mega-events"]
-    A8["A8: Strict net-zero carbon neutrality and zero new construction in green belts set new benchmarks"]
+    classDef core fill:#059669,stroke:#047857,stroke-width:2px,color:#fff;
+    classDef contested fill:#ca8a04,stroke:#a16207,stroke-width:2px,color:#fff;
+    
+    A1["A1 (Democratization):<br/>Open Weights prevent US Big Tech monopolies<br/>and enable independent global innovation"]:::contested
+    A2["A2 (Proliferation Risk):<br/>Open model weights can be irreversibly abused<br/>for bioweapons and cyberattacks"]:::contested
+    A3["A3 (Transparency-Security):<br/>Security vulnerabilities are only reliably detected<br/>through global open-source audits"]:::contested
+    A4["A4 (Regulatory Liability):<br/>Open-source maintainers cannot shoulder the strict<br/>liability requirements of the EU AI Act"]:::core
+    A5["A5 (Gatekeeping):<br/>Safety warnings are strategically weaponized<br/>by market leaders for regulatory capture"]:::contested
+    A6["A6 (Economic Hub):<br/>Europe can only catch up technologically if local<br/>developers have full control over base models"]:::contested
 
     A2 --> A1
-    A1 --> A2
     A3 --> A2
-    A5 --> A1
-    A7 --> A4
-    A8 --> A5
+    A4 --> A6
+    A5 --> A2
+    A1 --> A5
     A2 --> A3
-    A6 --> A2
 ```
 
-- **Perspective 1 (Sustainable Transformation & Civic Pride):** `{A1, A3, A4, A6, A8}` – Focuses on existing infrastructure reuse (1972 Olympic Park), transparent financial risk caps, transit expansion, and climate neutrality.
-- **Perspective 2 (Fiscal Discipline & Democratic Skepticism):** `{A2, A4, A5, A6, A7}` – Focuses on inevitable cost escalation, commercial IOC friction, and voter skepticism documented in previous regional referendums.
-- **Detected Dilemma Axis:** `A1 ↔ A2` – Fundamental trade-off between transformative urban legacy through major sports events versus safeguarding municipal public funds against speculative budget deficits.
+- **Perspective 1 (Sovereignty & Transparency):** `{A1, A3, A4, A5}` – Open-source AI is essential to combat digital dependency; risks are neutralized by transparency and exposing regulatory capture.
+- **Perspective 2 (Security Imperative):** `{A2, A4}` – The irreversible risk of misuse outweighs innovation benefits, mandating shielded API gatekeepers.
+- **Detected Dilemma Axis:** `A2 ↔ A3` – Fundamental trade-off between *Security through Obscurity* versus *Security through Transparency*.
 
 ---
 
