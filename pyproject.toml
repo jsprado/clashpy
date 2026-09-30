@@ -19,13 +19,12 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project.scripts]
-clashpy = "argument_inferencer.cli:main"
-clash = "argument_inferencer.cli:main"
-argument-inferencer = "argument_inferencer.cli:main"
-generate-docs = "argument_inferencer.doc_generator:main"
+clashpy = "clashpy.cli:main"
+clash = "clashpy.cli:main"
+generate-docs = "clashpy.doc_generator:main"
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/argument_inferencer"]
+packages = ["src/clashpy"]
 
 [dependency-groups]
 dev = [

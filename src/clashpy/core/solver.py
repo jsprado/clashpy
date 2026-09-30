@@ -11,7 +11,7 @@ from __future__ import annotations
 from enum import Enum
 from typing import List, Protocol, Set
 
-from argument_inferencer.core.models import ArgumentationFramework
+from clashpy.core.models import ArgumentationFramework
 
 
 class Semantics(str, Enum):

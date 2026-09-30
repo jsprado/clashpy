@@ -17,8 +17,8 @@ import tempfile
 from pathlib import Path
 from typing import List, Set
 
-from argument_inferencer.core.models import ArgumentationFramework
-from argument_inferencer.core.solver import Semantics, UnsupportedSemanticsError
+from clashpy.core.models import ArgumentationFramework
+from clashpy.core.solver import Semantics, UnsupportedSemanticsError
 
 
 class PygargNotAvailableError(RuntimeError):

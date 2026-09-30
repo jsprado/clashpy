@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <title>clashpy – Showcase: Open-Source AI vs. Closed-Source</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Inter:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0b0f19;
+      --card-bg: rgba(22, 30, 49, 0.95);
+      --card-border: rgba(255, 255, 255, 0.08);
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+      --accent-blue: #38bdf8;
+      --accent-purple: #818cf8;
+      --accent-emerald: #34d399;
+      --accent-amber: #fbbf24;
+      --accent-rose: #f43f5e;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    @page {
+      size: 1600px 960px;
+      margin: 0;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', -apple-system, sans-serif;
+      width: 1600px;
+      min-height: 960px;
+      padding: 36px 40px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 2px solid rgba(255, 255, 255, 0.08);
+      padding-bottom: 18px;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 6px 14px;
+      background: rgba(56, 189, 248, 0.12);
+      border: 1px solid rgba(56, 189, 248, 0.35);
+      border-radius: 9999px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--accent-blue);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 6px;
+    }
+
+    h1 {
+      font-size: 2.3rem;
+      font-weight: 900;
+      letter-spacing: -0.02em;
+      background: linear-gradient(135deg, #ffffff 40%, var(--accent-blue) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .meta-tags {
+      display: flex;
+      gap: 10px;
+    }
+
+    .tag {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      padding: 6px 14px;
+      border-radius: 8px;
+      font-family: 'Fira Code', monospace;
+      font-size: 0.85rem;
+      color: var(--accent-purple);
+    }
+
+    .main-grid {
+      display: grid;
+      grid-template-columns: 1.15fr 1.3fr 1.15fr;
+      gap: 20px;
+      margin: 18px 0;
+    }
+
+    .col {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .col h3 {
+      font-size: 1.1rem;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      padding-bottom: 8px;
+    }
+
+    .sc-box {
+      background: rgba(0, 0, 0, 0.3);
+      border-left: 3px solid var(--accent-blue);
+      padding: 10px 12px;
+      border-radius: 6px;
+      font-size: 0.82rem;
+      line-height: 1.4;
+    }
+
+    .graph-visual {
+      background: rgba(11, 15, 25, 0.8);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 12px;
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+    }
+
+    .pill {
+      display: inline-block;
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .pill-green { background: rgba(52, 211, 153, 0.15); color: var(--accent-emerald); }
+    .pill-amber { background: rgba(251, 191, 36, 0.15); color: var(--accent-amber); }
+
+    .footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-top: 1px solid var(--card-border);
+      padding-top: 14px;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+  </style>
+</head>
+<body>
+
+  <header class="header">
+    <div>
+      <div class="badge">clashpy • Frontier AI Showcase</div>
+      <h1>Streitlandkarte: Open-Source AI vs. Closed-Source</h1>
+      <p style="color: var(--text-muted); font-size: 0.95rem;">Mathematische Auflösung der Debatte um Open Weights, Big-Tech-Monopole &amp; Risiken</p>
+    </div>
+    <div class="meta-tags">
+      <div class="tag">LLM Parser (Pydantic-AI)</div>
+      <div class="tag">Dung 1995 Preferred Semantics</div>
+      <div class="tag">DuckDB Cache</div>
+    </div>
+  </header>
+
+  <div class="main-grid">
+    
+    <!-- SPALTE 1 -->
+    <div class="col">
+      <h3>📰 1. Extrahierte Thesen</h3>
+      <div class="sc-box">
+        <strong>A1 (Demokratisierung):</strong> Open Weights verhindern Big-Tech-Monopole und treiben globale Innovation.
+      </div>
+      <div class="sc-box">
+        <strong>A2 (Missbrauchsrisiko):</strong> Freie Gewichte können irreversibel für Cyberangriffe und Biowaffen missbraucht werden.
+      </div>
+      <div class="sc-box">
+        <strong>A3 (Transparenz):</strong> Sicherheitslücken &amp; Backdoors werden nur durch weltweite Open-Source-Audits entdeckt.
+      </div>
+      <div class="sc-box">
+        <strong>A4 (Haftungslast):</strong> Open-Source-Maintainer können die strengen EU-Haftungsauflagen nicht stemmen.
+      </div>
+      <div class="sc-box">
+        <strong>A5 (Gatekeeping):</strong> Sicherheitswarnungen werden von Marktführern gezielt für Regulatory Capture genutzt.
+      </div>
+    </div>
+
+    <!-- SPALTE 2 -->
+    <div class="col">
+      <h3>⚡ 2. Berechneter Angriffsgraph</h3>
+      <div class="graph-visual">
+        <svg width="450" height="260" viewBox="0 0 450 260">
+          <defs>
+            <marker id="arrow-red" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+              <path d="M 0 0 L 10 5 L 0 10 z" fill="#f43f5e"/>
+            </marker>
+            <marker id="arrow-blue" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+              <path d="M 0 0 L 10 5 L 0 10 z" fill="#38bdf8"/>
+            </marker>
+            <marker id="arrow-green" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+              <path d="M 0 0 L 10 5 L 0 10 z" fill="#34d399"/>
+            </marker>
+          </defs>
+
+          <!-- A1 -->
+          <rect x="20" y="20" width="180" height="42" rx="8" fill="#1e293b" stroke="#34d399" stroke-width="2"/>
+          <text x="110" y="46" fill="#fff" font-size="11" font-weight="bold" text-anchor="middle">A1: Anti-Monopol</text>
+
+          <!-- A2 -->
+          <rect x="250" y="20" width="180" height="42" rx="8" fill="#1e293b" stroke="#f43f5e" stroke-width="2"/>
+          <text x="340" y="46" fill="#fff" font-size="11" font-weight="bold" text-anchor="middle">A2: Missbrauchsgefahr</text>
+
+          <!-- A3 -->
+          <rect x="250" y="105" width="180" height="42" rx="8" fill="#1e293b" stroke="#38bdf8" stroke-width="2"/>
+          <text x="340" y="131" fill="#fff" font-size="11" font-weight="bold" text-anchor="middle">A3: Transparenz-Sicherheit</text>
+
+          <!-- A5 -->
+          <rect x="20" y="105" width="180" height="42" rx="8" fill="#1e293b" stroke="#818cf8" stroke-width="2"/>
+          <text x="110" y="131" fill="#fff" font-size="11" font-weight="bold" text-anchor="middle">A5: Regulatory Capture</text>
+
+          <!-- A4 -->
+          <rect x="135" y="190" width="180" height="42" rx="8" fill="#1e293b" stroke="#fbbf24" stroke-width="2"/>
+          <text x="225" y="216" fill="#fff" font-size="11" font-weight="bold" text-anchor="middle">A4: Haftungsauflagen (Core)</text>
+
+          <!-- Attacks -->
+          <line x1="250" y1="41" x2="208" y2="41" stroke="#f43f5e" stroke-width="2" marker-end="url(#arrow-red)"/>
+          <line x1="340" y1="105" x2="340" y2="70" stroke="#38bdf8" stroke-width="2" marker-end="url(#arrow-blue)"/>
+          <line x1="320" y1="62" x2="320" y2="97" stroke="#f43f5e" stroke-width="2" stroke-dasharray="3" marker-end="url(#arrow-red)"/>
+          <line x1="170" y1="105" x2="270" y2="62" stroke="#818cf8" stroke-width="2" marker-end="url(#arrow-blue)"/>
+          <line x1="110" y1="62" x2="110" y2="97" stroke="#34d399" stroke-width="2" marker-end="url(#arrow-green)"/>
+        </svg>
+        <div style="font-size: 0.72rem; color: var(--text-muted); margin-top: 6px;">
+          Rot/Blau: Streitachse (A2 ↔ A3) | Blau: A3 verteidigt A1 | Lila: A5 entlarvt A2
+        </div>
+      </div>
+    </div>
+
+    <!-- SPALTE 3 -->
+    <div class="col">
+      <h3>🧮 3. Berechnete Denkschulen</h3>
+      
+      <div class="sc-box" style="border-left-color: var(--accent-emerald);">
+        <span class="pill pill-green">Perspektive 1: Souveränität &amp; Wettbewerb</span>
+        <div style="font-size: 0.8rem; margin-top: 4px;">
+          <strong>Gruppe: {A1, A3, A4, A5}</strong><br>
+          <em>These:</em> Open Source schützt vor monopolistischer Abhängigkeit. Das Missbrauchsrisiko (A2) wird durch globale Audits und Transparenz (A3) abgewehrt.
+        </div>
+      </div>
+
+      <div class="sc-box" style="border-left-color: var(--accent-amber);">
+        <span class="pill pill-amber">Perspektive 2: Gefahrenabwehr</span>
+        <div style="font-size: 0.8rem; margin-top: 4px;">
+          <strong>Gruppe: {A2, A4}</strong><br>
+          <em>These:</em> Einmal offengelegte Gewichte lassen sich nie wieder zurückrufen. Proliferationsrisiken zwingen zur Abschirmung hinter kontrollierten APIs.
+        </div>
+      </div>
+
+      <div style="font-size: 0.78rem; color: var(--text-muted); line-height: 1.4; margin-top: 4px;">
+        💡 <strong>Die Streitachse (A2 ↔ A3):</strong> Macht Geheimhaltung Modelle sicherer – oder schafft erst weltweite Transparenz echte Resilienz?
+      </div>
+    </div>
+
+  </div>
+
+  <footer class="footer">
+    <div><strong>clashpy ⚡</strong> • Open-Source PoC für automatisierte Argumentationsanalyse</div>
+    <div>GitHub: <code>https://github.com/jsprado/clashpy</code></div>
+  </footer>
+
+</body>
+</html>

@@ -1,12 +1,12 @@
 """
-CLI entry point for argument_inferencer.
+CLI entry point for clashpy.
 
 Demonstrates the core benefit of the decoupled architecture: the choice of solver
 (naive vs. pygarg) and ingestion source is a pure runtime CLI option without
 modifying any core pipeline code.
 
-    python -m argument_inferencer.cli "AI Regulation" --solver naive
-    python -m argument_inferencer.cli "AI Regulation" --solver pygarg
+    uv run clashpy "AI Regulation" --solver naive
+    uv run clashpy "AI Regulation" --solver pygarg
 """
 
 from __future__ import annotations
@@ -17,9 +17,9 @@ import sys
 from datetime import timedelta
 from pathlib import Path
 
-from argument_inferencer.adapters.news_sources.rss_source import RSSNewsSource
-from argument_inferencer.core.solver import Semantics, Solver
-from argument_inferencer.pipeline import run_pipeline
+from clashpy.adapters.news_sources.rss_source import RSSNewsSource
+from clashpy.core.solver import Semantics, Solver
+from clashpy.pipeline import run_pipeline
 
 DEFAULT_RSS = "https://www.tagesschau.de/index~rss2.xml"
 DEFAULT_MODEL = "google:gemini-3.5-flash"
@@ -27,12 +27,12 @@ DEFAULT_MODEL = "google:gemini-3.5-flash"
 
 def _build_solver(name: str) -> Solver:
     if name == "naive":
-        from argument_inferencer.core.solver import NaiveBacktrackingSolver
+        from clashpy.core.solver import NaiveBacktrackingSolver
 
         return NaiveBacktrackingSolver()
 
     if name == "pygarg":
-        from argument_inferencer.adapters.solvers.pygarg_solver import PygargSolver
+        from clashpy.adapters.solvers.pygarg_solver import PygargSolver
 
         return PygargSolver()
 
@@ -97,7 +97,7 @@ def main() -> None:
     topic = (args.topic_opt or args.topic or "").strip()
 
     # Apply keyring secrets or .env values for API keys
-    from argument_inferencer.core.hashing import apply_keyring_secrets
+    from clashpy.core.hashing import apply_keyring_secrets
     apply_keyring_secrets(secret_keys=["GOOGLE_API_KEY", "OPENAI_API_KEY", "GEMINI_API_KEY"])
 
     try:

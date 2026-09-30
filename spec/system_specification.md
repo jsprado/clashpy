@@ -88,7 +88,7 @@ clashpy/
 ├── tests/
 │   └── test_core.py
 └── src/
-    └── argument_inferencer/
+    └── clashpy/
         ├── core/
         │   ├── models.py       # Pydantic domain models (Argument, Attack, AF)
         │   ├── hashing.py      # Deterministic key generation & secret resolution

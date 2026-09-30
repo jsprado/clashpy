@@ -1,9 +1,9 @@
-"""Unit tests for the argument_inferencer core models and solver."""
+"""Unit tests for the clashpy core models and solver."""
 
 import pytest
-from argument_inferencer.core.models import Argument, Attack, ArgumentationFramework
-from argument_inferencer.core.solver import NaiveBacktrackingSolver, Semantics
-from argument_inferencer.core.metrics import compute_argument_scores, classify_arguments, detect_dilemma_axes
+from clashpy.core.models import Argument, Attack, ArgumentationFramework
+from clashpy.core.solver import NaiveBacktrackingSolver, Semantics
+from clashpy.core.metrics import compute_argument_scores, classify_arguments, detect_dilemma_axes
 
 
 def test_naive_solver_preferred_extensions():

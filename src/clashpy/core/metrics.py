@@ -10,7 +10,7 @@ from __future__ import annotations
 
 from typing import Dict, List, Set, Tuple
 
-from argument_inferencer.core.models import Attack
+from clashpy.core.models import Attack
 
 
 def compute_argument_scores(

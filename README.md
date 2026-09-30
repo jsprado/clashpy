@@ -43,7 +43,7 @@ clashpy/
 ├── tests/
 │   └── test_core.py             # Unit tests for Dung semantics, solvers, and metrics
 └── src/
-    └── argument_inferencer/     # Core package source
+    └── clashpy/                 # Core package source
         ├── core/                # Domain models, DuckDB cache, hashing, solvers & metrics
         │   ├── models.py
         │   ├── hashing.py

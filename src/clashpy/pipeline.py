@@ -13,18 +13,18 @@ from datetime import timedelta
 from pathlib import Path
 from typing import Dict, List, Optional, Set, Tuple
 
-from argument_inferencer.adapters.news_sources.base import NewsSource
-from argument_inferencer.core.cache import DuckDBCache
-from argument_inferencer.core.hashing import stable_hash
-from argument_inferencer.core.metrics import (
+from clashpy.adapters.news_sources.base import NewsSource
+from clashpy.core.cache import DuckDBCache
+from clashpy.core.hashing import stable_hash
+from clashpy.core.metrics import (
     classify_arguments,
     compute_argument_scores,
     compute_attack_degrees,
     detect_dilemma_axes,
 )
-from argument_inferencer.core.models import ArgumentationFramework, FullAnalysisResult
-from argument_inferencer.core.solver import Semantics, Solver
-from argument_inferencer.llm.agents import get_extraction_agent, get_synthesis_agent
+from clashpy.core.models import ArgumentationFramework, FullAnalysisResult
+from clashpy.core.solver import Semantics, Solver
+from clashpy.llm.agents import get_extraction_agent, get_synthesis_agent
 
 PIPELINE_SCHEMA_VERSION = "pipeline-v1"
 
