@@ -30,3 +30,21 @@ def test_explicit_export_path_is_preserved(tmp_path):
 
 def test_markdown_cell_escapes_tables_and_line_breaks():
     assert _markdown_cell("one | two\nthree") == "one \\| two three"
+
+
+def test_resolve_export_path_for_html_and_cytoscape():
+    html_path = _resolve_export_path(
+        "af_graph.html",
+        "af_graph.html",
+        Path("output"),
+        "20261001_120000",
+    )
+    assert html_path == Path("output/20261001_120000_af_graph.html")
+
+    cyto_path = _resolve_export_path(
+        "af_cytoscape.json",
+        "af_cytoscape.json",
+        Path("output"),
+        "20261001_120000",
+    )
+    assert cyto_path == Path("output/20261001_120000_af_cytoscape.json")

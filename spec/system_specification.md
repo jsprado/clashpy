@@ -198,6 +198,8 @@ uv run clashpy [TOPIC] [OPTIONS]
 - `--model MODEL`: Target LLM model identifier.
 - `--export-md [FILE]`: Export analysis report with Mermaid graph to `output/`.
 - `--export-mmd [FILE]`: Export pure Mermaid diagram to `output/`.
+- `--export-html [FILE]`: Export interactive Cytoscape.js HTML visualization dashboard to `output/`.
+- `--export-cytoscape [FILE]`: Export Cytoscape.js graph JSON payload to `output/`.
 - `--output-json [FILE]`: Dump raw JSON payload.
 
 ---

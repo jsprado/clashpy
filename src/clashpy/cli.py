@@ -113,6 +113,20 @@ def parse_args() -> argparse.Namespace:
         default=None,
         help="Export Mermaid graph (.mmd)",
     )
+    parser.add_argument(
+        "--export-html",
+        nargs="?",
+        const="af_graph.html",
+        default=None,
+        help="Export interactive Cytoscape.js HTML visualization (.html)",
+    )
+    parser.add_argument(
+        "--export-cytoscape",
+        nargs="?",
+        const="af_cytoscape.json",
+        default=None,
+        help="Export Cytoscape.js graph JSON (.json)",
+    )
 
     return parser.parse_args()
 
@@ -223,6 +237,47 @@ def _run() -> None:
         mmd_content = _generate_mermaid(result.af)
         mmd_path.write_text(mmd_content, encoding="utf-8")
         print(f"Mermaid graph written to: {mmd_path}")
+
+    if args.export_html:
+        from clashpy.cytoscape import generate_cytoscape_html
+
+        html_path = _resolve_export_path(
+            args.export_html, "af_graph.html", output_dir, now_str
+        )
+        html_content = generate_cytoscape_html(
+            af=result.af,
+            extensions=result.extensions,
+            scores=result.scores,
+            classification=result.classification,
+            dilemma_axes=result.dilemma_axes,
+            degrees=result.degrees,
+            synthesis=result.synthesis,
+            solver_name=solver.name,
+            semantics_name=args.semantics,
+            model_name=args.model,
+            source_name=args.source,
+        )
+        html_path.write_text(html_content, encoding="utf-8")
+        print(f"Interactive Cytoscape.js HTML written to: {html_path}")
+
+    if args.export_cytoscape:
+        from clashpy.cytoscape import export_cytoscape_json
+
+        cyto_path = _resolve_export_path(
+            args.export_cytoscape, "af_cytoscape.json", output_dir, now_str
+        )
+        cyto_content = export_cytoscape_json(
+            af=result.af,
+            extensions=result.extensions,
+            scores=result.scores,
+            classification=result.classification,
+            dilemma_axes=result.dilemma_axes,
+            degrees=result.degrees,
+            synthesis=result.synthesis,
+            topic=result.af.topic,
+        )
+        cyto_path.write_text(cyto_content, encoding="utf-8")
+        print(f"Cytoscape.js JSON written to: {cyto_path}")
 
     if args.export_md:
         md_path = _resolve_export_path(

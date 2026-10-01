@@ -23,8 +23,8 @@ A lightweight, modular proof-of-concept for automated argumentation mining and f
 # 1. Sync dependencies with uv
 uv sync
 
-# 2. Run analysis directly
-uv run clashpy "4-Day Work Week" --solver naive --export-md --export-mmd
+# 2. Run analysis directly (with Cytoscape.js interactive HTML & Mermaid)
+uv run clashpy "4-Day Work Week" --solver naive --export-md --export-mmd --export-html --export-cytoscape
 ```
 
 ---
@@ -76,7 +76,7 @@ clashpy/
   - **Preferred Extensions**: Maximal conflict-free and mutually defended argument sets.
   - **Dilemma Axes**: Automatic detection of symmetric attacks ($A \leftrightarrow B$) representing core ideological disagreements.
   - **Acceptance Scores**: Argument classification into *Core Consensus* ($1.0$), *Contested* ($0 < s < 1$), or *Excluded* ($0.0$).
-- **Multi-Format Export**: Generates timestamped Markdown reports (`.md`), standalone Mermaid diagrams (`.mmd`), and raw JSON payloads under `output/`.
+- **Multi-Format Export & Interactive Visualizations**: Generates timestamped Markdown reports (`.md`), standalone Mermaid diagrams (`.mmd`), interactive **Cytoscape.js HTML dashboards** with live extension filtering and hierarchy layouts, and raw JSON payloads under `output/`.
 
 ---
 
@@ -115,6 +115,8 @@ uv run clashpy "4-Day Work Week" [OPTIONS]
 | `--model` | LLM model identifier (supports Google, OpenAI, Anthropic, Ollama, etc.) | `google:gemini-3.5-flash` |
 | `--export-md` | Export structured Markdown analysis report to `output/` | Disabled |
 | `--export-mmd` | Export Mermaid diagram to `output/` | Disabled |
+| `--export-html` | Export interactive Cytoscape.js HTML visualization dashboard to `output/` | Disabled |
+| `--export-cytoscape` | Export Cytoscape.js graph JSON payload to `output/` | Disabled |
 | `--output-json` | Save complete raw JSON analysis payload to path | `None` |
 | `--refresh` | Bypass DuckDB cache and force fresh extraction | `False` |
 
