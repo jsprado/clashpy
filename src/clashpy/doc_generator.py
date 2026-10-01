@@ -61,21 +61,41 @@ def _get_translations(lang: Language) -> dict[str, str]:
             "step4_pill": "In-Memory (Pure Functions)",
             "step5_title": "AI Synthesis & Export",
             "step5_desc": "Second Pydantic-AI Agent synthesizes perspectives into concise theses. Automated timestamped export.",
-            "scenario_title": "📰 Real-World Pipeline Scenario: “Munich Olympic Bid”",
+            "scenario_title": "📰 Real-World Pipeline Scenario: “4-Day Work Week (8 Arguments Analyzed)”",
             "sc_col1_title": "1. EXTRACTED ARGUMENTS (A)",
-            "sc_a1": "<strong>A1 (Economy):</strong> Reusing existing venues revitalizes sports infrastructure and local economy.",
-            "sc_a2": "<strong>A2 (Fiscal Risk):</strong> Cost overruns impose unpredictable burdens on taxpayers.",
-            "sc_a3": "<strong>A3 (Safeguard):</strong> Substantial reserve buffers and strict transparency rules mitigate fiscal risks.",
+            "sc_a1": "<strong>A1 (Health & Focus):</strong> Cuts burnout and sick leave; raises hourly cognitive productivity.",
+            "sc_a2": "<strong>A2 (Cost Shock & Inflation):</strong> Equal pay spikes unit labor costs, threatening business viability.",
+            "sc_a3": "<strong>A3 (AI & Efficiency):</strong> AI automation and streamlined workflows fully offset 20% fewer hours.",
+            "sc_a4": "<strong>A4 (Talent Magnet):</strong> Attracts top talent, lowers employee turnover and costly hiring cycles.",
+            "sc_a5": "<strong>A5 (Sector Inequity):</strong> Unfeasible for shift/care work, creating an unfair two-tier divide.",
+            "sc_a6": "<strong>A6 (Carbon Reduction):</strong> Cutting one commute day reduces office energy and transport emissions.",
+            "sc_a7": "<strong>A7 (Rebound Emissions):</strong> Extra leisure triggers carbon-heavy travel and recreational spending.",
+            "sc_a8": "<strong>A8 (Legal Reform):</strong> Labor laws must be modernized to enable flexible, outcome-based work.",
             "sc_col2_title": "2. ARGUMENT GRAPH & ATTACKS (R)",
-            "sc_graph_caption": "A2 attacks A1 | A3 defends A1 against A2 | A2 ↔ A3 form a dilemma axis",
-            "node_a1": "A1: Venue Reuse",
-            "node_a2": "A2: Cost Overrun",
-            "node_a3": "A3: Budget Buffer",
+            "sc_graph_caption": "A2 attacks A1 & A6 | A3 & A4 attack A2 | A2 ↔ A3 Dilemma | A5 attacks A4 | A3 attacks A5 | A7 attacks A6 | A1 attacks A7 | A8 Core",
+            "node_a1_title": "A1: Health & Focus",
+            "node_a1_sub": "Contested (0.50)",
+            "node_a2_title": "A2: Cost Shock",
+            "node_a2_sub": "Contested (0.50)",
+            "node_a3_title": "A3: AI & Efficiency",
+            "node_a3_sub": "Contested (0.50)",
+            "node_a4_title": "A4: Talent Magnet",
+            "node_a4_sub": "Contested (0.50)",
+            "node_a5_title": "A5: Sector Inequity",
+            "node_a5_sub": "Contested (0.50)",
+            "node_a6_title": "A6: Carbon Reduction",
+            "node_a6_sub": "Contested (0.50)",
+            "node_a7_title": "A7: Rebound Effect",
+            "node_a7_sub": "Contested (0.50)",
+            "node_a8_title": "A8: Legal Reform",
+            "node_a8_sub": "Core (1.00)",
             "sc_col3_title": "3. COMPUTED PERSPECTIVES",
-            "sc_p1_title": "Perspective 1 (Pro-Bid): {A1, A3}",
-            "sc_p1_thesis": "<em>AI Thesis:</em> Sustainable opportunity for regional sports and economy under controlled fiscal risk.",
-            "sc_p2_title": "Perspective 2 (Anti-Bid): {A2}",
-            "sc_p2_thesis": "<em>AI Thesis:</em> Uncontrollable expenditure risks outweigh any potential long-term benefits.",
+            "sc_p1_title": "Perspective 1 (Pro-Transformation & Climate): {A1, A3, A4, A6, A8}",
+            "sc_p1_thesis": "<em>AI Thesis:</em> AI efficiency (A3) and talent retention (A4) offset reduced hours and burnout costs (A1), while commute cuts (A6) lower emissions under modernized laws (A8).",
+            "sc_p2_title": "Perspective 2 (Cost Realism & Inequity): {A2, A5, A7, A8}",
+            "sc_p2_thesis": "<em>AI Thesis:</em> Cost shocks (A2) and shift limits (A5) risk market inequality, while leisure rebounds (A7) diminish climate gains. Legal reforms (A8) must allow sector flexibility.",
+            "sc_core_box": "<strong>Core Consensus:</strong> {A8} (Score: 1.00) – Modernized labor law is accepted across all perspectives.",
+            "sc_dilemma_box": "<strong>Dilemma Axis:</strong> A2 ↔ A3 – Automation capacity vs. physical frontline limits.",
             "bottom_col1_title": "🤖 Dual-Stage LLM Integration",
             "bottom_col1_desc": "<strong>Pydantic-AI Powered:</strong> Stage 1 extracts unstructured news into typed <code>ArgumentationFramework</code> graphs. Stage 2 takes mathematically proven extensions and generates natural-language meta-theses.",
             "bottom_col2_title": "🏷️ Structural Roles",
@@ -109,21 +129,41 @@ def _get_translations(lang: Language) -> dict[str, str]:
         "step4_pill": "In-Memory (Pure Functions)",
         "step5_title": "KI-Synthese & Export",
         "step5_desc": "Zweiter Pydantic-AI Agent formuliert Perspektiventhesen. Automatischer Export mit Datumsstempel nach output/.",
-        "scenario_title": "📰 Konkretes Pipeline-Szenario: „Olympia-Bewerbung München“",
+        "scenario_title": "📰 Konkretes Pipeline-Szenario: „4-Tage-Woche (8 Argumente im Diskurs)“",
         "sc_col1_title": "1. EXTRAHIERTE ARGUMENTE (A)",
-        "sc_a1": "<strong>A1 (Wirtschaft):</strong> Nachnutzung bestehender Sportstätten stärkt Wirtschaft & Infrastruktur.",
-        "sc_a2": "<strong>A2 (Finanzkritik):</strong> Kostenexplosionen belasten Steuerzahler unkalkulierbar.",
-        "sc_a3": "<strong>A3 (Absicherung):</strong> Hoher Puffer & Transparenzregeln sichern vor finanziellen Risiken ab.",
+        "sc_a1": "<strong>A1 (Gesundheit & Fokus):</strong> Senkt Burnout und Krankheitsausfälle; steigert kognitive Produktivität.",
+        "sc_a2": "<strong>A2 (Lohnkosten & Inflation):</strong> Voller Lohnausgleich treibt Stückkosten und gefährdet Betriebe.",
+        "sc_a3": "<strong>A3 (KI & Effizienz):</strong> KI-Prozessoptimierung und Meeting-Reduktion kompensieren 20 % Zeitverlust.",
+        "sc_a4": "<strong>A4 (Employer Branding):</strong> Zieht Spitzen-Talente an, senkt Fluktuation und Recruiting-Kosten.",
+        "sc_a5": "<strong>A5 (Branchenspaltung):</strong> In Pflege/Handwerk unmöglich; führt zu ungleicher Zwei-Klassen-Welt.",
+        "sc_a6": "<strong>A6 (Klimaschutz & Pendeln):</strong> Ein freier Tag senkt Pendlerverkehr, Büro-Energie und CO2 nachhaltig.",
+        "sc_a7": "<strong>A7 (Rebound-Effekt):</strong> Mehr Freizeit induziert emissionsintensive Reisen und Konsumausgaben.",
+        "sc_a8": "<strong>A8 (Gesetzesreform):</strong> Starres Arbeitszeitrecht muss für flexible Modelle modernisiert werden.",
         "sc_col2_title": "2. GRAPH-RELATIONEN (R)",
-        "sc_graph_caption": "A2 greift A1 an | A3 verteidigt A1 gegen A2 | A2 ↔ A3 bilden Streitachse",
-        "node_a1": "A1: Stätten-Nachnutzung",
-        "node_a2": "A2: Kostenexplosion",
-        "node_a3": "A3: Transparenter Puffer",
+        "sc_graph_caption": "A2 greift A1 & A6 an | A3 & A4 greifen A2 an | A2 ↔ A3 Streitachse | A5 greift A4 an | A3 greift A5 an | A7 greift A6 an | A1 greift A7 an | A8 Core",
+        "node_a1_title": "A1: Gesundheit & Fokus",
+        "node_a1_sub": "Umstritten (0.50)",
+        "node_a2_title": "A2: Lohnkosten & Druck",
+        "node_a2_sub": "Umstritten (0.50)",
+        "node_a3_title": "A3: KI & Effizienz",
+        "node_a3_sub": "Umstritten (0.50)",
+        "node_a4_title": "A4: Employer Branding",
+        "node_a4_sub": "Umstritten (0.50)",
+        "node_a5_title": "A5: Branchenspaltung",
+        "node_a5_sub": "Umstritten (0.50)",
+        "node_a6_title": "A6: Klimaschutz",
+        "node_a6_sub": "Umstritten (0.50)",
+        "node_a7_title": "A7: Rebound-Effekt",
+        "node_a7_sub": "Umstritten (0.50)",
+        "node_a8_title": "A8: Gesetzesreform",
+        "node_a8_sub": "Basis-Konsens (1.00)",
         "sc_col3_title": "3. SYNTHETISIERTE PERSPEKTIVEN",
-        "sc_p1_title": "Perspektive 1 (Pro): {A1, A3}",
-        "sc_p1_thesis": "<em>KI-These:</em> Nachhaltige Chance für Sport und Stadt bei kontrollierbarem Haushaltsrisiko.",
-        "sc_p2_title": "Perspektive 2 (Contra): {A2}",
-        "sc_p2_thesis": "<em>KI-These:</em> Unkalkulierbare Kostenfallen übersteigen jeden potenziellen Nutzen.",
+        "sc_p1_title": "Perspektive 1 (Pro-Transformation & Klima): {A1, A3, A4, A6, A8}",
+        "sc_p1_thesis": "<em>KI-These:</em> KI-Effizienz (A3) und Mitarbeiterbindung (A4) kompensieren Zeitverluste und Burnout-Kosten (A1), während Pendelreduktion (A6) das Klima schont unter neuem Recht (A8).",
+        "sc_p2_title": "Perspektive 2 (Kostenrealismus & Ungleichheit): {A2, A5, A7, A8}",
+        "sc_p2_thesis": "<em>KI-These:</em> Lohnkosten (A2) und Schichtgrenzen (A5) spalten den Arbeitsmarkt; Freizeit-Rebounds (A7) dämpfen Klimavorteile. Reformen (A8) müssen Branchenfreiheit wahren.",
+        "sc_core_box": "<strong>Basis-Konsens:</strong> {A8} (Score: 1.00) – Reform des Arbeitszeitrechts wird von allen Perspektiven gestützt.",
+        "sc_dilemma_box": "<strong>Streitachse:</strong> A2 ↔ A3 – Automatisierungspotenzial vs. physische Kapazitätsgrenzen.",
         "bottom_col1_title": "🤖 Zweistufige KI-Verdrahtung",
         "bottom_col1_desc": "<strong>Pydantic-AI Nativ:</strong> Stufe 1 wandelt Freitext in streng typisierte <code>ArgumentationFramework</code>-Objekte. Stufe 2 verdichtet berechnete mathematische Extensions in verständliche Meta-Thesen.",
         "bottom_col2_title": "🏷️ Strukturelle Rollen",
@@ -332,23 +372,27 @@ def generate_html_poster(output_path: Path, lang: Language) -> None:
     .sc-box {{
       background: rgba(0, 0, 0, 0.25);
       border-left: 3px solid var(--accent-blue);
-      padding: 12px 14px;
+      padding: 5px 10px;
       border-radius: 6px;
-      font-size: 0.85rem;
-      line-height: 1.45;
-      margin-bottom: 10px;
+      font-size: 0.74rem;
+      line-height: 1.3;
+      margin-bottom: 5px;
+    }}
+
+    .sc-box:last-child {{
+      margin-bottom: 0;
     }}
 
     .graph-visual {{
       background: rgba(11, 15, 25, 0.8);
       border: 1px solid rgba(255, 255, 255, 0.05);
       border-radius: 12px;
-      padding: 16px;
+      padding: 12px;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      min-height: 200px;
+      min-height: 250px;
     }}
 
     .bottom-grid {{
@@ -480,59 +524,116 @@ def generate_html_poster(output_path: Path, lang: Language) -> None:
     <div class="scenario-grid">
       
       <div>
-        <h4 style="color: var(--accent-blue); margin-bottom: 10px; font-size: 0.95rem;">{t['sc_col1_title']}</h4>
+        <h4 style="color: var(--accent-blue); margin-bottom: 6px; font-size: 0.88rem;">{t['sc_col1_title']}</h4>
         <div class="sc-box">{t['sc_a1']}</div>
         <div class="sc-box">{t['sc_a2']}</div>
         <div class="sc-box">{t['sc_a3']}</div>
+        <div class="sc-box">{t['sc_a4']}</div>
+        <div class="sc-box">{t['sc_a5']}</div>
+        <div class="sc-box">{t['sc_a6']}</div>
+        <div class="sc-box">{t['sc_a7']}</div>
+        <div class="sc-box" style="border-left-color: var(--accent-emerald);">{t['sc_a8']}</div>
       </div>
 
       <div>
-        <h4 style="color: var(--accent-blue); margin-bottom: 10px; font-size: 0.95rem; text-align: center;">{t['sc_col2_title']}</h4>
+        <h4 style="color: var(--accent-blue); margin-bottom: 6px; font-size: 0.88rem; text-align: center;">{t['sc_col2_title']}</h4>
         <div class="graph-visual">
-          <svg width="420" height="180" viewBox="0 0 420 180">
-            <!-- Node A2 -->
-            <rect x="20" y="20" width="160" height="45" rx="8" fill="#1e293b" stroke="#f43f5e" stroke-width="2"/>
-            <text x="100" y="47" fill="#fff" font-size="12" font-family="sans-serif" text-anchor="middle" font-weight="bold">{t['node_a2']}</text>
-
-            <!-- Node A1 -->
-            <rect x="240" y="20" width="160" height="45" rx="8" fill="#1e293b" stroke="#34d399" stroke-width="2"/>
-            <text x="320" y="47" fill="#fff" font-size="12" font-family="sans-serif" text-anchor="middle" font-weight="bold">{t['node_a1']}</text>
-
-            <!-- Node A3 -->
-            <rect x="130" y="115" width="160" height="45" rx="8" fill="#1e293b" stroke="#38bdf8" stroke-width="2"/>
-            <text x="210" y="142" fill="#fff" font-size="12" font-family="sans-serif" text-anchor="middle" font-weight="bold">{t['node_a3']}</text>
-
-            <!-- Arrow A2 -> A1 -->
+          <svg width="460" height="248" viewBox="0 0 460 248">
             <defs>
-              <marker id="arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-                <path d="M 0 0 L 10 5 L 0 10 z" fill="#f43f5e"/>
+              <marker id="arrow-red" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                <path d="M 0 1 L 10 5 L 0 9 z" fill="#f43f5e"/>
               </marker>
-              <marker id="arrow-blue" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-                <path d="M 0 0 L 10 5 L 0 10 z" fill="#38bdf8"/>
+              <marker id="arrow-blue" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                <path d="M 0 1 L 10 5 L 0 9 z" fill="#38bdf8"/>
               </marker>
             </defs>
-            <line x1="180" y1="42" x2="232" y2="42" stroke="#f43f5e" stroke-width="2" marker-end="url(#arrow)"/>
 
-            <!-- Arrow A3 -> A2 -->
-            <path d="M 170 115 L 120 70" stroke="#38bdf8" stroke-width="2" marker-end="url(#arrow-blue)"/>
-            <!-- Arrow A2 -> A3 (Mutual) -->
-            <path d="M 100 65 L 150 110" stroke="#f43f5e" stroke-width="2" stroke-dasharray="4" marker-end="url(#arrow)"/>
+            <!-- Attack A2 -> A1 -->
+            <line x1="185" y1="24" x2="267" y2="24" stroke="#f43f5e" stroke-width="1.8" marker-end="url(#arrow-red)"/>
+
+            <!-- Attack A3 -> A2 -->
+            <line x1="75" y1="68" x2="75" y2="44" stroke="#38bdf8" stroke-width="1.8" marker-end="url(#arrow-blue)"/>
+            
+            <!-- Attack A2 -> A3 (Dilemma) -->
+            <line x1="95" y1="38" x2="95" y2="62" stroke="#f43f5e" stroke-width="1.8" stroke-dasharray="3" marker-end="url(#arrow-red)"/>
+
+            <!-- Attack A4 -> A2 -->
+            <path d="M 275 74 L 189 34" stroke="#38bdf8" stroke-width="1.8" marker-end="url(#arrow-blue)"/>
+
+            <!-- Attack A5 -> A4 -->
+            <path d="M 185 137 L 271 94" stroke="#f43f5e" stroke-width="1.8" marker-end="url(#arrow-red)"/>
+
+            <!-- Attack A3 -> A5 -->
+            <line x1="75" y1="98" x2="75" y2="122" stroke="#38bdf8" stroke-width="1.8" marker-end="url(#arrow-blue)"/>
+
+            <!-- Attack A7 -> A6 -->
+            <path d="M 185 197 L 271 154" stroke="#f43f5e" stroke-width="1.8" marker-end="url(#arrow-red)"/>
+
+            <!-- Attack A1 -> A7 -->
+            <path d="M 275 32 L 189 191" stroke="#38bdf8" stroke-width="1.8" marker-end="url(#arrow-blue)"/>
+
+            <!-- Attack A2 -> A6 -->
+            <path d="M 185 34 L 271 137" stroke="#f43f5e" stroke-width="1.8" marker-end="url(#arrow-red)"/>
+
+            <!-- Node A2 -->
+            <rect x="15" y="8" width="170" height="30" rx="6" fill="#1e293b" stroke="#f43f5e" stroke-width="1.6"/>
+            <text x="100" y="21" fill="#fff" font-size="10" font-family="sans-serif" text-anchor="middle" font-weight="bold">{t['node_a2_title']}</text>
+            <text x="100" y="32" fill="#fbbf24" font-size="8" font-family="sans-serif" text-anchor="middle">{t['node_a2_sub']}</text>
+
+            <!-- Node A1 -->
+            <rect x="275" y="8" width="170" height="30" rx="6" fill="#1e293b" stroke="#fbbf24" stroke-width="1.6"/>
+            <text x="360" y="21" fill="#fff" font-size="10" font-family="sans-serif" text-anchor="middle" font-weight="bold">{t['node_a1_title']}</text>
+            <text x="360" y="32" fill="#fbbf24" font-size="8" font-family="sans-serif" text-anchor="middle">{t['node_a1_sub']}</text>
+
+            <!-- Node A3 -->
+            <rect x="15" y="68" width="170" height="30" rx="6" fill="#1e293b" stroke="#38bdf8" stroke-width="1.6"/>
+            <text x="100" y="81" fill="#fff" font-size="10" font-family="sans-serif" text-anchor="middle" font-weight="bold">{t['node_a3_title']}</text>
+            <text x="100" y="92" fill="#fbbf24" font-size="8" font-family="sans-serif" text-anchor="middle">{t['node_a3_sub']}</text>
+
+            <!-- Node A4 -->
+            <rect x="275" y="68" width="170" height="30" rx="6" fill="#1e293b" stroke="#fbbf24" stroke-width="1.6"/>
+            <text x="360" y="81" fill="#fff" font-size="10" font-family="sans-serif" text-anchor="middle" font-weight="bold">{t['node_a4_title']}</text>
+            <text x="360" y="92" fill="#fbbf24" font-size="8" font-family="sans-serif" text-anchor="middle">{t['node_a4_sub']}</text>
+
+            <!-- Node A5 -->
+            <rect x="15" y="128" width="170" height="30" rx="6" fill="#1e293b" stroke="#f43f5e" stroke-width="1.6"/>
+            <text x="100" y="141" fill="#fff" font-size="10" font-family="sans-serif" text-anchor="middle" font-weight="bold">{t['node_a5_title']}</text>
+            <text x="100" y="152" fill="#fbbf24" font-size="8" font-family="sans-serif" text-anchor="middle">{t['node_a5_sub']}</text>
+
+            <!-- Node A6 -->
+            <rect x="275" y="128" width="170" height="30" rx="6" fill="#1e293b" stroke="#fbbf24" stroke-width="1.6"/>
+            <text x="360" y="141" fill="#fff" font-size="10" font-family="sans-serif" text-anchor="middle" font-weight="bold">{t['node_a6_title']}</text>
+            <text x="360" y="152" fill="#fbbf24" font-size="8" font-family="sans-serif" text-anchor="middle">{t['node_a6_sub']}</text>
+
+            <!-- Node A7 -->
+            <rect x="15" y="188" width="170" height="30" rx="6" fill="#1e293b" stroke="#f43f5e" stroke-width="1.6"/>
+            <text x="100" y="201" fill="#fff" font-size="10" font-family="sans-serif" text-anchor="middle" font-weight="bold">{t['node_a7_title']}</text>
+            <text x="100" y="212" fill="#fbbf24" font-size="8" font-family="sans-serif" text-anchor="middle">{t['node_a7_sub']}</text>
+
+            <!-- Node A8 (Core Consensus) -->
+            <rect x="275" y="188" width="170" height="30" rx="6" fill="#1e293b" stroke="#34d399" stroke-width="2"/>
+            <text x="360" y="201" fill="#fff" font-size="10" font-family="sans-serif" text-anchor="middle" font-weight="bold">{t['node_a8_title']}</text>
+            <text x="360" y="212" fill="#34d399" font-size="8" font-family="sans-serif" text-anchor="middle" font-weight="600">{t['node_a8_sub']}</text>
           </svg>
-          <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 6px;">
+          <div style="font-size: 0.7rem; color: var(--text-muted); margin-top: 2px; text-align: center;">
             {t['sc_graph_caption']}
           </div>
         </div>
       </div>
 
-      <div>
-        <h4 style="color: var(--accent-blue); margin-bottom: 10px; font-size: 0.95rem;">{t['sc_col3_title']}</h4>
-        <div class="sc-box" style="border-left-color: var(--accent-emerald);">
-          <strong style="color: var(--accent-emerald);">{t['sc_p1_title']}</strong><br>
-          {t['sc_p1_thesis']}
+      <div style="display: flex; flex-direction: column; justify-content: space-between;">
+        <h4 style="color: var(--accent-blue); margin-bottom: 6px; font-size: 0.88rem;">{t['sc_col3_title']}</h4>
+        <div class="sc-box" style="border-left-color: var(--accent-emerald); margin-bottom: 6px;">
+          <strong style="color: var(--accent-emerald); font-size: 0.8rem;">{t['sc_p1_title']}</strong><br>
+          <span style="font-size: 0.74rem;">{t['sc_p1_thesis']}</span>
         </div>
-        <div class="sc-box" style="border-left-color: var(--accent-amber);">
-          <strong style="color: var(--accent-amber);">{t['sc_p2_title']}</strong><br>
-          {t['sc_p2_thesis']}
+        <div class="sc-box" style="border-left-color: var(--accent-amber); margin-bottom: 6px;">
+          <strong style="color: var(--accent-amber); font-size: 0.8rem;">{t['sc_p2_title']}</strong><br>
+          <span style="font-size: 0.74rem;">{t['sc_p2_thesis']}</span>
+        </div>
+        <div class="sc-box" style="border-left-color: var(--accent-blue); font-size: 0.74rem; background: rgba(56, 189, 248, 0.08);">
+          <div>{t['sc_core_box']}</div>
+          <div style="margin-top: 3px; color: var(--accent-rose);">{t['sc_dilemma_box']}</div>
         </div>
       </div>
 
@@ -596,8 +697,9 @@ def convert_html_to_pdf_and_png(html_path: Path, docs_dir: Path, lang: Language)
     # PDF Export (exact canvas size)
     cmd_pdf = [
         chrome_bin,
-        "--headless",
+        "--headless=new",
         "--disable-gpu",
+        "--no-sandbox",
         "--print-to-pdf-no-header",
         f"--print-to-pdf={pdf_out.resolve()}",
         str(html_path.resolve()),
@@ -611,8 +713,9 @@ def convert_html_to_pdf_and_png(html_path: Path, docs_dir: Path, lang: Language)
     # PNG Export (matching 1600x1200 viewport)
     cmd_png = [
         chrome_bin,
-        "--headless",
+        "--headless=new",
         "--disable-gpu",
+        "--no-sandbox",
         "--window-size=1600,1200",
         f"--screenshot={png_out.resolve()}",
         str(html_path.resolve()),

@@ -19,17 +19,35 @@ from pathlib import Path
 
 from clashpy.adapters.news_sources.rss_source import RSSNewsSource
 from clashpy.core.solver import Semantics, Solver
+from clashpy.errors import ClashpyError
 from clashpy.pipeline import run_pipeline
 
 DEFAULT_RSS = "https://www.tagesschau.de/index~rss2.xml,https://www.heise.de/rss/heise-atom.xml,https://www.zeit.de/news/index"
 DEFAULT_MODEL = "google:gemini-3.5-flash"
 
 
-def _build_solver(name: str) -> Solver:
+def _resolve_export_path(
+    requested_path: str,
+    default_name: str,
+    output_dir: Path,
+    timestamp: str,
+) -> Path:
+    path = Path(requested_path)
+    if path.name == default_name:
+        path = output_dir / f"{timestamp}_{default_name}"
+    path.parent.mkdir(parents=True, exist_ok=True)
+    return path
+
+
+def _markdown_cell(value: str) -> str:
+    return value.replace("|", "\\|").replace("\n", " ")
+
+
+def _build_solver(name: str, naive_max_arguments: int = 20) -> Solver:
     if name == "naive":
         from clashpy.core.solver import NaiveBacktrackingSolver
 
-        return NaiveBacktrackingSolver()
+        return NaiveBacktrackingSolver(max_arguments=naive_max_arguments)
 
     if name == "pygarg":
         from clashpy.adapters.solvers.pygarg_solver import PygargSolver
@@ -40,10 +58,14 @@ def _build_solver(name: str) -> Solver:
 
 
 def parse_args() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description="Argumentation analysis pipeline (packaged version)")
+    parser = argparse.ArgumentParser(
+        description="Argumentation analysis pipeline (packaged version)"
+    )
 
     parser.add_argument("topic", nargs="?", default="")
-    parser.add_argument("--topic", dest="topic_opt", default=None, help="Alternative flag for topic")
+    parser.add_argument(
+        "--topic", dest="topic_opt", default=None, help="Alternative flag for topic"
+    )
     parser.add_argument(
         "--source",
         default=DEFAULT_RSS,
@@ -65,14 +87,32 @@ def parse_args() -> argparse.Namespace:
         choices=[s.value for s in Semantics],
         default=Semantics.PREFERRED.value,
     )
+    parser.add_argument(
+        "--naive-max-arguments",
+        type=int,
+        default=20,
+        help="Maximum framework size accepted by the exponential naive solver (default: 20).",
+    )
     parser.add_argument("--cache-db", default="af_cache.duckdb")
     parser.add_argument("--news-ttl-minutes", type=int, default=15)
     parser.add_argument("--max-articles", type=int, default=30)
     parser.add_argument("--refresh", action="store_true")
     parser.add_argument("--no-synthesis", action="store_true")
     parser.add_argument("--output-json", default=None)
-    parser.add_argument("--export-md", nargs="?", const="af_analyse.md", default=None, help="Export visual markdown report (.md)")
-    parser.add_argument("--export-mmd", nargs="?", const="af_graph.mmd", default=None, help="Export Mermaid graph (.mmd)")
+    parser.add_argument(
+        "--export-md",
+        nargs="?",
+        const="af_analyse.md",
+        default=None,
+        help="Export visual markdown report (.md)",
+    )
+    parser.add_argument(
+        "--export-mmd",
+        nargs="?",
+        const="af_graph.mmd",
+        default=None,
+        help="Export Mermaid graph (.mmd)",
+    )
 
     return parser.parse_args()
 
@@ -90,8 +130,9 @@ BANNER = r"""
 """
 
 
-def main() -> None:
+def _run() -> None:
     import os
+
     os.environ["PYDANTIC_AI_NO_BANNER"] = "1"
 
     print(BANNER)
@@ -102,10 +143,13 @@ def main() -> None:
 
     # Apply keyring secrets or .env values for API keys
     from clashpy.core.hashing import apply_keyring_secrets
-    apply_keyring_secrets(secret_keys=["GOOGLE_API_KEY", "OPENAI_API_KEY", "GEMINI_API_KEY"])
+
+    apply_keyring_secrets(
+        secret_keys=["GOOGLE_API_KEY", "OPENAI_API_KEY", "GEMINI_API_KEY"]
+    )
 
     try:
-        solver = _build_solver(args.solver)
+        solver = _build_solver(args.solver, args.naive_max_arguments)
     except Exception as exc:
         print(f"→ Solver '{args.solver}' could not be initialized: {exc}")
         sys.exit(1)
@@ -157,6 +201,7 @@ def main() -> None:
         print(f"JSON written to: {args.output_json}")
 
     from datetime import datetime
+
     now_str = datetime.now().strftime("%Y%m%d_%H%M%S")
 
     output_dir = Path("output")
@@ -172,27 +217,25 @@ def main() -> None:
         return "\n".join(lines)
 
     if args.export_mmd:
-        mmd_path = Path(args.export_mmd)
-        if mmd_path.stem == "af_graph":
-            mmd_path = output_dir / f"{now_str}_{mmd_path.name}"
-        else:
-            mmd_path = output_dir / f"{now_str}_{mmd_path.name}"
+        mmd_path = _resolve_export_path(
+            args.export_mmd, "af_graph.mmd", output_dir, now_str
+        )
         mmd_content = _generate_mermaid(result.af)
         mmd_path.write_text(mmd_content, encoding="utf-8")
         print(f"Mermaid graph written to: {mmd_path}")
 
     if args.export_md:
-        md_path = Path(args.export_md)
-        if md_path.stem == "af_analyse":
-            md_path = output_dir / f"{now_str}_{md_path.name}"
-        else:
-            md_path = output_dir / f"{now_str}_{md_path.name}"
-        
+        md_path = _resolve_export_path(
+            args.export_md, "af_analyse.md", output_dir, now_str
+        )
+
         md_lines = [
             f"# Argumentation Analysis: {result.af.topic}",
             f"\n*Generated on: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}*\n",
             "## Summary",
             f"- **Solver:** {solver.name} ({args.semantics})",
+            f"- **Model:** `{args.model}`",
+            f"- **News source:** `{args.source}`",
             f"- **Arguments:** {len(result.af.arguments)}",
             f"- **Attacks:** {len(result.af.attacks)}",
             f"- **Preferred Extensions:** {len(result.extensions)}",
@@ -202,11 +245,40 @@ def main() -> None:
             _generate_mermaid(result.af),
             "```\n",
             "## Arguments & Classification\n",
+            "| ID | Classification | Score | Claim | Source |",
+            "| :--- | :--- | ---: | :--- | :--- |",
         ]
         for arg in result.af.arguments:
             cls = result.classification.get(arg.id, "Unknown")
             score = result.scores.get(arg.id, 0.0)
-            md_lines.append(f"- **{arg.id}**: {arg.claim} *(Class: {cls}, Score: {score:.2f})*")
+            md_lines.append(
+                f"| {_markdown_cell(arg.id)} | {cls} | {score:.2f} | "
+                f"{_markdown_cell(arg.claim)} | {_markdown_cell(arg.source_url)} |"
+            )
+
+        md_lines.append("\n## Attack Relations\n")
+        if result.af.attacks:
+            for attack in result.af.attacks:
+                md_lines.append(
+                    f"- `{attack.attacker_id}` → `{attack.target_id}`: "
+                    f"{attack.reason}"
+                )
+        else:
+            md_lines.append("No attacks were extracted.")
+
+        md_lines.append("\n## Preferred Extensions\n")
+        for index, extension in enumerate(result.extensions, 1):
+            members = ", ".join(sorted(extension)) or "∅"
+            md_lines.append(f"- **Extension {index}:** `{{{members}}}`")
+
+        md_lines.append("\n## Dilemma Axes\n")
+        if result.dilemma_axes:
+            for left, right, left_reason, right_reason in result.dilemma_axes:
+                md_lines.append(
+                    f"- **`{left} ↔ {right}`:** {left_reason} / {right_reason}"
+                )
+        else:
+            md_lines.append("No mutual attacks were detected.")
 
         if result.synthesis:
             md_lines.append("\n## Perspectives & Synthesis\n")
@@ -214,8 +286,28 @@ def main() -> None:
                 md_lines.append(f"### Perspective {thesis.group_id}: {thesis.title}")
                 md_lines.append(f"{thesis.thesis}\n")
 
+        md_lines.extend(
+            [
+                "\n## Provenance and Limitations\n",
+                "This report was generated by the `clashpy` CLI. News selection and "
+                "LLM extraction may be incomplete or incorrect; formal results are "
+                "reproducible only for the argument graph shown above.",
+            ]
+        )
+
         md_path.write_text("\n".join(md_lines), encoding="utf-8")
         print(f"Markdown report written to: {md_path}")
+
+
+def main() -> None:
+    try:
+        _run()
+    except (ClashpyError, OSError, ValueError) as exc:
+        print(f"Error: {exc}", file=sys.stderr)
+        sys.exit(1)
+    except RuntimeError as exc:
+        print(f"Solver or provider error: {exc}", file=sys.stderr)
+        sys.exit(1)
 
 
 if __name__ == "__main__":

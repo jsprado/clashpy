@@ -24,6 +24,7 @@ from clashpy.core.metrics import (
 )
 from clashpy.core.models import ArgumentationFramework, FullAnalysisResult
 from clashpy.core.solver import Semantics, Solver
+from clashpy.errors import NoNewsDataError, ProviderError
 from clashpy.llm.agents import get_extraction_agent, get_synthesis_agent
 
 PIPELINE_SCHEMA_VERSION = "pipeline-v1"
@@ -47,7 +48,13 @@ def _extract_framework(
     target_topic: str,
     force_refresh: bool,
 ) -> ArgumentationFramework:
-    key = stable_hash(PIPELINE_SCHEMA_VERSION, "framework", model_name, raw_news, target_topic.strip().lower())
+    key = stable_hash(
+        PIPELINE_SCHEMA_VERSION,
+        "framework",
+        model_name,
+        raw_news,
+        target_topic.strip().lower(),
+    )
 
     if not force_refresh:
         cached = cache.get_json("framework", key)
@@ -62,7 +69,12 @@ def _extract_framework(
         if target_topic
         else f"Hier sind die Nachrichten und Daten:\n\n{raw_news}"
     )
-    result = get_extraction_agent(model_name).run_sync(prompt)
+    try:
+        result = get_extraction_agent(model_name).run_sync(prompt)
+    except Exception as exc:
+        raise ProviderError(
+            f"LLM extraction failed for model '{model_name}': {exc}"
+        ) from exc
     af = result.output
 
     if target_topic:
@@ -132,7 +144,12 @@ def _synthesize(
             return FullAnalysisResult.model_validate(cached)
 
     print("→ Synthesis-Cache MISS – invoking synthesis LLM")
-    result = get_synthesis_agent(model_name).run_sync(prompt)
+    try:
+        result = get_synthesis_agent(model_name).run_sync(prompt)
+    except Exception as exc:
+        raise ProviderError(
+            f"LLM synthesis failed for model '{model_name}': {exc}"
+        ) from exc
     synthesis = result.output
 
     for i, thesis in enumerate(synthesis.theses, 1):
@@ -166,7 +183,9 @@ def run_pipeline(
 
         raw_news = None
         if not force_refresh:
-            raw_news = cache.get_json(f"news:{news_source.name}", news_key, ttl=news_ttl)
+            raw_news = cache.get_json(
+                f"news:{news_source.name}", news_key, ttl=news_ttl
+            )
 
         if raw_news is None:
             print(f"→ News-Cache MISS/REFRESH ({news_source.name})")
@@ -176,7 +195,9 @@ def run_pipeline(
             print(f"→ News-Cache HIT ({news_source.name})")
 
         if not raw_news.strip():
-            raise RuntimeError("No news data retrieved.")
+            raise NoNewsDataError(
+                "No usable news data was retrieved. Check the topic and feed URLs."
+            )
 
         # -- 2. Framework Extraction ----------------------------------
         af = _extract_framework(cache, raw_news, model_name, topic, force_refresh)

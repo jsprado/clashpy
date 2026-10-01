@@ -2,10 +2,14 @@
 
 from __future__ import annotations
 
+from concurrent.futures import ThreadPoolExecutor
 import re
 from typing import Iterable, List
+from urllib.request import Request, urlopen
 
 import feedparser
+
+from clashpy.errors import NewsSourceError
 
 DEFAULT_FEEDS = [
     # General & Politics
@@ -17,6 +21,15 @@ DEFAULT_FEEDS = [
     # Economy & Policy
     "https://www.handelsblatt.com/contentexport/feed/top-themen",
 ]
+
+DEFAULT_REQUEST_TIMEOUT = 10.0
+DEFAULT_MAX_WORKERS = 5
+
+
+def _parse_feed(url: str, timeout: float):
+    request = Request(url, headers={"User-Agent": "clashpy/0.1 RSS reader"})
+    with urlopen(request, timeout=timeout) as response:
+        return feedparser.parse(response.read())
 
 
 def _entry_text(entry) -> str:
@@ -61,7 +74,20 @@ class RSSNewsSource:
 
     name = "rss"
 
-    def __init__(self, feed_url: str | List[str] | None = None) -> None:
+    def __init__(
+        self,
+        feed_url: str | List[str] | None = None,
+        request_timeout: float = DEFAULT_REQUEST_TIMEOUT,
+        max_workers: int = DEFAULT_MAX_WORKERS,
+    ) -> None:
+        if request_timeout <= 0:
+            raise ValueError("request_timeout must be greater than zero")
+        if max_workers < 1:
+            raise ValueError("max_workers must be at least 1")
+
+        self.request_timeout = request_timeout
+        self.max_workers = max_workers
+
         if feed_url is None:
             self.feed_urls = list(DEFAULT_FEEDS)
         elif isinstance(feed_url, str):
@@ -76,11 +102,23 @@ class RSSNewsSource:
     def fetch(self, topic: str, max_items: int = 30) -> str:
         all_entries = []
         seen_links = set()
+        failures = []
 
-        for url in self.feed_urls:
+        worker_count = min(self.max_workers, len(self.feed_urls))
+        with ThreadPoolExecutor(max_workers=worker_count) as executor:
+            feed_futures = [
+                (url, executor.submit(_parse_feed, url, self.request_timeout))
+                for url in self.feed_urls
+            ]
+
+        for url, future in feed_futures:
             try:
-                feed = feedparser.parse(url)
+                feed = future.result()
                 entries = getattr(feed, "entries", []) or []
+                if getattr(feed, "bozo", False) and not entries:
+                    error = getattr(feed, "bozo_exception", "invalid feed")
+                    failures.append(f"{url}: {error}")
+                    continue
                 for entry in entries:
                     link = getattr(entry, "link", "")
                     if link and link in seen_links:
@@ -88,10 +126,17 @@ class RSSNewsSource:
                     if link:
                         seen_links.add(link)
                     all_entries.append(entry)
-            except Exception:
+            except Exception as exc:
+                failures.append(f"{url}: {exc}")
                 continue
 
         if not all_entries:
+            if failures and len(failures) == len(self.feed_urls):
+                details = "; ".join(failures)
+                raise NewsSourceError(
+                    f"All configured RSS feeds failed ({details}). "
+                    "Check the feed URLs and network connection."
+                )
             return ""
 
         pattern = _topic_pattern(topic)

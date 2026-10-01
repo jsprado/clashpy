@@ -188,23 +188,27 @@
     .sc-box {
       background: rgba(0, 0, 0, 0.25);
       border-left: 3px solid var(--accent-blue);
-      padding: 12px 14px;
+      padding: 5px 10px;
       border-radius: 6px;
-      font-size: 0.85rem;
-      line-height: 1.45;
-      margin-bottom: 10px;
+      font-size: 0.74rem;
+      line-height: 1.3;
+      margin-bottom: 5px;
+    }
+
+    .sc-box:last-child {
+      margin-bottom: 0;
     }
 
     .graph-visual {
       background: rgba(11, 15, 25, 0.8);
       border: 1px solid rgba(255, 255, 255, 0.05);
       border-radius: 12px;
-      padding: 16px;
+      padding: 12px;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      min-height: 200px;
+      min-height: 250px;
     }
 
     .bottom-grid {
@@ -332,63 +336,120 @@
 
   <!-- SCENARIO SHOWCASE -->
   <section class="scenario-container">
-    <div class="section-title">📰 Konkretes Pipeline-Szenario: „Olympia-Bewerbung München“</div>
+    <div class="section-title">📰 Konkretes Pipeline-Szenario: „4-Tage-Woche (8 Argumente im Diskurs)“</div>
     <div class="scenario-grid">
       
       <div>
-        <h4 style="color: var(--accent-blue); margin-bottom: 10px; font-size: 0.95rem;">1. EXTRAHIERTE ARGUMENTE (A)</h4>
-        <div class="sc-box"><strong>A1 (Wirtschaft):</strong> Nachnutzung bestehender Sportstätten stärkt Wirtschaft & Infrastruktur.</div>
-        <div class="sc-box"><strong>A2 (Finanzkritik):</strong> Kostenexplosionen belasten Steuerzahler unkalkulierbar.</div>
-        <div class="sc-box"><strong>A3 (Absicherung):</strong> Hoher Puffer & Transparenzregeln sichern vor finanziellen Risiken ab.</div>
+        <h4 style="color: var(--accent-blue); margin-bottom: 6px; font-size: 0.88rem;">1. EXTRAHIERTE ARGUMENTE (A)</h4>
+        <div class="sc-box"><strong>A1 (Gesundheit & Fokus):</strong> Senkt Burnout und Krankheitsausfälle; steigert kognitive Produktivität.</div>
+        <div class="sc-box"><strong>A2 (Lohnkosten & Inflation):</strong> Voller Lohnausgleich treibt Stückkosten und gefährdet Betriebe.</div>
+        <div class="sc-box"><strong>A3 (KI & Effizienz):</strong> KI-Prozessoptimierung und Meeting-Reduktion kompensieren 20 % Zeitverlust.</div>
+        <div class="sc-box"><strong>A4 (Employer Branding):</strong> Zieht Spitzen-Talente an, senkt Fluktuation und Recruiting-Kosten.</div>
+        <div class="sc-box"><strong>A5 (Branchenspaltung):</strong> In Pflege/Handwerk unmöglich; führt zu ungleicher Zwei-Klassen-Welt.</div>
+        <div class="sc-box"><strong>A6 (Klimaschutz & Pendeln):</strong> Ein freier Tag senkt Pendlerverkehr, Büro-Energie und CO2 nachhaltig.</div>
+        <div class="sc-box"><strong>A7 (Rebound-Effekt):</strong> Mehr Freizeit induziert emissionsintensive Reisen und Konsumausgaben.</div>
+        <div class="sc-box" style="border-left-color: var(--accent-emerald);"><strong>A8 (Gesetzesreform):</strong> Starres Arbeitszeitrecht muss für flexible Modelle modernisiert werden.</div>
       </div>
 
       <div>
-        <h4 style="color: var(--accent-blue); margin-bottom: 10px; font-size: 0.95rem; text-align: center;">2. GRAPH-RELATIONEN (R)</h4>
+        <h4 style="color: var(--accent-blue); margin-bottom: 6px; font-size: 0.88rem; text-align: center;">2. GRAPH-RELATIONEN (R)</h4>
         <div class="graph-visual">
-          <svg width="420" height="180" viewBox="0 0 420 180">
-            <!-- Node A2 -->
-            <rect x="20" y="20" width="160" height="45" rx="8" fill="#1e293b" stroke="#f43f5e" stroke-width="2"/>
-            <text x="100" y="47" fill="#fff" font-size="12" font-family="sans-serif" text-anchor="middle" font-weight="bold">A2: Kostenexplosion</text>
-
-            <!-- Node A1 -->
-            <rect x="240" y="20" width="160" height="45" rx="8" fill="#1e293b" stroke="#34d399" stroke-width="2"/>
-            <text x="320" y="47" fill="#fff" font-size="12" font-family="sans-serif" text-anchor="middle" font-weight="bold">A1: Stätten-Nachnutzung</text>
-
-            <!-- Node A3 -->
-            <rect x="130" y="115" width="160" height="45" rx="8" fill="#1e293b" stroke="#38bdf8" stroke-width="2"/>
-            <text x="210" y="142" fill="#fff" font-size="12" font-family="sans-serif" text-anchor="middle" font-weight="bold">A3: Transparenter Puffer</text>
-
-            <!-- Arrow A2 -> A1 -->
+          <svg width="460" height="248" viewBox="0 0 460 248">
             <defs>
-              <marker id="arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-                <path d="M 0 0 L 10 5 L 0 10 z" fill="#f43f5e"/>
+              <marker id="arrow-red" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                <path d="M 0 1 L 10 5 L 0 9 z" fill="#f43f5e"/>
               </marker>
-              <marker id="arrow-blue" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-                <path d="M 0 0 L 10 5 L 0 10 z" fill="#38bdf8"/>
+              <marker id="arrow-blue" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                <path d="M 0 1 L 10 5 L 0 9 z" fill="#38bdf8"/>
               </marker>
             </defs>
-            <line x1="180" y1="42" x2="232" y2="42" stroke="#f43f5e" stroke-width="2" marker-end="url(#arrow)"/>
 
-            <!-- Arrow A3 -> A2 -->
-            <path d="M 170 115 L 120 70" stroke="#38bdf8" stroke-width="2" marker-end="url(#arrow-blue)"/>
-            <!-- Arrow A2 -> A3 (Mutual) -->
-            <path d="M 100 65 L 150 110" stroke="#f43f5e" stroke-width="2" stroke-dasharray="4" marker-end="url(#arrow)"/>
+            <!-- Attack A2 -> A1 -->
+            <line x1="185" y1="24" x2="267" y2="24" stroke="#f43f5e" stroke-width="1.8" marker-end="url(#arrow-red)"/>
+
+            <!-- Attack A3 -> A2 -->
+            <line x1="75" y1="68" x2="75" y2="44" stroke="#38bdf8" stroke-width="1.8" marker-end="url(#arrow-blue)"/>
+            
+            <!-- Attack A2 -> A3 (Dilemma) -->
+            <line x1="95" y1="38" x2="95" y2="62" stroke="#f43f5e" stroke-width="1.8" stroke-dasharray="3" marker-end="url(#arrow-red)"/>
+
+            <!-- Attack A4 -> A2 -->
+            <path d="M 275 74 L 189 34" stroke="#38bdf8" stroke-width="1.8" marker-end="url(#arrow-blue)"/>
+
+            <!-- Attack A5 -> A4 -->
+            <path d="M 185 137 L 271 94" stroke="#f43f5e" stroke-width="1.8" marker-end="url(#arrow-red)"/>
+
+            <!-- Attack A3 -> A5 -->
+            <line x1="75" y1="98" x2="75" y2="122" stroke="#38bdf8" stroke-width="1.8" marker-end="url(#arrow-blue)"/>
+
+            <!-- Attack A7 -> A6 -->
+            <path d="M 185 197 L 271 154" stroke="#f43f5e" stroke-width="1.8" marker-end="url(#arrow-red)"/>
+
+            <!-- Attack A1 -> A7 -->
+            <path d="M 275 32 L 189 191" stroke="#38bdf8" stroke-width="1.8" marker-end="url(#arrow-blue)"/>
+
+            <!-- Attack A2 -> A6 -->
+            <path d="M 185 34 L 271 137" stroke="#f43f5e" stroke-width="1.8" marker-end="url(#arrow-red)"/>
+
+            <!-- Node A2 -->
+            <rect x="15" y="8" width="170" height="30" rx="6" fill="#1e293b" stroke="#f43f5e" stroke-width="1.6"/>
+            <text x="100" y="21" fill="#fff" font-size="10" font-family="sans-serif" text-anchor="middle" font-weight="bold">A2: Lohnkosten & Druck</text>
+            <text x="100" y="32" fill="#fbbf24" font-size="8" font-family="sans-serif" text-anchor="middle">Umstritten (0.50)</text>
+
+            <!-- Node A1 -->
+            <rect x="275" y="8" width="170" height="30" rx="6" fill="#1e293b" stroke="#fbbf24" stroke-width="1.6"/>
+            <text x="360" y="21" fill="#fff" font-size="10" font-family="sans-serif" text-anchor="middle" font-weight="bold">A1: Gesundheit & Fokus</text>
+            <text x="360" y="32" fill="#fbbf24" font-size="8" font-family="sans-serif" text-anchor="middle">Umstritten (0.50)</text>
+
+            <!-- Node A3 -->
+            <rect x="15" y="68" width="170" height="30" rx="6" fill="#1e293b" stroke="#38bdf8" stroke-width="1.6"/>
+            <text x="100" y="81" fill="#fff" font-size="10" font-family="sans-serif" text-anchor="middle" font-weight="bold">A3: KI & Effizienz</text>
+            <text x="100" y="92" fill="#fbbf24" font-size="8" font-family="sans-serif" text-anchor="middle">Umstritten (0.50)</text>
+
+            <!-- Node A4 -->
+            <rect x="275" y="68" width="170" height="30" rx="6" fill="#1e293b" stroke="#fbbf24" stroke-width="1.6"/>
+            <text x="360" y="81" fill="#fff" font-size="10" font-family="sans-serif" text-anchor="middle" font-weight="bold">A4: Employer Branding</text>
+            <text x="360" y="92" fill="#fbbf24" font-size="8" font-family="sans-serif" text-anchor="middle">Umstritten (0.50)</text>
+
+            <!-- Node A5 -->
+            <rect x="15" y="128" width="170" height="30" rx="6" fill="#1e293b" stroke="#f43f5e" stroke-width="1.6"/>
+            <text x="100" y="141" fill="#fff" font-size="10" font-family="sans-serif" text-anchor="middle" font-weight="bold">A5: Branchenspaltung</text>
+            <text x="100" y="152" fill="#fbbf24" font-size="8" font-family="sans-serif" text-anchor="middle">Umstritten (0.50)</text>
+
+            <!-- Node A6 -->
+            <rect x="275" y="128" width="170" height="30" rx="6" fill="#1e293b" stroke="#fbbf24" stroke-width="1.6"/>
+            <text x="360" y="141" fill="#fff" font-size="10" font-family="sans-serif" text-anchor="middle" font-weight="bold">A6: Klimaschutz</text>
+            <text x="360" y="152" fill="#fbbf24" font-size="8" font-family="sans-serif" text-anchor="middle">Umstritten (0.50)</text>
+
+            <!-- Node A7 -->
+            <rect x="15" y="188" width="170" height="30" rx="6" fill="#1e293b" stroke="#f43f5e" stroke-width="1.6"/>
+            <text x="100" y="201" fill="#fff" font-size="10" font-family="sans-serif" text-anchor="middle" font-weight="bold">A7: Rebound-Effekt</text>
+            <text x="100" y="212" fill="#fbbf24" font-size="8" font-family="sans-serif" text-anchor="middle">Umstritten (0.50)</text>
+
+            <!-- Node A8 (Core Consensus) -->
+            <rect x="275" y="188" width="170" height="30" rx="6" fill="#1e293b" stroke="#34d399" stroke-width="2"/>
+            <text x="360" y="201" fill="#fff" font-size="10" font-family="sans-serif" text-anchor="middle" font-weight="bold">A8: Gesetzesreform</text>
+            <text x="360" y="212" fill="#34d399" font-size="8" font-family="sans-serif" text-anchor="middle" font-weight="600">Basis-Konsens (1.00)</text>
           </svg>
-          <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 6px;">
-            A2 greift A1 an | A3 verteidigt A1 gegen A2 | A2 ↔ A3 bilden Streitachse
+          <div style="font-size: 0.7rem; color: var(--text-muted); margin-top: 2px; text-align: center;">
+            A2 greift A1 & A6 an | A3 & A4 greifen A2 an | A2 ↔ A3 Streitachse | A5 greift A4 an | A3 greift A5 an | A7 greift A6 an | A1 greift A7 an | A8 Core
           </div>
         </div>
       </div>
 
-      <div>
-        <h4 style="color: var(--accent-blue); margin-bottom: 10px; font-size: 0.95rem;">3. SYNTHETISIERTE PERSPEKTIVEN</h4>
-        <div class="sc-box" style="border-left-color: var(--accent-emerald);">
-          <strong style="color: var(--accent-emerald);">Perspektive 1 (Pro): {A1, A3}</strong><br>
-          <em>KI-These:</em> Nachhaltige Chance für Sport und Stadt bei kontrollierbarem Haushaltsrisiko.
+      <div style="display: flex; flex-direction: column; justify-content: space-between;">
+        <h4 style="color: var(--accent-blue); margin-bottom: 6px; font-size: 0.88rem;">3. SYNTHETISIERTE PERSPEKTIVEN</h4>
+        <div class="sc-box" style="border-left-color: var(--accent-emerald); margin-bottom: 6px;">
+          <strong style="color: var(--accent-emerald); font-size: 0.8rem;">Perspektive 1 (Pro-Transformation & Klima): {A1, A3, A4, A6, A8}</strong><br>
+          <span style="font-size: 0.74rem;"><em>KI-These:</em> KI-Effizienz (A3) und Mitarbeiterbindung (A4) kompensieren Zeitverluste und Burnout-Kosten (A1), während Pendelreduktion (A6) das Klima schont unter neuem Recht (A8).</span>
         </div>
-        <div class="sc-box" style="border-left-color: var(--accent-amber);">
-          <strong style="color: var(--accent-amber);">Perspektive 2 (Contra): {A2}</strong><br>
-          <em>KI-These:</em> Unkalkulierbare Kostenfallen übersteigen jeden potenziellen Nutzen.
+        <div class="sc-box" style="border-left-color: var(--accent-amber); margin-bottom: 6px;">
+          <strong style="color: var(--accent-amber); font-size: 0.8rem;">Perspektive 2 (Kostenrealismus & Ungleichheit): {A2, A5, A7, A8}</strong><br>
+          <span style="font-size: 0.74rem;"><em>KI-These:</em> Lohnkosten (A2) und Schichtgrenzen (A5) spalten den Arbeitsmarkt; Freizeit-Rebounds (A7) dämpfen Klimavorteile. Reformen (A8) müssen Branchenfreiheit wahren.</span>
+        </div>
+        <div class="sc-box" style="border-left-color: var(--accent-blue); font-size: 0.74rem; background: rgba(56, 189, 248, 0.08);">
+          <div><strong>Basis-Konsens:</strong> {A8} (Score: 1.00) – Reform des Arbeitszeitrechts wird von allen Perspektiven gestützt.</div>
+          <div style="margin-top: 3px; color: var(--accent-rose);"><strong>Streitachse:</strong> A2 ↔ A3 – Automatisierungspotenzial vs. physische Kapazitätsgrenzen.</div>
         </div>
       </div>
 

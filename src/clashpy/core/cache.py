@@ -16,6 +16,8 @@ from typing import Any, Optional
 
 import duckdb
 
+from clashpy.errors import CacheDataError
+
 
 class DuckDBCache:
     def __init__(self, path: Path) -> None:
@@ -24,8 +26,7 @@ class DuckDBCache:
         self._ensure_schema()
 
     def _ensure_schema(self) -> None:
-        self.con.execute(
-            """
+        self.con.execute("""
             CREATE TABLE IF NOT EXISTS cache_entries (
                 namespace VARCHAR,
                 cache_key VARCHAR,
@@ -34,8 +35,7 @@ class DuckDBCache:
                 payload_meta VARCHAR,
                 PRIMARY KEY (namespace, cache_key)
             )
-            """
-        )
+            """)
 
     def get_raw(
         self,
@@ -70,7 +70,15 @@ class DuckDBCache:
         ttl: Optional[timedelta] = None,
     ) -> Optional[Any]:
         raw = self.get_raw(namespace, key, ttl=ttl)
-        return json.loads(raw) if raw is not None else None
+        if raw is None:
+            return None
+        try:
+            return json.loads(raw)
+        except json.JSONDecodeError as exc:
+            raise CacheDataError(
+                f"Invalid cached JSON in namespace '{namespace}' for key "
+                f"'{key[:12]}...'. Delete the cache database or use --refresh."
+            ) from exc
 
     def set_raw(
         self,
