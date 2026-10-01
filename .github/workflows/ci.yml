@@ -26,7 +26,7 @@ jobs:
         run: uv sync --frozen
 
       - name: Verify CLI interface
-        run: uv run argument-inferencer --help
+        run: uv run clashpy --help
 
       - name: Verify Doc Generator interface
         run: uv run generate-docs --help
