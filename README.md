@@ -162,8 +162,8 @@ uv run clashpy "AI Regulation" --model test
 
 To illustrate the output of `clashpy`, see the comprehensive analysis of the debate **"4-Day Work Week with Equal Pay"**:
 
-- 🇩🇪 **[German Showcase Report (`docs/showcase_4day_week_de.md`)](docs/showcase_4day_week_de.md)**
-- 🇬🇧 **[English Showcase Report (`docs/showcase_4day_week_en.md`)](docs/showcase_4day_week_en.md)**
+- **[German Showcase Report (`docs/showcase_4day_week_de.md`)](docs/showcase_4day_week_de.md)**
+- **[English Showcase Report (`docs/showcase_4day_week_en.md`)](docs/showcase_4day_week_en.md)**
 
 ### Pure CLI & System Output
 
@@ -253,9 +253,9 @@ uv run generate-docs --watch --language all
 ```
 
 Generated assets under `docs/`:
-- 📄 `docs/poster_en.pdf` (Print-ready landscape vector PDF)
-- 🖼️ `docs/poster_en.png` (High-res 1600x1200 preview)
-- 🌐 `docs/poster_en.html` (Standalone interactive web poster)
+- `docs/poster_en.pdf` (Print-ready landscape vector PDF)
+- `docs/poster_en.png` (High-res 1600x1200 preview)
+- `docs/poster_en.html` (Standalone interactive web poster)
 
 ---
 
