@@ -7,13 +7,13 @@
   \___|_|\__,_|___/_| |_| .__/ \__, | 
                         | |     __/ | 
                         |_|    |___/  
- Automated Argumentation Reasoning Engine ⚡
+Automated Argumentation Reasoning Engine ⚡
 ```
 
 # clashpy ⚡
 
-> **Raw LLM noise in, mathematically proven conflict topology out.**  
-A lightweight, modular proof-of-concept for automated argumentation mining and formal reasoning. It ingests live news streams, extracts claims & attacks via LLMs, and computes stable, defensible perspectives using Dung's Abstract Argumentation Frameworks.
+> **From unstructured news to formally derived conflict structures.**  
+A lightweight, modular proof-of-concept for automated argumentation mining and formal reasoning. It ingests live news streams, extracts claims and attacks via LLMs, and derives perspectives using Dung's Abstract Argumentation Frameworks.
 
 ---
 
@@ -31,7 +31,7 @@ uv run clashpy "4-Day Work Week" --solver naive --export-md --export-mmd
 
 ## Project Structure
 
-```
+```text
 clashpy/
 ├── pyproject.toml
 ├── spec/
@@ -41,7 +41,8 @@ clashpy/
 │   ├── poster_en.png            # High-resolution architectural infographic (PNG)
 │   └── poster_en.html           # Interactive poster template (SVG/CSS)
 ├── tests/
-│   └── test_core.py             # Unit tests for Dung semantics, solvers, and metrics
+│   ├── test_core.py             # Unit tests for Dung semantics, solvers, and metrics
+│   └── test_rss_source.py       # Unit tests for parallel RSS ingestion and timeouts
 └── src/
     └── clashpy/                 # Core package source
         ├── core/                # Domain models, DuckDB cache, hashing, solvers & metrics
