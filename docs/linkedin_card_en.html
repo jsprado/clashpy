@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>clashpy LinkedIn Card</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@600&family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0b0f19;
+      --card-bg: rgba(22, 30, 49, 0.95);
+      --card-border: rgba(255, 255, 255, 0.1);
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+      --accent-blue: #38bdf8;
+      --accent-emerald: #34d399;
+      --accent-amber: #fbbf24;
+      --accent-rose: #f43f5e;
+      --accent-purple: #818cf8;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      width: 1200px;
+      height: 900px;
+      padding: 36px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      -webkit-print-color-adjust: exact;
+    }
+
+    /* HEADER */
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 2px solid rgba(255, 255, 255, 0.08);
+      padding-bottom: 18px;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 4px 12px;
+      background: rgba(56, 189, 248, 0.15);
+      border: 1px solid rgba(56, 189, 248, 0.4);
+      border-radius: 9999px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--accent-blue);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 6px;
+    }
+
+    h1 {
+      font-size: 2.2rem;
+      font-weight: 900;
+      letter-spacing: -0.02em;
+      background: linear-gradient(135deg, #ffffff 40%, var(--accent-blue) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .header-sub {
+      font-size: 1.05rem;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    .tags {
+      display: flex;
+      gap: 8px;
+    }
+
+    .tag {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      padding: 6px 14px;
+      border-radius: 8px;
+      font-family: 'Fira Code', monospace;
+      font-size: 0.85rem;
+      color: var(--accent-purple);
+      font-weight: 600;
+    }
+
+    /* MAIN CONTENT: 2 COLUMNS */
+    .main-grid {
+      display: grid;
+      grid-template-columns: 1.15fr 1fr;
+      gap: 24px;
+      margin: 20px 0;
+      align-items: stretch;
+    }
+
+    /* LEFT: GRAPH CONTAINER */
+    .graph-card {
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      border-radius: 18px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .card-title {
+      font-size: 1.1rem;
+      font-weight: 800;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .graph-visual {
+      background: rgba(11, 15, 25, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 12px;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .graph-caption {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-top: 8px;
+      text-align: center;
+    }
+
+    /* RIGHT: PERSPECTIVES CONTAINER */
+    .results-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 18px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .perspective-box {
+      background: rgba(0, 0, 0, 0.35);
+      border-left: 4px solid var(--accent-emerald);
+      padding: 12px 14px;
+      border-radius: 8px;
+    }
+
+    .perspective-box.contra {
+      border-left-color: var(--accent-amber);
+    }
+
+    .p-title {
+      font-size: 0.95rem;
+      font-weight: 800;
+      margin-bottom: 4px;
+    }
+
+    .p-text {
+      font-size: 0.85rem;
+      color: #cbd5e1;
+      line-height: 1.4;
+    }
+
+    .insights-box {
+      background: rgba(56, 189, 248, 0.08);
+      border: 1px solid rgba(56, 189, 248, 0.25);
+      border-radius: 8px;
+      padding: 12px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      font-size: 0.85rem;
+    }
+
+    /* FOOTER */
+    .footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      padding-top: 16px;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    .footer-left strong {
+      color: #fff;
+    }
+
+    .code-tag {
+      background: rgba(0, 0, 0, 0.5);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-family: 'Fira Code', monospace;
+      color: var(--accent-blue);
+      font-size: 0.8rem;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header class="header">
+    <div>
+      <div class="badge">Neuro-Symbolic AI in Practice</div>
+      <h1>clashpy ⚡</h1>
+      <div class="header-sub">From unstructured news to formally proven perspectives (Dung 1995)</div>
+    </div>
+    <div class="tags">
+      <div class="tag">Pydantic-AI</div>
+      <div class="tag">DuckDB</div>
+      <div class="tag">Dung Semantics</div>
+    </div>
+  </header>
+
+  <!-- MAIN GRID -->
+  <main class="main-grid">
+
+    <!-- LEFT: GRAPH -->
+    <div class="graph-card">
+      <div class="card-title">
+        <span>📰 Scenario: 4-Day Work Week (8 Arguments)</span>
+      </div>
+
+      <div class="graph-visual">
+        <svg width="550" height="360" viewBox="0 0 550 360">
+          <defs>
+            <marker id="arr-red" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+              <path d="M 0 1 L 10 5 L 0 9 z" fill="#f43f5e"/>
+            </marker>
+            <marker id="arr-blue" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+              <path d="M 0 1 L 10 5 L 0 9 z" fill="#38bdf8"/>
+            </marker>
+          </defs>
+
+          <!-- Attacks Lines -->
+          <!-- A2 -> A1 -->
+          <line x1="220" y1="36" x2="318" y2="36" stroke="#f43f5e" stroke-width="2.2" marker-end="url(#arr-red)"/>
+          
+          <!-- A3 -> A2 -->
+          <line x1="100" y1="95" x2="100" y2="64" stroke="#38bdf8" stroke-width="2.2" marker-end="url(#arr-blue)"/>
+
+          <!-- A2 -> A3 (Dilemma Axis) -->
+          <line x1="130" y1="56" x2="130" y2="87" stroke="#f43f5e" stroke-width="2.2" stroke-dasharray="4" marker-end="url(#arr-red)"/>
+
+          <!-- A4 -> A2 -->
+          <path d="M 330 105 L 225 50" stroke="#38bdf8" stroke-width="2.2" marker-end="url(#arr-blue)"/>
+
+          <!-- A5 -> A4 -->
+          <path d="M 220 195 L 325 138" stroke="#f43f5e" stroke-width="2.2" marker-end="url(#arr-red)"/>
+
+          <!-- A3 -> A5 -->
+          <line x1="100" y1="140" x2="100" y2="171" stroke="#38bdf8" stroke-width="2.2" marker-end="url(#arr-blue)"/>
+
+          <!-- A7 -> A6 -->
+          <path d="M 220 282 L 325 225" stroke="#f43f5e" stroke-width="2.2" marker-end="url(#arr-red)"/>
+
+          <!-- A1 -> A7 -->
+          <path d="M 330 46 L 225 272" stroke="#38bdf8" stroke-width="2.2" marker-end="url(#arr-blue)"/>
+
+          <!-- A2 -> A6 -->
+          <path d="M 220 48 L 325 205" stroke="#f43f5e" stroke-width="2.2" marker-end="url(#arr-red)"/>
+
+          <!-- Nodes: Left Col (x=20, w=200, h=42) -->
+          <!-- A2 -->
+          <rect x="20" y="15" width="200" height="42" rx="8" fill="#1e293b" stroke="#f43f5e" stroke-width="2"/>
+          <text x="120" y="33" fill="#fff" font-size="12" font-family="sans-serif" text-anchor="middle" font-weight="bold">A2: Cost Shock & Inflation</text>
+          <text x="120" y="47" fill="#fbbf24" font-size="10" font-family="sans-serif" text-anchor="middle">Contested (Score: 0.50)</text>
+
+          <!-- A3 -->
+          <rect x="20" y="98" width="200" height="42" rx="8" fill="#1e293b" stroke="#38bdf8" stroke-width="2"/>
+          <text x="120" y="116" fill="#fff" font-size="12" font-family="sans-serif" text-anchor="middle" font-weight="bold">A3: AI & Efficiency</text>
+          <text x="120" y="130" fill="#fbbf24" font-size="10" font-family="sans-serif" text-anchor="middle">Contested (Score: 0.50)</text>
+
+          <!-- A5 -->
+          <rect x="20" y="181" width="200" height="42" rx="8" fill="#1e293b" stroke="#f43f5e" stroke-width="2"/>
+          <text x="120" y="199" fill="#fff" font-size="12" font-family="sans-serif" text-anchor="middle" font-weight="bold">A5: Sector Inequity</text>
+          <text x="120" y="213" fill="#fbbf24" font-size="10" font-family="sans-serif" text-anchor="middle">Contested (Score: 0.50)</text>
+
+          <!-- A7 -->
+          <rect x="20" y="264" width="200" height="42" rx="8" fill="#1e293b" stroke="#f43f5e" stroke-width="2"/>
+          <text x="120" y="282" fill="#fff" font-size="12" font-family="sans-serif" text-anchor="middle" font-weight="bold">A7: Rebound Emissions</text>
+          <text x="120" y="296" fill="#fbbf24" font-size="10" font-family="sans-serif" text-anchor="middle">Contested (Score: 0.50)</text>
+
+          <!-- Nodes: Right Col (x=330, w=200, h=42) -->
+          <!-- A1 -->
+          <rect x="330" y="15" width="200" height="42" rx="8" fill="#1e293b" stroke="#fbbf24" stroke-width="2"/>
+          <text x="430" y="33" fill="#fff" font-size="12" font-family="sans-serif" text-anchor="middle" font-weight="bold">A1: Health & Focus</text>
+          <text x="430" y="47" fill="#fbbf24" font-size="10" font-family="sans-serif" text-anchor="middle">Contested (Score: 0.50)</text>
+
+          <!-- A4 -->
+          <rect x="330" y="98" width="200" height="42" rx="8" fill="#1e293b" stroke="#fbbf24" stroke-width="2"/>
+          <text x="430" y="116" fill="#fff" font-size="12" font-family="sans-serif" text-anchor="middle" font-weight="bold">A4: Talent Magnet</text>
+          <text x="430" y="130" fill="#fbbf24" font-size="10" font-family="sans-serif" text-anchor="middle">Contested (Score: 0.50)</text>
+
+          <!-- A6 -->
+          <rect x="330" y="181" width="200" height="42" rx="8" fill="#1e293b" stroke="#fbbf24" stroke-width="2"/>
+          <text x="430" y="199" fill="#fff" font-size="12" font-family="sans-serif" text-anchor="middle" font-weight="bold">A6: Carbon Reduction</text>
+          <text x="430" y="213" fill="#fbbf24" font-size="10" font-family="sans-serif" text-anchor="middle">Contested (Score: 0.50)</text>
+
+          <!-- A8 (Core Consensus) -->
+          <rect x="330" y="264" width="200" height="42" rx="8" fill="#1e293b" stroke="#34d399" stroke-width="2.4"/>
+          <text x="430" y="282" fill="#fff" font-size="12" font-family="sans-serif" text-anchor="middle" font-weight="bold">A8: Legal Reform</text>
+          <text x="430" y="296" fill="#34d399" font-size="10" font-family="sans-serif" text-anchor="middle" font-weight="bold">Core Consensus (Score: 1.00)</text>
+        </svg>
+      </div>
+      <div class="graph-caption">
+        A2 ↔ A3 Dilemma Axis | A8 Core Consensus | Blue Arrows = Defense, Red Arrows = Attack
+      </div>
+    </div>
+
+    <!-- RIGHT: COMPUTED PERSPECTIVES -->
+    <div class="results-card">
+      <div class="card-title">
+        <span>🧭 Computed Perspectives (Preferred Extensions)</span>
+      </div>
+
+      <div class="perspective-box">
+        <div class="p-title" style="color: var(--accent-emerald);">🟢 Perspective 1 (Pro-Transformation & Climate): {A1, A3, A4, A6, A8}</div>
+        <div class="p-text">
+          AI automation (A3) and talent retention (A4) offset reduced hours and lower burnout costs (A1), while commute cuts (A6) save emissions under modernized laws (A8).
+        </div>
+      </div>
+
+      <div class="perspective-box contra">
+        <div class="p-title" style="color: var(--accent-amber);">🟠 Perspective 2 (Cost Realism & Inequity): {A2, A5, A7, A8}</div>
+        <div class="p-text">
+          Unit labor costs (A2) and shift limits (A5) divide the workforce; leisure rebounds (A7) erode climate gains. Legal reforms (A8) must prioritize sector flexibility.
+        </div>
+      </div>
+
+      <div class="insights-box">
+        <div><strong style="color: var(--accent-emerald);">🟢 Core Consensus:</strong> <strong>{A8} (Score = 1.00)</strong> – Modernizing labor law is accepted across all stable perspectives.</div>
+        <div style="color: var(--accent-rose);"><strong>⚡ Dilemma Axis:</strong> <strong>A2 ↔ A3</strong> – Automation potential vs. physical frontline capacity limits.</div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="footer-left">
+      <strong>clashpy</strong> • Neuro-symbolic Argumentation Engine • <span class="code-tag">github.com/jsprado/clashpy</span>
+    </div>
+    <div class="code-tag">Python 3.12+ | uv | Pydantic-AI | DuckDB</div>
+  </footer>
+
+</body>
+</html>
