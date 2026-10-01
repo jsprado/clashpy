@@ -43,6 +43,8 @@ clashpy/
 │   └── poster_en.html           # Interactive poster template (SVG/CSS)
 ├── tests/
 │   ├── test_core.py             # Unit tests for Dung semantics, solvers, and metrics
+│   ├── test_cytoscape.py        # Unit tests for Cytoscape elements and HTML generation
+│   ├── test_sources.py          # Unit tests for YAML config and Search adapters
 │   └── test_rss_source.py       # Unit tests for parallel RSS ingestion and timeouts
 └── src/
     └── clashpy/                 # Core package source
@@ -55,11 +57,15 @@ clashpy/
         ├── adapters/            # Interchangeable ports & adapters (News, Solvers)
         │   ├── news_sources/
         │   │   ├── base.py
+        │   │   ├── sources_config.py
+        │   │   ├── search_source.py
+        │   │   ├── composite_source.py
         │   │   └── rss_source.py
         │   └── solvers/
         │       └── pygarg_solver.py
         ├── llm/                 # Lazy-initialized Pydantic-AI agents
         │   └── agents.py
+        ├── cytoscape.py         # Cytoscape.js graph converter, JSON & HTML dashboard
         ├── pipeline.py          # End-to-end pipeline orchestrator
         ├── cli.py               # CLI interface & export manager
         └── doc_generator.py     # Automated poster & doc generator
@@ -115,7 +121,7 @@ uv run clashpy "4-Day Work Week" [OPTIONS]
 | `--source-yaml` | Path to YAML sources configuration | `sources.yaml` |
 | `--search` / `--no-search` | Enable/disable deep topic-targeted Google News search | `True` |
 | `--search-time` | Search time window (e.g. `7d`, `14d`, `30d`) | `30d` |
-| `--source` | Feed URL or comma-separated list of RSS feeds (overrides YAML/Search) | `None` |
+| `--source` | Single feed URL or comma-separated list of RSS feeds (overrides YAML/Search) | `None` |
 | `--solver` | Chosen solver algorithm (`naive` or `pygarg`) | `naive` |
 | `--semantics` | Formal semantics (`PR`, `ST`, `CO`, `GR`) | `PR` (Preferred) |
 | `--model` | LLM model identifier (supports Google, OpenAI, Anthropic, Ollama, etc.) | `google:gemini-3.5-flash` |
@@ -125,6 +131,44 @@ uv run clashpy "4-Day Work Week" [OPTIONS]
 | `--export-cytoscape` | Export Cytoscape.js graph JSON payload to `output/` | Disabled |
 | `--output-json` | Save complete raw JSON analysis payload to path | `None` |
 | `--refresh` | Bypass DuckDB cache and force fresh extraction | `False` |
+
+---
+
+## News Sources Configuration (`sources.yaml`)
+
+`clashpy` organizes news feeds in `sources.yaml` across four distinct media categories to ensure balanced, multi-perspective discourse:
+
+```yaml
+sources:
+  # 1. International Leitmedien
+  - name: BBC World News
+    category: international
+    url: https://feeds.bbci.co.uk/news/world/rss.xml
+  - name: Reuters World
+    category: international
+    url: https://www.reutersagency.com/feed/?taxonomy=markets-news&post_type=best
+  - name: Al Jazeera English
+    category: international
+    url: https://www.aljazeera.com/xml/rss/all.xml
+
+  # 2. Nationale Leitmedien (DACH)
+  - name: Tagesschau
+    category: national
+    url: https://www.tagesschau.de/index~rss2.xml
+  - name: ZEIT ONLINE
+    category: national
+    url: https://www.zeit.de/news/index
+
+  # 3. Wirtschaft & Policy
+  - name: Handelsblatt
+    category: business
+    url: https://www.handelsblatt.com/contentexport/feed/top-themen
+
+  # 4. Tech & Fachpresse
+  - name: Heise Online
+    category: tech
+    url: https://www.heise.de/rss/heise-atom.xml
+```
 
 ---
 
