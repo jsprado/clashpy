@@ -34,6 +34,7 @@ uv run clashpy "4-Day Work Week" --solver naive --export-md --export-mmd --expor
 ```text
 clashpy/
 ├── pyproject.toml
+├── sources.yaml                 # Multi-perspective news sources (International, National, Tech, Business)
 ├── spec/
 │   └── system_specification.md  # Comprehensive technical specification & LLM prompt blueprint
 ├── docs/
@@ -68,7 +69,9 @@ clashpy/
 
 ## Key Features & Highlights
 
-- **Multi-Feed Ingestion & Bias Mitigation**: Automatically aggregates across multiple distinct RSS news feeds (e.g. Heise, Tagesschau, Zeit, TechCrunch) simultaneously to eliminate single-source editorial bias.
+- **Multi-Feed Ingestion & Bias Mitigation**: Automatically aggregates across multiple distinct RSS news feeds (BBC, Reuters, Al Jazeera, NYT, Tagesschau, Zeit, Heise) defined in `sources.yaml` to eliminate single-source editorial bias.
+- **Topic-Targeted Deep Search (Google News Search)**: Allows targeted topic queries across the past 7–30 days (`--search` / `--search-time 30d`) instead of relying solely on transient frontpage headlines.
+- **Multi-Perspective Source Filtering in Cytoscape.js**: Filter arguments interactively by media category (*International Leitmedien*, *Nationale Leitmedien*, *Tech & Fachpresse*, *Wirtschaft & Policy*, *Deep Search*).
 - **Decoupled Hexagonal Architecture (Ports & Adapters)**: Core graph reasoning is strictly decoupled from ingestion and solvers. Switch from the naive backtracking solver to an external SAT solver (`pygarg`) via a CLI flag without modifying pipeline code.
 - **Zero-Leakage Secret Resolution**: Automatically loads API keys using a multi-tier fallback: `os.environ` → local `.env` → encrypted OS Keyring (`service="db.syst.datahub"`).
 - **Deterministic DuckDB Caching**: All news queries, LLM extraction calls, and solver computations are hashed via SHA-256 and cached in DuckDB to minimize latency and eliminate redundant LLM API costs.
@@ -109,7 +112,10 @@ uv run clashpy "4-Day Work Week" [OPTIONS]
 | Option | Description | Default |
 | :--- | :--- | :--- |
 | `topic` / `--topic` | Debate topic or inquiry (positional or flag) | `""` |
-| `--source` | Feed URL or comma-separated list of RSS feeds (aggregates feeds to prevent single-source bias) | `Tagesschau, Heise, Zeit` |
+| `--source-yaml` | Path to YAML sources configuration | `sources.yaml` |
+| `--search` / `--no-search` | Enable/disable deep topic-targeted Google News search | `True` |
+| `--search-time` | Search time window (e.g. `7d`, `14d`, `30d`) | `30d` |
+| `--source` | Feed URL or comma-separated list of RSS feeds (overrides YAML/Search) | `None` |
 | `--solver` | Chosen solver algorithm (`naive` or `pygarg`) | `naive` |
 | `--semantics` | Formal semantics (`PR`, `ST`, `CO`, `GR`) | `PR` (Preferred) |
 | `--model` | LLM model identifier (supports Google, OpenAI, Anthropic, Ollama, etc.) | `google:gemini-3.5-flash` |

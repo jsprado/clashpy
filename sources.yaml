@@ -1,0 +1,107 @@
+# clashpy Sources Configuration
+# Pre-configured international, national, business, and tech news feeds
+
+sources:
+  # === International Leitmedien ===
+  - name: BBC World News
+    type: rss
+    category: international
+    url: https://feeds.bbci.co.uk/news/world/rss.xml
+    language: en
+
+  - name: Reuters World
+    type: rss
+    category: international
+    url: https://www.reutersagency.com/feed/?taxonomy=markets-news&post_type=best
+    language: en
+
+  - name: Al Jazeera English
+    type: rss
+    category: international
+    url: https://www.aljazeera.com/xml/rss/all.xml
+    language: en
+
+  - name: The Guardian World
+    type: rss
+    category: international
+    url: https://www.theguardian.com/world/rss
+    language: en
+
+  - name: New York Times World
+    type: rss
+    category: international
+    url: https://rss.nytimes.com/services/xml/rss/nyt/World.xml
+    language: en
+
+  # === Nationale Leitmedien (DACH) ===
+  - name: Tagesschau
+    type: rss
+    category: national
+    url: https://www.tagesschau.de/index~rss2.xml
+    language: de
+
+  - name: ZEIT ONLINE
+    type: rss
+    category: national
+    url: https://www.zeit.de/news/index
+    language: de
+
+  - name: Süddeutsche Zeitung
+    type: rss
+    category: national
+    url: https://rss.sueddeutsche.de/alles
+    language: de
+
+  - name: ORF News
+    type: rss
+    category: national
+    url: https://rss.orf.at/news.xml
+    language: de
+
+  - name: NZZ International
+    type: rss
+    category: national
+    url: https://www.nzz.ch/international.rss
+    language: de
+
+  # === Wirtschaft & Policy ===
+  - name: Handelsblatt
+    type: rss
+    category: business
+    url: https://www.handelsblatt.com/contentexport/feed/top-themen
+    language: de
+
+  - name: Financial Times
+    type: rss
+    category: business
+    url: https://www.ft.com/news-feed?format=rss
+    language: en
+
+  # === Fachpresse & Tech ===
+  - name: Heise Online
+    type: rss
+    category: tech
+    url: https://www.heise.de/rss/heise-atom.xml
+    language: de
+
+  - name: TechCrunch
+    type: rss
+    category: tech
+    url: https://techcrunch.com/feed/
+    language: en
+
+  - name: Ars Technica
+    type: rss
+    category: tech
+    url: https://feeds.arstechnica.com/arstechnica/index
+    language: en
+
+search_engines:
+  - name: Google News Search RSS
+    type: google_news
+    enabled: true
+    # Google News supports keyword queries with date filtering (when:7d, when:30d)
+
+  - name: DuckDuckGo News
+    type: duckduckgo
+    enabled: true

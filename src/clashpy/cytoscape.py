@@ -3,10 +3,11 @@ Cytoscape.js integration for clashpy Argumentation Frameworks.
 
 Provides functions to:
 1. Transform ArgumentationFramework & metrics into Cytoscape.js JSON elements.
-2. Export Cytoscape.js compatible JSON.
-3. Generate standalone, interactive HTML dashboards with Cytoscape.js visualization,
+2. Enrich nodes with media source categories (international, national, tech, business, search).
+3. Export Cytoscape.js compatible JSON.
+4. Generate standalone, interactive HTML dashboards with Cytoscape.js visualization,
    crystal-clear readable argument claims, filtering by Dung preferred extensions,
-   layout switching (dagre, cose, circle, etc.), inspector panel, and PNG/JSON export.
+   multi-perspective media source filters, layout switching, inspector panel, and PNG/JSON export.
 """
 
 from __future__ import annotations
@@ -17,6 +18,7 @@ from typing import Any
 
 import jinja2
 
+from clashpy.adapters.news_sources.sources_config import categorize_source_url
 from clashpy.core.metrics import (
     classify_arguments,
     compute_argument_scores,
@@ -66,6 +68,9 @@ def build_cytoscape_elements(
             idx + 1 for idx, ext in enumerate(extensions) if arg.id in ext
         ]
 
+        # Automatic media source category classification
+        source_category = categorize_source_url(arg.source_url)
+
         # Readable card label: ID + Classification + Claim
         card_label = f"[{arg.id}] {arg_cls.upper()} ({arg_score:.2f})\n\n{arg.claim}"
         compact_label = f"[{arg.id}] {arg_score:.2f}"
@@ -73,6 +78,9 @@ def build_cytoscape_elements(
         # Node height estimation based on claim length for optimal padding
         claim_len = len(arg.claim)
         node_height = max(80, min(140, 70 + (claim_len // 35) * 16))
+
+        classes_list = [f"cls-{arg_cls}", f"src-{source_category}"]
+        classes_list.extend(f"ext-{e}" for e in member_exts)
 
         elements.append(
             {
@@ -84,6 +92,7 @@ def build_cytoscape_elements(
                     "compact_label": compact_label,
                     "claim": arg.claim,
                     "source_url": arg.source_url,
+                    "source_category": source_category,
                     "score": round(arg_score, 2),
                     "classification": arg_cls,
                     "in_degree": arg_deg.get("in_degree", 0),
@@ -92,7 +101,7 @@ def build_cytoscape_elements(
                     "in_any_extension": len(member_exts) > 0,
                     "node_height": node_height,
                 },
-                "classes": f"cls-{arg_cls} " + " ".join(f"ext-{e}" for e in member_exts),
+                "classes": " ".join(classes_list),
             }
         )
 
@@ -139,6 +148,13 @@ def build_cytoscape_data(
         degrees=degrees,
     )
 
+    # Calculate source category stats
+    nodes = [e["data"] for e in elements if e["group"] == "nodes"]
+    source_stats: dict[str, int] = {}
+    for n in nodes:
+        cat = n.get("source_category", "general")
+        source_stats[cat] = source_stats.get(cat, 0) + 1
+
     return {
         "format": "clashpy-cytoscape-v1",
         "topic": topic or af.topic,
@@ -148,6 +164,7 @@ def build_cytoscape_data(
             "attack_count": len(af.attacks),
             "extension_count": len(extensions or []),
             "dilemma_axis_count": len(dilemma_axes or []),
+            "source_categories": source_stats,
         },
         "elements": elements,
         "extensions": [sorted(ext) for ext in (extensions or [])],
@@ -308,7 +325,7 @@ HTML_TEMPLATE = jinja2.Template("""<!DOCTYPE html>
 
     /* Left Controls Panel */
     .controls-panel {
-      width: 320px;
+      width: 330px;
       background: var(--bg-panel);
       backdrop-filter: blur(16px);
       border-right: 1px solid var(--border-color);
@@ -447,20 +464,20 @@ HTML_TEMPLATE = jinja2.Template("""<!DOCTYPE html>
       box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
     }
 
-    /* Extensions Buttons */
-    .ext-buttons {
+    /* Source & Extension Buttons */
+    .filter-buttons {
       display: flex;
       flex-direction: column;
       gap: 6px;
     }
 
-    .ext-btn {
+    .filter-btn {
       justify-content: space-between;
       text-align: left;
       padding: 7px 9px;
     }
 
-    .ext-btn.active {
+    .filter-btn.active {
       border-color: var(--accent-blue);
       background: rgba(56, 189, 248, 0.15);
       color: var(--accent-blue);
@@ -559,8 +576,13 @@ HTML_TEMPLATE = jinja2.Template("""<!DOCTYPE html>
       color: var(--accent-blue);
     }
 
-    .cls-badge {
-      font-size: 11px;
+    .badge-group {
+      display: flex;
+      gap: 6px;
+    }
+
+    .cls-badge, .src-badge {
+      font-size: 10px;
       font-weight: 700;
       padding: 3px 8px;
       border-radius: 12px;
@@ -572,6 +594,12 @@ HTML_TEMPLATE = jinja2.Template("""<!DOCTYPE html>
     .cls-contested { background: rgba(245, 158, 11, 0.2); color: var(--accent-contested); border: 1px solid var(--accent-contested); }
     .cls-rejected { background: rgba(239, 68, 68, 0.2); color: var(--accent-rejected); border: 1px solid var(--accent-rejected); }
     .cls-unclassified { background: rgba(100, 116, 139, 0.2); color: #94a3b8; border: 1px solid #64748b; }
+
+    .src-badge {
+      background: rgba(56, 189, 248, 0.15);
+      color: var(--accent-blue);
+      border: 1px solid rgba(56, 189, 248, 0.4);
+    }
 
     .claim-box {
       background: rgba(15, 23, 42, 0.7);
@@ -719,11 +747,44 @@ HTML_TEMPLATE = jinja2.Template("""<!DOCTYPE html>
         </div>
       </div>
 
+      <!-- Multi-Perspective Source Filter -->
+      <div class="section-box">
+        <div class="section-title">
+          <span>Media Source Filter</span>
+        </div>
+        <div class="filter-buttons" id="srcBtnContainer">
+          <button class="filter-btn active src-btn" data-src="all">
+            <span>🌐 All Sources</span>
+            <span class="badge-count">{{ argument_count }}</span>
+          </button>
+          <button class="filter-btn src-btn" data-src="international">
+            <span>🌍 International Leitmedien</span>
+            <span class="badge-count" id="count-international">0</span>
+          </button>
+          <button class="filter-btn src-btn" data-src="national">
+            <span>🇩🇪 Nationale Leitmedien</span>
+            <span class="badge-count" id="count-national">0</span>
+          </button>
+          <button class="filter-btn src-btn" data-src="tech">
+            <span>💻 Tech & Fachpresse</span>
+            <span class="badge-count" id="count-tech">0</span>
+          </button>
+          <button class="filter-btn src-btn" data-src="business">
+            <span>📊 Wirtschaft & Policy</span>
+            <span class="badge-count" id="count-business">0</span>
+          </button>
+          <button class="filter-btn src-btn" data-src="search">
+            <span>🔍 Deep Search Articles</span>
+            <span class="badge-count" id="count-search">0</span>
+          </button>
+        </div>
+      </div>
+
       <!-- Search & Filter -->
       <div class="section-box">
         <div class="section-title">Search & Filter</div>
         <div class="control-group">
-          <input type="text" id="searchInput" placeholder="Search ID or claim keywords..." autocomplete="off">
+          <input type="text" id="searchInput" placeholder="Search ID, claim or URL..." autocomplete="off">
         </div>
       </div>
 
@@ -752,13 +813,13 @@ HTML_TEMPLATE = jinja2.Template("""<!DOCTYPE html>
           <span>Preferred Extensions</span>
           <span class="badge-count">{{ extension_count }}</span>
         </div>
-        <div class="ext-buttons" id="extBtnContainer">
-          <button class="ext-btn active" data-ext="all">
-            <span>Show All</span>
-            <span class="badge-count">{{ argument_count }} args</span>
+        <div class="filter-buttons" id="extBtnContainer">
+          <button class="filter-btn active ext-btn" data-ext="all">
+            <span>Show All Extensions</span>
+            <span class="badge-count">{{ argument_count }}</span>
           </button>
           {% for ext in extensions %}
-          <button class="ext-btn" data-ext="{{ loop.index }}">
+          <button class="filter-btn ext-btn" data-ext="{{ loop.index }}">
             <span>Extension {{ loop.index }}</span>
             <span class="badge-count">{{ ext | length }} args</span>
           </button>
@@ -811,7 +872,7 @@ HTML_TEMPLATE = jinja2.Template("""<!DOCTYPE html>
       <div class="section-title">Argument Inspector</div>
       <div id="inspectorContent">
         <div class="empty-state">
-          👉 <strong>Klicken Sie auf ein Argument oder einen Pfeil</strong>, um vollständige Claims, Begründungen und formale Extension-Zugehörigkeiten einzusehen.
+          👉 <strong>Klicken Sie auf ein Argument oder einen Pfeil</strong>, um vollständige Claims, Begründungen, Medienkategorien und Extension-Zugehörigkeiten einzusehen.
         </div>
       </div>
 
@@ -833,8 +894,19 @@ HTML_TEMPLATE = jinja2.Template("""<!DOCTYPE html>
   <script>
     const graphData = {{ data_json | safe }};
     const elementsData = {{ elements_json | safe }};
-    let currentMode = 'cards'; // 'cards' | 'compact'
+    let currentMode = 'cards';
     let showEdgeLabels = false;
+    let currentExtFilter = 'all';
+    let currentSrcFilter = 'all';
+
+    // Populate source category count badges
+    if (graphData.stats && graphData.stats.source_categories) {
+      const cats = graphData.stats.source_categories;
+      for (const [cat, count] of Object.entries(cats)) {
+        const el = document.getElementById(`count-${cat}`);
+        if (el) el.textContent = count;
+      }
+    }
 
     const cy = cytoscape({
       container: document.getElementById('cy'),
@@ -842,7 +914,6 @@ HTML_TEMPLATE = jinja2.Template("""<!DOCTYPE html>
       boxSelectionEnabled: false,
       autounselectify: false,
       style: [
-        // Node Base Style: Large Card with clear readability
         {
           selector: 'node',
           style: {
@@ -868,7 +939,6 @@ HTML_TEMPLATE = jinja2.Template("""<!DOCTYPE html>
             'transition-duration': '0.25s'
           }
         },
-        // Classification Card Styles (High-Contrast & Distinctive)
         {
           selector: 'node.cls-core',
           style: {
@@ -896,7 +966,6 @@ HTML_TEMPLATE = jinja2.Template("""<!DOCTYPE html>
             'color': '#fef2f2'
           }
         },
-        // Compact Node Mode
         {
           selector: 'node.compact-mode',
           style: {
@@ -908,7 +977,6 @@ HTML_TEMPLATE = jinja2.Template("""<!DOCTYPE html>
             'text-max-width': '75px'
           }
         },
-        // Node Selection & Highlight
         {
           selector: 'node:selected',
           style: {
@@ -928,10 +996,9 @@ HTML_TEMPLATE = jinja2.Template("""<!DOCTYPE html>
         {
           selector: 'node.dimmed',
           style: {
-            'opacity': 0.15
+            'opacity': 0.12
           }
         },
-        // Edge Base Style (Attacks)
         {
           selector: 'edge',
           style: {
@@ -957,14 +1024,12 @@ HTML_TEMPLATE = jinja2.Template("""<!DOCTYPE html>
             'transition-duration': '0.2s'
           }
         },
-        // Edge Labels When Enabled
         {
           selector: 'edge.show-labels',
           style: {
             'label': 'data(label)'
           }
         },
-        // Mutual Attacks (Dilemma Axes)
         {
           selector: 'edge.mutual-attack',
           style: {
@@ -995,7 +1060,7 @@ HTML_TEMPLATE = jinja2.Template("""<!DOCTYPE html>
         {
           selector: 'edge.dimmed',
           style: {
-            'opacity': 0.1
+            'opacity': 0.08
           }
         }
       ]
@@ -1021,6 +1086,46 @@ HTML_TEMPLATE = jinja2.Template("""<!DOCTYPE html>
     }
 
     applyLayout('dagre');
+
+    function applyFilters() {
+      cy.elements().removeClass('dimmed highlighted');
+
+      const extNum = currentExtFilter === 'all' ? null : parseInt(currentExtFilter, 10);
+      const srcCat = currentSrcFilter === 'all' ? null : currentSrcFilter;
+
+      cy.nodes().forEach(node => {
+        let matchExt = true;
+        let matchSrc = true;
+
+        if (extNum !== null) {
+          const exts = node.data('extensions') || [];
+          matchExt = exts.includes(extNum);
+        }
+
+        if (srcCat !== null) {
+          const cat = node.data('source_category') || 'general';
+          matchSrc = (cat === srcCat);
+        }
+
+        if (matchExt && matchSrc) {
+          if (extNum !== null || srcCat !== null) {
+            node.addClass('highlighted');
+          }
+        } else {
+          node.addClass('dimmed');
+        }
+      });
+
+      cy.edges().forEach(edge => {
+        const src = edge.source();
+        const tgt = edge.target();
+        if (src.hasClass('highlighted') && tgt.hasClass('highlighted')) {
+          edge.addClass('highlighted');
+        } else if (src.hasClass('dimmed') || tgt.hasClass('dimmed')) {
+          edge.addClass('dimmed');
+        }
+      });
+    }
 
     function updateViewMode(mode) {
       currentMode = mode;
@@ -1055,6 +1160,26 @@ HTML_TEMPLATE = jinja2.Template("""<!DOCTYPE html>
       } else {
         cy.edges().removeClass('show-labels');
       }
+    });
+
+    // Source Filter Buttons
+    document.querySelectorAll('.src-btn').forEach(btn => {
+      btn.addEventListener('click', function() {
+        document.querySelectorAll('.src-btn').forEach(b => b.classList.remove('active'));
+        this.classList.add('active');
+        currentSrcFilter = this.getAttribute('data-src');
+        applyFilters();
+      });
+    });
+
+    // Extension Filter Buttons
+    document.querySelectorAll('.ext-btn').forEach(btn => {
+      btn.addEventListener('click', function() {
+        document.querySelectorAll('.ext-btn').forEach(b => b.classList.remove('active'));
+        this.classList.add('active');
+        currentExtFilter = this.getAttribute('data-ext');
+        applyFilters();
+      });
     });
 
     const inspectorContent = document.getElementById('inspectorContent');
@@ -1107,7 +1232,10 @@ HTML_TEMPLATE = jinja2.Template("""<!DOCTYPE html>
         <div class="inspector-card">
           <div class="node-header">
             <span class="node-id">${escapeHtml(d.id)}</span>
-            <span class="cls-badge cls-${escapeHtml(d.classification)}">${escapeHtml(d.classification)}</span>
+            <div class="badge-group">
+              <span class="src-badge">${escapeHtml(d.source_category || 'general')}</span>
+              <span class="cls-badge cls-${escapeHtml(d.classification)}">${escapeHtml(d.classification)}</span>
+            </div>
           </div>
 
           <div class="claim-box">
@@ -1117,6 +1245,10 @@ HTML_TEMPLATE = jinja2.Template("""<!DOCTYPE html>
           <div class="property-row">
             <span class="property-label">Dung Acceptance Score:</span>
             <span class="property-value">${(d.score || 0).toFixed(2)}</span>
+          </div>
+          <div class="property-row">
+            <span class="property-label">Source Category:</span>
+            <span class="property-value" style="text-transform:capitalize;color:var(--accent-blue);">${escapeHtml(d.source_category || 'general')}</span>
           </div>
           <div class="property-row">
             <span class="property-label">In-Degree (Attacked by):</span>
@@ -1215,10 +1347,10 @@ HTML_TEMPLATE = jinja2.Template("""<!DOCTYPE html>
 
     cy.on('tap', function(evt) {
       if (evt.target === cy) {
-        cy.elements().removeClass('highlighted dimmed');
+        applyFilters();
         inspectorContent.innerHTML = `
           <div class="empty-state">
-            👉 <strong>Klicken Sie auf ein Argument oder einen Pfeil</strong>, um vollständige Claims, Begründungen und formale Extension-Zugehörigkeiten einzusehen.
+            👉 <strong>Klicken Sie auf ein Argument oder einen Pfeil</strong>, um vollständige Claims, Begründungen, Medienkategorien und Extension-Zugehörigkeiten einzusehen.
           </div>
         `;
       }
@@ -1232,65 +1364,35 @@ HTML_TEMPLATE = jinja2.Template("""<!DOCTYPE html>
     document.getElementById('btnCenter').addEventListener('click', () => cy.fit(undefined, 40));
     document.getElementById('btnReset').addEventListener('click', () => {
       document.getElementById('searchInput').value = '';
-      cy.elements().removeClass('dimmed highlighted');
-      document.querySelectorAll('.ext-btn').forEach(b => b.classList.remove('active'));
-      const allBtn = document.querySelector('.ext-btn[data-ext="all"]');
-      if (allBtn) allBtn.classList.add('active');
+      currentExtFilter = 'all';
+      currentSrcFilter = 'all';
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      const allExt = document.querySelector('.ext-btn[data-ext="all"]');
+      if (allExt) allExt.classList.add('active');
+      const allSrc = document.querySelector('.src-btn[data-src="all"]');
+      if (allSrc) allSrc.classList.add('active');
+      applyFilters();
       applyLayout(document.getElementById('layoutSelect').value);
     });
 
     document.getElementById('searchInput').addEventListener('input', function(e) {
       const q = e.target.value.trim().toLowerCase();
       if (!q) {
-        cy.elements().removeClass('dimmed highlighted');
+        applyFilters();
         return;
       }
 
       cy.nodes().forEach(node => {
         const id = (node.data('id') || '').toLowerCase();
         const claim = (node.data('claim') || '').toLowerCase();
-        if (id.includes(q) || claim.includes(q)) {
+        const url = (node.data('source_url') || '').toLowerCase();
+        if (id.includes(q) || claim.includes(q) || url.includes(q)) {
           node.removeClass('dimmed').addClass('highlighted');
         } else {
           node.addClass('dimmed').removeClass('highlighted');
         }
       });
       cy.edges().addClass('dimmed');
-    });
-
-    document.querySelectorAll('.ext-btn').forEach(btn => {
-      btn.addEventListener('click', function() {
-        document.querySelectorAll('.ext-btn').forEach(b => b.classList.remove('active'));
-        this.classList.add('active');
-
-        const ext = this.getAttribute('data-ext');
-        if (ext === 'all') {
-          cy.elements().removeClass('dimmed highlighted');
-          return;
-        }
-
-        const extNum = parseInt(ext, 10);
-        cy.elements().removeClass('dimmed highlighted');
-
-        cy.nodes().forEach(node => {
-          const exts = node.data('extensions') || [];
-          if (exts.includes(extNum)) {
-            node.addClass('highlighted');
-          } else {
-            node.addClass('dimmed');
-          }
-        });
-
-        cy.edges().forEach(edge => {
-          const src = edge.source();
-          const tgt = edge.target();
-          if (src.hasClass('highlighted') && tgt.hasClass('highlighted')) {
-            edge.addClass('highlighted');
-          } else {
-            edge.addClass('dimmed');
-          }
-        });
-      });
     });
 
     document.getElementById('btnExportPng').addEventListener('click', function() {

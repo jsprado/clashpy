@@ -17,13 +17,17 @@ import sys
 from datetime import timedelta
 from pathlib import Path
 
+from clashpy.adapters.news_sources.base import NewsSource
+from clashpy.adapters.news_sources.composite_source import CompositeNewsSource
 from clashpy.adapters.news_sources.rss_source import RSSNewsSource
+from clashpy.adapters.news_sources.search_source import GoogleNewsSearchSource
 from clashpy.core.solver import Semantics, Solver
 from clashpy.errors import ClashpyError
 from clashpy.pipeline import run_pipeline
 
 DEFAULT_RSS = "https://www.tagesschau.de/index~rss2.xml,https://www.heise.de/rss/heise-atom.xml,https://www.zeit.de/news/index"
 DEFAULT_MODEL = "google:gemini-3.5-flash"
+DEFAULT_SOURCES_YAML = "sources.yaml"
 
 
 def _resolve_export_path(
@@ -68,8 +72,24 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument(
         "--source",
-        default=DEFAULT_RSS,
+        default=None,
         help="Single feed URL or comma-separated list of RSS feeds (e.g., Tagesschau, Heise, Zeit)",
+    )
+    parser.add_argument(
+        "--source-yaml",
+        default=DEFAULT_SOURCES_YAML,
+        help="Path to YAML sources configuration (default: sources.yaml)",
+    )
+    parser.add_argument(
+        "--search",
+        action=argparse.BooleanOptionalAction,
+        default=True,
+        help="Enable deep topic-targeted search across Google News (default: True)",
+    )
+    parser.add_argument(
+        "--search-time",
+        default="30d",
+        help="Search time horizon, e.g. '7d', '14d', '30d' (default: 30d)",
     )
     parser.add_argument("--model", default=DEFAULT_MODEL)
     parser.add_argument(
@@ -168,7 +188,20 @@ def _run() -> None:
         print(f"→ Solver '{args.solver}' could not be initialized: {exc}")
         sys.exit(1)
 
-    news_source = RSSNewsSource(feed_url=args.source)
+    # Determine news ingestion source
+    news_source: NewsSource
+    if args.source:
+        # User specified an explicit RSS feed URL or list
+        news_source = RSSNewsSource(feed_url=args.source)
+    else:
+        # Use CompositeNewsSource with YAML sources + Deep Topic Search
+        news_source = CompositeNewsSource(
+            config_path=Path(args.source_yaml) if args.source_yaml else None,
+            enable_search=args.search,
+            search_time_window=args.search_time,
+        )
+
+    source_desc = f"{news_source.name} (yaml={args.source_yaml}, search={args.search})" if not args.source else args.source
 
     result = run_pipeline(
         topic=topic,
@@ -290,7 +323,7 @@ def _run() -> None:
             "## Summary",
             f"- **Solver:** {solver.name} ({args.semantics})",
             f"- **Model:** `{args.model}`",
-            f"- **News source:** `{args.source}`",
+            f"- **News source:** `{source_desc}`",
             f"- **Arguments:** {len(result.af.arguments)}",
             f"- **Attacks:** {len(result.af.attacks)}",
             f"- **Preferred Extensions:** {len(result.extensions)}",
