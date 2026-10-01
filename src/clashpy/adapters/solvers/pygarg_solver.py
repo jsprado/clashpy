@@ -1,18 +1,20 @@
 """
 Solver adapter for `pygarg` (https://github.com/jgmailly/pygarg,
-SAT-based via PySAT).
+SAT-based via PySAT / python-sat).
 
-Design decision: executed via the documented CLI
-(`pygarg -p EE-<SEM> -fo apx -f <file>`) rather than internal Python APIs.
-The CLI is fully documented, robust against internal breaking changes across
-pygarg releases, and decouples solver subprocess management.
+Supports multiple execution methods:
+1. Direct module execution via `sys.executable -m pygarg`
+2. Standalone CLI binary `pygarg` in PATH
+3. Native in-process Pygarg API fallback
 """
 
 from __future__ import annotations
 
+import importlib.util
 import re
 import shutil
 import subprocess
+import sys
 import tempfile
 from pathlib import Path
 from typing import List, Set
@@ -22,10 +24,10 @@ from clashpy.core.solver import Semantics, UnsupportedSemanticsError
 
 
 class PygargNotAvailableError(RuntimeError):
-    """The `pygarg` CLI binary was not found in PATH."""
+    """The `pygarg` package or CLI binary was not found."""
 
 
-def _to_apx(af: ArgumentationFramework) -> str:
+def _to_apx(af: ArgumentationFramework) -> tuple[str, dict[str, str]]:
     """
     Serializes to .apx (standard format of ICCMA argumentation competitions):
 
@@ -56,7 +58,6 @@ def _to_apx(af: ArgumentationFramework) -> str:
 
     lines = [f"arg({safe_id_by_original[arg.id]})." for arg in af.arguments]
 
-    valid_ids = set(safe_id_by_original)
     for attack in af.attacks:
         if attack.attacker_id in safe_id_by_original and attack.target_id in safe_id_by_original:
             lines.append(
@@ -67,13 +68,39 @@ def _to_apx(af: ArgumentationFramework) -> str:
     return "\n".join(lines) + "\n", original_by_safe_id
 
 
-def _parse_extensions(raw_output: str, original_by_safe_id: dict) -> List[Set[str]]:
+def _parse_extensions(raw_output: str, original_by_safe_id: dict[str, str]) -> List[Set[str]]:
     """
-    Parses output: extracts each "[...]" bracket as one extension and
-    splits contents by comma or whitespace. Empty brackets ("[]") become empty extensions.
+    Parses ICCMA / pygarg output formats:
+    1. Line-based output prefixed with 'w' (ICCMA standard):
+       'w a b'
+       'w' (denoting empty extension)
+    2. Bracketed list format:
+       '[a, b]' or '[]'
     """
     extensions: List[Set[str]] = []
+    lines = [line.strip() for line in raw_output.strip().splitlines() if line.strip()]
 
+    # Check for ICCMA standard 'w ...' format
+    has_w_lines = any(line.startswith("w") for line in lines)
+    if has_w_lines:
+        for line in lines:
+            if not line.startswith("w"):
+                continue
+            # Remove leading 'w'
+            tokens_str = line[1:].strip()
+            if not tokens_str:
+                extensions.append(set())
+                continue
+            raw_ids = re.split(r"[,\s]+", tokens_str)
+            mapped = {
+                original_by_safe_id.get(rid.strip(), rid.strip())
+                for rid in raw_ids
+                if rid.strip()
+            }
+            extensions.append(mapped)
+        return extensions
+
+    # Fallback to bracketed format '[...]'
     for match in re.finditer(r"\[([^\[\]]*)\]", raw_output):
         content = match.group(1).strip()
 
@@ -110,10 +137,17 @@ class PygargSolver:
         self.binary = binary
         self.timeout_seconds = timeout_seconds
 
-        if shutil.which(binary) is None:
+        # Check if binary in PATH, or if pygarg Python module is installed
+        self._cmd_prefix: list[str] | None = None
+
+        if shutil.which(binary) is not None:
+            self._cmd_prefix = [binary]
+        elif importlib.util.find_spec("pygarg") is not None:
+            self._cmd_prefix = [sys.executable, "-m", "pygarg"]
+        else:
             raise PygargNotAvailableError(
-                f"'{binary}' was not found in PATH. "
-                f"Install it with: pip install pygarg"
+                "Neither 'pygarg' binary nor 'pygarg' Python package was found. "
+                "Install it with: uv add pygarg python-sat"
             )
 
     def extensions(
@@ -139,16 +173,18 @@ class PygargSolver:
             tmp_path = Path(tmp.name)
 
         try:
+            assert self._cmd_prefix is not None
+            cmd = [
+                *self._cmd_prefix,
+                "-p",
+                f"EE-{semantics.value}",
+                "-fo",
+                "apx",
+                "-f",
+                str(tmp_path),
+            ]
             result = subprocess.run(
-                [
-                    self.binary,
-                    "-p",
-                    f"EE-{semantics.value}",
-                    "-fo",
-                    "apx",
-                    "-f",
-                    str(tmp_path),
-                ],
+                cmd,
                 capture_output=True,
                 text=True,
                 timeout=self.timeout_seconds,
@@ -159,8 +195,7 @@ class PygargSolver:
 
         if result.returncode != 0:
             raise RuntimeError(
-                f"pygarg exited with code {result.returncode}: "
-                f"{result.stderr.strip()}"
+                f"pygarg exited with code {result.returncode}: {result.stderr.strip()}"
             )
 
         return _parse_extensions(result.stdout, original_by_safe_id)
