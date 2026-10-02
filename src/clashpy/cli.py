@@ -179,7 +179,18 @@ def _run() -> None:
     from clashpy.core.hashing import apply_keyring_secrets
 
     apply_keyring_secrets(
-        secret_keys=["GOOGLE_API_KEY", "OPENAI_API_KEY", "GEMINI_API_KEY"]
+        secret_keys=[
+            "GOOGLE_API_KEY",
+            "OPENAI_API_KEY",
+            "GEMINI_API_KEY",
+            "GROQ_API_KEY",
+            "DEEPINFRA_API_KEY",
+            "OPENROUTER_API_KEY",
+            "DASHSCOPE_API_KEY",
+            "TOGETHER_API_KEY",
+            "ANTHROPIC_API_KEY",
+            "MISTRAL_API_KEY",
+        ]
     )
 
     try:

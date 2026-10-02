@@ -179,18 +179,33 @@ Thanks to `pydantic-ai`, `clashpy` natively supports all major LLM providers sim
 | Provider | Example Model String | Required API Key / Env Variable |
 | :--- | :--- | :--- |
 | **Google Gemini** (Default) | `google:gemini-3.5-flash` | `GOOGLE_API_KEY` |
+| **Qwen 2.5 (DeepInfra - Ultra-Günstig)** | `deepinfra:Qwen/Qwen2.5-72B-Instruct` | `DEEPINFRA_API_KEY` (~$0.13 / 1M Tokens) |
+| **Qwen 2.5 (Groq - Ultra-Schnell)** | `groq:qwen-2.5-32b` | `GROQ_API_KEY` (Free Tier / Cent-Beträge) |
+| **Qwen 2.5 (OpenRouter)** | `openrouter:qwen/qwen-2.5-72b-instruct` | `OPENROUTER_API_KEY` |
+| **Qwen 2.5 (Alibaba DashScope)** | `dashscope:qwen-plus` or `dashscope:qwen-turbo` | `DASHSCOPE_API_KEY` |
+| **Qwen 2.5 (Lokal & Kostenlos)** | `ollama:qwen2.5:7b` or `lmstudio:qwen2.5-7b` | Keine (Ollama / LM Studio lokal) |
 | **OpenAI** | `openai:gpt-4o-mini` or `openai:gpt-4o` | `OPENAI_API_KEY` |
 | **Anthropic Claude** | `anthropic:claude-3-5-sonnet-latest` | `ANTHROPIC_API_KEY` |
 | **Mistral AI** | `mistral:mistral-large-latest` | `MISTRAL_API_KEY` |
 | **Groq (Llama 3)** | `groq:llama-3.3-70b-versatile` | `GROQ_API_KEY` |
-| **LM Studio** (Local / Offline) | `lmstudio:local-model` | None (LM Studio local server on `http://localhost:1234/v1`) |
-| **Local Ollama** (Offline) | `ollama:llama3.2` | None (requires local Ollama server running) |
 | **Offline Test Mode** | `test` | None (built-in deterministic mock) |
 
 ### Examples with alternative LLMs:
 
 ```bash
-# Using OpenAI GPT-4o-mini
+# 1. Qwen 2.5 72B via DeepInfra (Unschlagbar günstig: ~$0.13 pro 1M Tokens)
+DEEPINFRA_API_KEY="..." uv run clashpy "Israel Gaza" --model deepinfra:Qwen/Qwen2.5-72B-Instruct
+
+# 2. Qwen 2.5 32B via Groq (Extrem schnell, Free-Tier / minimale Kosten)
+GROQ_API_KEY="..." uv run clashpy "Israel Gaza" --model groq:qwen-2.5-32b
+
+# 3. Qwen 2.5 via OpenRouter
+OPENROUTER_API_KEY="..." uv run clashpy "Israel Gaza" --model openrouter:qwen/qwen-2.5-72b-instruct
+
+# 4. Qwen 2.5 lokal über Ollama (100% kostenlos & offline)
+uv run clashpy "Israel Gaza" --model ollama:qwen2.5:7b
+
+# 5. Using OpenAI GPT-4o-mini
 OPENAI_API_KEY="sk-..." uv run clashpy "AI Regulation" --model openai:gpt-4o-mini
 
 # Using Anthropic Claude 3.5 Sonnet
