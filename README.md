@@ -303,7 +303,7 @@ graph TD
   *AI Synthesis:* AI efficiency ($A3$) and talent retention ($A4$) offset reduced hours and burnout costs ($A1$), while commute cuts ($A6$) lower emissions under modernized laws ($A8$).
 - **🟠 Perspective 2 (Cost Realism & Inequity):** `{A2, A5, A7, A8}`  
   *AI Synthesis:* Cost shocks ($A2$) and shift limits ($A5$) risk labor market inequality, while leisure rebounds ($A7$) diminish climate gains. Legal reforms ($A8$) must allow sector flexibility.
-- **⚡ Detected Dilemma Axis:** `A2 ↔ A3` – Fundamental conflict between *Automation & Productivity Offset Potential* vs. *Physical Operational Capacity Limits in Frontline Shift Work*.
+- ** Detected Dilemma Axis:** `A2 ↔ A3` – Fundamental conflict between *Automation & Productivity Offset Potential* vs. *Physical Operational Capacity Limits in Frontline Shift Work*.
 
 ---
 
