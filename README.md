@@ -10,7 +10,7 @@
 Automated Argumentation Reasoning Engine
 ```
 
-# clashpy ⚡
+# clashpy
 
 > **From unstructured news to formally derived conflict structures.**  
 A lightweight, modular proof-of-concept for automated argumentation mining and formal reasoning. It ingests live news streams, extracts claims and attacks via LLMs, and derives perspectives using Dung's Abstract Argumentation Frameworks.
@@ -130,6 +130,8 @@ uv run clashpy "4-Day Work Week" [OPTIONS]
 | `--export-html` | Export interactive Cytoscape.js HTML visualization dashboard to `output/` | Disabled |
 | `--export-cytoscape` | Export Cytoscape.js graph JSON payload to `output/` | Disabled |
 | `--output-json` | Save complete raw JSON analysis payload to path | `None` |
+| `--max-articles` | Maximum number of aggregated news items fed to the LLM | `60` |
+| `--naive-max-arguments` | Maximum argument capacity accepted by the naive solver | `35` |
 | `--refresh` | Bypass DuckDB cache and force fresh extraction | `False` |
 
 ---
@@ -336,8 +338,7 @@ uv run pytest
 
 ## AI Implementation Specification
 
-A formal technical specification covering Dung's semantics, mathematical proofs, negative constraints (anti-patterns), and extension guidelines is available at:  
-👉 **[`spec/system_specification.md`](spec/system_specification.md)**
+A formal technical specification covering Dung's semantics, mathematical proofs, negative constraints (anti-patterns), and extension guidelines is available at: **[`spec/system_specification.md`](spec/system_specification.md)**
 
 ---
 

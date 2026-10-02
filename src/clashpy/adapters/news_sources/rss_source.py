@@ -47,8 +47,15 @@ def _clean_text(text: str, max_chars: int = 300) -> str:
 
 def _parse_feed(url: str, timeout: float):
     request = Request(url, headers={"User-Agent": "clashpy/0.1 RSS reader"})
-    with urlopen(request, timeout=timeout) as response:
-        return feedparser.parse(response.read())
+    response = urlopen(request, timeout=timeout)
+    try:
+        data = response.read()
+    finally:
+        try:
+            response.close()
+        finally:
+            response.fp = None
+    return feedparser.parse(data)
 
 
 def _entry_text(entry) -> str:

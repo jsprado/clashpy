@@ -131,7 +131,7 @@ def get_extraction_agent(model_name: str) -> Agent[None, ArgumentationFramework]
             "Deine Aufgabe: Analysiere den bereitgestellten Nachrichten- und Quellenkorpus neutral und erschöpfend.\n\n"
             "Anforderungen:\n"
             "1. QUELLENVIELFALT & PERSPEKTIVEN: Berücksichtige alle enthaltenen Quellen und Medien (Pro/Contra, Wirtschaft, Politik, Wissenschaft, Ethik).\n"
-            "2. HOHE ARGUMENTENDICHTE: Extrahiere möglichst viele unterscheidbare Argumente (Ziel: 15–30 Argumente). IDs strikt als A1, A2, A3 ... vergeben.\n"
+            "2. HOHE ARGUMENTENDICHTE: Extrahiere möglichst viele unterscheidbare Argumente (Ziel: 20–40 Argumente). IDs strikt als A1, A2, A3 ... vergeben.\n"
             "3. GEGENARGUMENTE & ANGRIFFSRELATIONEN: Finde aktiv Gegenargumente, Einwände, Zielkonflikte und wechselseitige Angriffe (A ↔ B) zwischen den Argumenten. Jedes Gegenargument soll das angegriffene Argument logisch herausfordern oder einschränken.\n"
             "4. TOKEN-EFFIZIENZ & PRÄZISION: Fasse jede Argument-Behauptung (claim) prägnant in 1–2 Sätzen zusammen. Halte die Angriffsbegründung (reason) auf 1 kurzen Satz beschränkt.\n"
             "5. QUELLENTREUE: Trage als 'source_url' die exakte URL des zugehörigen Artikels ein (oder KEINE_QUELLE, falls nicht zuzuordnen). Keine erfundenen URLs.\n"

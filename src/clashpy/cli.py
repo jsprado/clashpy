@@ -16,6 +16,21 @@ import json
 import sys
 from datetime import timedelta
 from pathlib import Path
+from typing import Any
+
+
+def _suppress_cpython314_http_response_bug(unraisable: Any) -> None:
+    """Filter out known upstream CPython 3.14 http.client.HTTPResponse GC finalizer warning."""
+    if (
+        isinstance(unraisable.exc_value, ValueError)
+        and "closed file" in str(unraisable.exc_value)
+        and "HTTPResponse" in str(getattr(unraisable, "object", ""))
+    ):
+        return
+    sys.__unraisablehook__(unraisable)
+
+
+sys.unraisablehook = _suppress_cpython314_http_response_bug
 
 from clashpy.adapters.news_sources.base import NewsSource
 from clashpy.adapters.news_sources.composite_source import CompositeNewsSource
@@ -110,12 +125,12 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--naive-max-arguments",
         type=int,
-        default=20,
-        help="Maximum framework size accepted by the exponential naive solver (default: 20).",
+        default=35,
+        help="Maximum framework size accepted by the exponential naive solver (default: 35).",
     )
     parser.add_argument("--cache-db", default="af_cache.duckdb")
     parser.add_argument("--news-ttl-minutes", type=int, default=15)
-    parser.add_argument("--max-articles", type=int, default=30)
+    parser.add_argument("--max-articles", type=int, default=60)
     parser.add_argument("--refresh", action="store_true")
     parser.add_argument("--no-synthesis", action="store_true")
     parser.add_argument("--output-json", default=None)

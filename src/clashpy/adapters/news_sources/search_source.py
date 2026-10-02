@@ -88,9 +88,16 @@ class GoogleNewsSearchSource:
         for url in search_urls:
             try:
                 request = Request(url, headers={"User-Agent": DEFAULT_USER_AGENT})
-                with urlopen(request, timeout=self.request_timeout) as response:
-                    feed = feedparser.parse(response.read())
+                response = urlopen(request, timeout=self.request_timeout)
+                try:
+                    data = response.read()
+                finally:
+                    try:
+                        response.close()
+                    finally:
+                        response.fp = None
 
+                feed = feedparser.parse(data)
                 entries = getattr(feed, "entries", []) or []
                 url_entries = []
                 for entry in entries:
@@ -160,8 +167,15 @@ class DuckDuckGoNewsSource:
 
         try:
             request = Request(url, headers={"User-Agent": DEFAULT_USER_AGENT})
-            with urlopen(request, timeout=self.request_timeout) as response:
-                html_text = response.read().decode("utf-8", errors="ignore")
+            response = urlopen(request, timeout=self.request_timeout)
+            try:
+                data = response.read()
+            finally:
+                try:
+                    response.close()
+                finally:
+                    response.fp = None
+            html_text = data.decode("utf-8", errors="ignore")
         except Exception as exc:
             # Fallback to Google News if DuckDuckGo blocks or times out
             fallback = GoogleNewsSearchSource(request_timeout=self.request_timeout)

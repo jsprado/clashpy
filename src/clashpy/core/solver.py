@@ -58,7 +58,7 @@ class NaiveBacktrackingSolver:
 
     name = "naive"
 
-    def __init__(self, max_arguments: int = 20) -> None:
+    def __init__(self, max_arguments: int = 35) -> None:
         if max_arguments < 1:
             raise ValueError("max_arguments must be at least 1")
         self.max_arguments = max_arguments
