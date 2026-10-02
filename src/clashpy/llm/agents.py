@@ -37,6 +37,36 @@ def _resolve_model(model_name: str):
         from pydantic_ai.models.google import GoogleModel
         return GoogleModel(model_name)
 
+    # Apple Silicon M4 / Local Ollama shortcuts
+    if (
+        model_name.startswith("ollama:")
+        or model_lower in ("ollama", "local", "m4", "offline", "apple-silicon")
+    ):
+        from pydantic_ai.models.openai import OpenAIChatModel
+        from pydantic_ai.providers.openai import OpenAIProvider
+
+        if ":" in model_name:
+            raw_name = model_name.split(":", 1)[1]
+        else:
+            raw_name = os.getenv("OLLAMA_MODEL", "qwen2.5:7b")
+
+        base_url = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434/v1")
+        if not base_url.endswith("/v1") and not base_url.endswith("/v1/"):
+            base_url = base_url.rstrip("/") + "/v1"
+
+        provider = OpenAIProvider(base_url=base_url, api_key="ollama")
+        return OpenAIChatModel(raw_name, provider=provider)
+
+    # Apple MLX local server
+    if model_name.startswith("mlx:"):
+        from pydantic_ai.models.openai import OpenAIChatModel
+        from pydantic_ai.providers.openai import OpenAIProvider
+
+        raw_name = model_name.split(":", 1)[1] or "mlx-model"
+        base_url = os.getenv("MLX_BASE_URL", "http://localhost:8080/v1")
+        provider = OpenAIProvider(base_url=base_url, api_key="not-needed")
+        return OpenAIChatModel(raw_name, provider=provider)
+
     # Local LM Studio
     if model_name.startswith("lmstudio:"):
         from pydantic_ai.models.openai import OpenAIChatModel

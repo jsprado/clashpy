@@ -170,6 +170,7 @@ def run_pipeline(
     news_ttl: timedelta = timedelta(minutes=15),
     force_refresh: bool = False,
     with_synthesis: bool = True,
+    dense_filter: bool = True,
 ) -> PipelineResult:
     with DuckDBCache(cache_db) as cache:
         # -- 1. News Ingestion ----------------------------------------
@@ -199,20 +200,27 @@ def run_pipeline(
                 "No usable news data was retrieved. Check the topic and feed URLs."
             )
 
-        # -- 2. Framework Extraction ----------------------------------
-        af = _extract_framework(cache, raw_news, model_name, topic, force_refresh)
+        # -- 2. Local Dense Pre-Filter (M4 Token Reduction) -----------
+        if dense_filter:
+            from clashpy.adapters.classifiers.dense_filter import prune_corpus
+            news_payload = prune_corpus(raw_news, topic=topic)
+        else:
+            news_payload = raw_news
 
-        # -- 3. Extension Solving -------------------------------------
+        # -- 3. Framework Extraction ----------------------------------
+        af = _extract_framework(cache, news_payload, model_name, topic, force_refresh)
+
+        # -- 4. Extension Solving -------------------------------------
         extensions = _solve_extensions(cache, af, solver, semantics, force_refresh)
 
-        # -- 4. Metrics (pure functions, no cache needed) -------------
+        # -- 5. Metrics (pure functions, no cache needed) -------------
         all_ids = [arg.id for arg in af.arguments]
         scores = compute_argument_scores(all_ids, extensions)
         classification = classify_arguments(scores)
         degrees = compute_attack_degrees(all_ids, af.attacks)
         dilemma_axes = detect_dilemma_axes(af.attacks)
 
-        # -- 5. Synthesis (optional) ----------------------------------
+        # -- 6. Synthesis (optional) ----------------------------------
         synthesis = None
         if with_synthesis:
             synthesis = _synthesize(cache, af, extensions, model_name, force_refresh)

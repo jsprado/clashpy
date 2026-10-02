@@ -131,6 +131,12 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--cache-db", default="af_cache.duckdb")
     parser.add_argument("--news-ttl-minutes", type=int, default=15)
     parser.add_argument("--max-articles", type=int, default=60)
+    parser.add_argument(
+        "--dense-filter",
+        action=argparse.BooleanOptionalAction,
+        default=True,
+        help="Enable local Apple Silicon argument density pre-filter (default: True)",
+    )
     parser.add_argument("--refresh", action="store_true")
     parser.add_argument("--no-synthesis", action="store_true")
     parser.add_argument("--output-json", default=None)
@@ -243,6 +249,7 @@ def _run() -> None:
         news_ttl=timedelta(minutes=args.news_ttl_minutes),
         force_refresh=args.refresh,
         with_synthesis=not args.no_synthesis,
+        dense_filter=args.dense_filter,
     )
 
     print()

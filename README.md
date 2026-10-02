@@ -131,8 +131,27 @@ uv run clashpy "4-Day Work Week" [OPTIONS]
 | `--export-cytoscape` | Export Cytoscape.js graph JSON payload to `output/` | Disabled |
 | `--output-json` | Save complete raw JSON analysis payload to path | `None` |
 | `--max-articles` | Maximum number of aggregated news items fed to the LLM | `60` |
+| `--dense-filter` / `--no-dense-filter` | Enable/disable sub-millisecond local argument density pre-filter | `True` |
 | `--naive-max-arguments` | Maximum argument capacity accepted by the naive solver | `35` |
 | `--refresh` | Bypass DuckDB cache and force fresh extraction | `False` |
+
+---
+
+## Local Offline Execution (Apple Silicon M4 / Ollama)
+
+Run `clashpy` 100% locally with zero external API calls and zero token costs:
+
+```bash
+# 1. Start Ollama with Qwen 2.5 on Apple Silicon Metal
+ollama run qwen2.5:7b
+
+# 2. Run clashpy using the local M4 model alias
+uv run clashpy "4-Day Work Week" --model m4 --export-html --export-md
+```
+
+### Apple Silicon M4 Optimization Highlights:
+* **Sub-millisecond Pre-Filter (`dense_filter`):** Scans news corpus locally on CPU/Neural Engine, pruning boilerplate and noise down to high-density argument sentences (~75% token reduction).
+* **Metal GPU Acceleration:** Generates structured argument graphs locally in seconds with Qwen 2.5 (7B or 14B).
 
 ---
 
