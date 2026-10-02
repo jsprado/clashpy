@@ -7,6 +7,7 @@ past days/weeks rather than relying only on top-level frontpage RSS headlines.
 
 from __future__ import annotations
 
+import html
 import json
 import re
 from urllib.parse import quote_plus
@@ -18,6 +19,21 @@ from clashpy.adapters.news_sources.base import NewsSource
 from clashpy.errors import NewsSourceError
 
 DEFAULT_USER_AGENT = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36 clashpy/0.1"
+
+
+def _clean_text(text: str, max_chars: int = 300) -> str:
+    if not text:
+        return ""
+    cleaned = re.sub(r"<[^>]+>", " ", text)
+    cleaned = html.unescape(cleaned)
+    cleaned = re.sub(r"\s+", " ", cleaned).strip()
+    if len(cleaned) > max_chars:
+        truncated = cleaned[:max_chars]
+        last_space = truncated.rfind(" ")
+        if last_space > int(max_chars * 0.7):
+            truncated = truncated[:last_space]
+        cleaned = truncated.rstrip(".,;:- ") + "..."
+    return cleaned
 
 
 class GoogleNewsSearchSource:
@@ -60,14 +76,13 @@ class GoogleNewsSearchSource:
         if not topic.strip():
             return ""
 
-        # Fetch in primary language and optionally English if multi-perspective is desired
+        # Fetch in primary language and English for multi-perspective coverage
         search_urls = [
             self._build_search_url(topic),
-            # Also fetch English international news for broader global coverage
             f"https://news.google.com/rss/search?q={quote_plus(topic + ' when:' + self.time_window)}&hl=en-US&gl=US&ceid=US:en",
         ]
 
-        all_entries = []
+        entries_by_url: list[list] = []
         seen_links = set()
 
         for url in search_urls:
@@ -77,35 +92,47 @@ class GoogleNewsSearchSource:
                     feed = feedparser.parse(response.read())
 
                 entries = getattr(feed, "entries", []) or []
+                url_entries = []
                 for entry in entries:
                     link = getattr(entry, "link", "")
                     if link and link in seen_links:
                         continue
                     if link:
                         seen_links.add(link)
-                    all_entries.append(entry)
+                    url_entries.append(entry)
+                if url_entries:
+                    entries_by_url.append(url_entries)
             except Exception:
                 continue
 
-        if not all_entries:
+        if not entries_by_url:
             return ""
 
+        # Interleave German and English search results
+        interleaved = []
+        max_depth = max((len(e) for e in entries_by_url), default=0)
+        for depth in range(max_depth):
+            for url_entries in entries_by_url:
+                if depth < len(url_entries):
+                    interleaved.append(url_entries[depth])
+                    if len(interleaved) >= max_items:
+                        break
+            if len(interleaved) >= max_items:
+                break
+
         formatted_items = []
-        for entry in all_entries[:max_items]:
-            title = getattr(entry, "title", "") or ""
-            summary = getattr(entry, "summary", "") or ""
-            # Strip HTML tags from summary
-            clean_summary = re.sub(r"<[^>]+>", "", summary).strip()
-            link = getattr(entry, "link", "") or ""
-            published = getattr(entry, "published", "") or ""
+        for entry in interleaved:
+            title = _clean_text(getattr(entry, "title", "") or "", max_chars=180)
+            summary = _clean_text(getattr(entry, "summary", "") or "", max_chars=280)
+            link = (getattr(entry, "link", "") or "").strip()
+            content = summary if summary and summary.lower() != title.lower() else title
 
             formatted_items.append(
                 "\n".join(
                     [
                         f"Title: {title}",
-                        f"Content: {clean_summary or title}",
+                        f"Content: {content}",
                         f"Source: {link}",
-                        f"Date: {published}",
                     ]
                 )
             )
@@ -149,9 +176,9 @@ class DuckDuckGoNewsSource:
         )
 
         for link, snippet in snippets[:max_items]:
-            clean_snippet = re.sub(r"<[^>]+>", "", snippet).strip()
+            clean_snippet = _clean_text(snippet, max_chars=280)
             results.append(
-                f"Title: News regarding {topic}\nContent: {clean_snippet}\nSource: {link}\nDate: Recent"
+                f"Title: News regarding {topic}\nContent: {clean_snippet}\nSource: {link}"
             )
 
         if not results:

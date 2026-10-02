@@ -40,35 +40,46 @@ class CompositeNewsSource:
         self.request_timeout = request_timeout
 
     def fetch(self, topic: str, max_items: int = 50) -> str:
-        collected_sections: list[str] = []
+        search_articles: list[str] = []
+        rss_articles: list[str] = []
 
-        # 1. First, perform deep topic search to get relevant articles from past days/weeks
+        # 1. Topic-targeted search across Google News (DE + EN)
         if self.enable_search and topic.strip():
             searcher = GoogleNewsSearchSource(
                 time_window=self.search_time_window,
                 request_timeout=self.request_timeout,
             )
-            search_blob = searcher.fetch(topic, max_items=max(30, max_items // 2))
+            search_blob = searcher.fetch(topic, max_items=max(30, max_items))
             if search_blob.strip():
-                collected_sections.append(search_blob)
+                search_articles = [a.strip() for a in search_blob.split("\n\n") if a.strip()]
 
-        # 2. Also query curated international & national feeds from YAML configuration
+        # 2. Curated international, national, business, and tech RSS feeds from YAML
         if self.sources:
             feed_urls = [s.url for s in self.sources]
             rss_source = RSSNewsSource(
                 feed_url=feed_urls,
                 request_timeout=self.request_timeout,
             )
-            rss_blob = rss_source.fetch(topic, max_items=max(20, max_items // 2))
+            rss_blob = rss_source.fetch(topic, max_items=max(30, max_items))
             if rss_blob.strip():
-                collected_sections.append(rss_blob)
+                rss_articles = [a.strip() for a in rss_blob.split("\n\n") if a.strip()]
 
-        if not collected_sections:
+        if not search_articles and not rss_articles:
             # Fallback to standard RSS feeds
             rss_fallback = RSSNewsSource()
             return rss_fallback.fetch(topic, max_items=max_items)
 
-        # Merge results up to max_items
-        full_text = "\n\n".join(collected_sections)
-        articles = [a.strip() for a in full_text.split("\n\n") if a.strip()]
-        return "\n\n".join(articles[:max_items])
+        # Fair balanced interleaving of search articles and curated feeds
+        interleaved: list[str] = []
+        max_depth = max(len(search_articles), len(rss_articles))
+        for depth in range(max_depth):
+            if depth < len(search_articles):
+                interleaved.append(search_articles[depth])
+                if len(interleaved) >= max_items:
+                    break
+            if depth < len(rss_articles):
+                interleaved.append(rss_articles[depth])
+                if len(interleaved) >= max_items:
+                    break
+
+        return "\n\n".join(interleaved[:max_items])

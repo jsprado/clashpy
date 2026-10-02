@@ -103,7 +103,7 @@ def _get_translations(lang: Language) -> dict[str, str]:
             "pill_green": "Core Consensus (Score = 1.0)",
             "pill_amber": "Contested (0 < Score < 1)",
             "pill_red": "Excluded / Rejected (Score = 0)",
-            "bottom_col3_title": "🔒 Zero-Leakage Secrets",
+            "bottom_col3_title": "Zero-Leakage Secrets",
             "bottom_col3_desc": "Fully automated API key resolution without hardcoding:<br>1. <code>os.environ</code><br>2. Local <code>.env</code> file<br>3. Encrypted OS Keyring (<code>db.syst.datahub</code>)",
             "footer_left": "<strong>clashpy</strong> • Data Engineering, LLM Extraction & Automated Formal Reasoning",
             "footer_right": "Specification: <code>spec/system_specification.md</code> • Generated: September 2026",
@@ -171,7 +171,7 @@ def _get_translations(lang: Language) -> dict[str, str]:
         "pill_green": "Basis-Konsens (Score = 1.0)",
         "pill_amber": "Umstritten (0 < Score < 1)",
         "pill_red": "Isoliert / Verworfen (Score = 0)",
-        "bottom_col3_title": "🔒 Zero-Leakage Secrets",
+        "bottom_col3_title": "Zero-Leakage Secrets",
         "bottom_col3_desc": "Vollautomatische Auflösung von API-Keys ohne Hardcoding:<br>1. <code>os.environ</code><br>2. Lokale <code>.env</code> Datei<br>3. Verschlüsselter OS Keyring (<code>db.syst.datahub</code>)",
         "footer_left": "<strong>clashpy</strong> • Data Engineering, KI-Extraktion & Formale Inferenz",
         "footer_right": "Spezifikation: <code>spec/system_specification.md</code> • Generiert: September 2026",
@@ -469,7 +469,7 @@ def generate_html_poster(output_path: Path, lang: Language) -> None:
   <section class="pipeline-section">
     <div class="section-title">{t['pipeline_title']}</div>
     <div class="pipeline-steps">
-      
+
       <div class="step-card">
         <div class="step-header">
           <div class="step-num">1</div>
@@ -522,7 +522,7 @@ def generate_html_poster(output_path: Path, lang: Language) -> None:
   <section class="scenario-container">
     <div class="section-title">{t['scenario_title']}</div>
     <div class="scenario-grid">
-      
+
       <div>
         <h4 style="color: var(--accent-blue); margin-bottom: 6px; font-size: 0.88rem;">{t['sc_col1_title']}</h4>
         <div class="sc-box">{t['sc_a1']}</div>
@@ -553,7 +553,7 @@ def generate_html_poster(output_path: Path, lang: Language) -> None:
 
             <!-- Attack A3 -> A2 -->
             <line x1="75" y1="68" x2="75" y2="44" stroke="#38bdf8" stroke-width="1.8" marker-end="url(#arrow-blue)"/>
-            
+
             <!-- Attack A2 -> A3 (Dilemma) -->
             <line x1="95" y1="38" x2="95" y2="62" stroke="#f43f5e" stroke-width="1.8" stroke-dasharray="3" marker-end="url(#arrow-red)"/>
 

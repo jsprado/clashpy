@@ -26,7 +26,7 @@
   \___|_|\__,_|___/_| |_| .__/ \__, | 
                         | |     __/ | 
                         |_|    |___/  
- Automated Argumentation Reasoning Engine ⚡
+ Automated Argumentation Reasoning Engine
 
 → News-Cache HIT (Tagesschau, Heise, Zeit)
 → Framework-Cache HIT – skipping extraction LLM call

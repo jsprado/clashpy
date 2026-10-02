@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from concurrent.futures import ThreadPoolExecutor
+import html
 import re
 from typing import Iterable, List
 from urllib.request import Request, urlopen
@@ -23,7 +24,25 @@ DEFAULT_FEEDS = [
 ]
 
 DEFAULT_REQUEST_TIMEOUT = 10.0
-DEFAULT_MAX_WORKERS = 5
+DEFAULT_MAX_WORKERS = 10
+
+
+def _clean_text(text: str, max_chars: int = 300) -> str:
+    if not text:
+        return ""
+    # Strip HTML tags
+    cleaned = re.sub(r"<[^>]+>", " ", text)
+    # Unescape HTML entities
+    cleaned = html.unescape(cleaned)
+    # Collapse multiple whitespace / newlines
+    cleaned = re.sub(r"\s+", " ", cleaned).strip()
+    if len(cleaned) > max_chars:
+        truncated = cleaned[:max_chars]
+        last_space = truncated.rfind(" ")
+        if last_space > int(max_chars * 0.7):
+            truncated = truncated[:last_space]
+        cleaned = truncated.rstrip(".,;:- ") + "..."
+    return cleaned
 
 
 def _parse_feed(url: str, timeout: float):
@@ -33,17 +52,16 @@ def _parse_feed(url: str, timeout: float):
 
 
 def _entry_text(entry) -> str:
-    title = getattr(entry, "title", "") or ""
-    summary = getattr(entry, "summary", "") or ""
-    link = getattr(entry, "link", "") or ""
-    published = getattr(entry, "published", "") or ""
+    title = _clean_text(getattr(entry, "title", "") or "", max_chars=180)
+    summary = _clean_text(getattr(entry, "summary", "") or "", max_chars=280)
+    link = (getattr(entry, "link", "") or "").strip()
 
+    content = summary if summary and summary.lower() != title.lower() else title
     return "\n".join(
         [
             f"Title: {title}",
-            f"Content: {summary}",
+            f"Content: {content}",
             f"Source: {link}",
-            f"Date: {published}",
         ]
     )
 
@@ -100,9 +118,9 @@ class RSSNewsSource:
             self.feed_urls = list(feed_url)
 
     def fetch(self, topic: str, max_items: int = 30) -> str:
-        all_entries = []
         seen_links = set()
         failures = []
+        entries_by_feed: list[list] = []
 
         worker_count = min(self.max_workers, len(self.feed_urls))
         with ThreadPoolExecutor(max_workers=worker_count) as executor:
@@ -110,6 +128,8 @@ class RSSNewsSource:
                 (url, executor.submit(_parse_feed, url, self.request_timeout))
                 for url in self.feed_urls
             ]
+
+        pattern = _topic_pattern(topic)
 
         for url, future in feed_futures:
             try:
@@ -119,18 +139,38 @@ class RSSNewsSource:
                     error = getattr(feed, "bozo_exception", "invalid feed")
                     failures.append(f"{url}: {error}")
                     continue
+
+                feed_valid_entries = []
                 for entry in entries:
                     link = getattr(entry, "link", "")
                     if link and link in seen_links:
                         continue
                     if link:
                         seen_links.add(link)
-                    all_entries.append(entry)
+                    feed_valid_entries.append(entry)
+
+                if not feed_valid_entries:
+                    continue
+
+                if pattern is not None:
+                    matched = [
+                        entry
+                        for entry in feed_valid_entries
+                        if pattern.search(getattr(entry, "title", "") or "")
+                        or pattern.search(getattr(entry, "summary", "") or "")
+                    ]
+                    # Prefer topic-matched entries if available, otherwise take feed top entries
+                    feed_entries = matched if matched else feed_valid_entries
+                else:
+                    feed_entries = feed_valid_entries
+
+                if feed_entries:
+                    entries_by_feed.append(feed_entries)
             except Exception as exc:
                 failures.append(f"{url}: {exc}")
                 continue
 
-        if not all_entries:
+        if not entries_by_feed:
             if failures and len(failures) == len(self.feed_urls):
                 details = "; ".join(failures)
                 raise NewsSourceError(
@@ -139,20 +179,16 @@ class RSSNewsSource:
                 )
             return ""
 
-        pattern = _topic_pattern(topic)
+        # Fair round-robin interleaving across all responding feeds to maximize source diversity
+        interleaved_entries = []
+        max_depth = max((len(f) for f in entries_by_feed), default=0)
+        for depth in range(max_depth):
+            for feed_entries in entries_by_feed:
+                if depth < len(feed_entries):
+                    interleaved_entries.append(feed_entries[depth])
+                    if len(interleaved_entries) >= max_items:
+                        break
+            if len(interleaved_entries) >= max_items:
+                break
 
-        if pattern is None:
-            selected = all_entries
-        else:
-            selected = [
-                entry
-                for entry in all_entries
-                if pattern.search(getattr(entry, "title", "") or "")
-                or pattern.search(getattr(entry, "summary", "") or "")
-            ]
-
-            # If no direct keyword match exists across feeds, fall back to top entries
-            if not selected:
-                selected = all_entries
-
-        return _render_entries(selected, max_items)
+        return _render_entries(interleaved_entries, max_items)

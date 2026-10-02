@@ -7,7 +7,7 @@
   \___|_|\__,_|___/_| |_| .__/ \__, | 
                         | |     __/ | 
                         |_|    |___/  
-Automated Argumentation Reasoning Engine ⚡
+Automated Argumentation Reasoning Engine
 ```
 
 # clashpy ⚡
@@ -241,7 +241,7 @@ To illustrate the output of `clashpy`, see the comprehensive analysis of the deb
   \___|_|\__,_|___/_| |_| .__/ \__, | 
                         | |     __/ | 
                         |_|    |___/  
- Automated Argumentation Reasoning Engine ⚡
+ Automated Argumentation Reasoning Engine
 
 ======================================================================
 ANALYSIS RESULTS

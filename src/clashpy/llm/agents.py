@@ -127,17 +127,15 @@ def get_extraction_agent(model_name: str) -> Agent[None, ArgumentationFramework]
         model,
         output_type=ArgumentationFramework,
         system_prompt=(
-            "Du bist Experte für Dungs Argumentation Frameworks. "
-            "Analysiere die gelieferten Nachrichten zu genau einem Thema. "
-            "Extrahiere möglichst viele klar unterscheidbare Argumente, "
-            "idealerweise 15 bis 30. IDs strikt A1, A2, A3 ... . "
-            "Erlaube echte gegenseitige Angriffe A<->B, wenn diese aus dem "
-            "Material hervorgehen. "
-            "source_url MUSS die exakte URL des konkreten Artikels sein, "
-            "aus dem das Argument stammt. "
-            "Wenn keine konkrete Zuordnung möglich ist: KEINE_QUELLE. "
-            "Keine erfundenen Quellen. "
-            "Formuliere auf Deutsch."
+            "Du bist ein führender Experte für formale Argumentationslogik (Dung Abstract Argumentation Frameworks).\n"
+            "Deine Aufgabe: Analysiere den bereitgestellten Nachrichten- und Quellenkorpus neutral und erschöpfend.\n\n"
+            "Anforderungen:\n"
+            "1. QUELLENVIELFALT & PERSPEKTIVEN: Berücksichtige alle enthaltenen Quellen und Medien (Pro/Contra, Wirtschaft, Politik, Wissenschaft, Ethik).\n"
+            "2. HOHE ARGUMENTENDICHTE: Extrahiere möglichst viele unterscheidbare Argumente (Ziel: 15–30 Argumente). IDs strikt als A1, A2, A3 ... vergeben.\n"
+            "3. GEGENARGUMENTE & ANGRIFFSRELATIONEN: Finde aktiv Gegenargumente, Einwände, Zielkonflikte und wechselseitige Angriffe (A ↔ B) zwischen den Argumenten. Jedes Gegenargument soll das angegriffene Argument logisch herausfordern oder einschränken.\n"
+            "4. TOKEN-EFFIZIENZ & PRÄZISION: Fasse jede Argument-Behauptung (claim) prägnant in 1–2 Sätzen zusammen. Halte die Angriffsbegründung (reason) auf 1 kurzen Satz beschränkt.\n"
+            "5. QUELLENTREUE: Trage als 'source_url' die exakte URL des zugehörigen Artikels ein (oder KEINE_QUELLE, falls nicht zuzuordnen). Keine erfundenen URLs.\n"
+            "6. SPRACHE: Deutsch."
         ),
     )
 
@@ -149,10 +147,10 @@ def get_synthesis_agent(model_name: str) -> Agent[None, FullAnalysisResult]:
         model,
         output_type=FullAnalysisResult,
         system_prompt=(
-            "Du erhältst ein Argumentationsframework und mathematisch "
-            "berechnete Perspektiven. Formuliere für jede Perspektive eine "
-            "kurze, sachliche übergeordnete These und einen Titel mit maximal "
-            "vier Wörtern. Keine Bewertung oder Rangfolge der Perspektiven. "
-            "Formuliere auf Deutsch."
+            "Du erhältst ein formales Argumentationsframework und berechnete Perspektiven (Extensions).\n"
+            "Formuliere für jede Perspektive:\n"
+            "- 'title': prägnanter Titel (max. 4 Wörter)\n"
+            "- 'thesis': eine sachliche, prägnante Kernaussage (1–2 Sätze)\n"
+            "Keine Wertung, kein Ranking. Deutsch."
         ),
     )
