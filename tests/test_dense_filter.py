@@ -49,12 +49,19 @@ Content: Forscher belegen Effizienzgewinne durch KI.
 Source: https://a.com
 
 Title: News B
-Content: Allerdings bestehen erhebliche Sicherheitsrisiken.
-Source: https://b.com"""
+Content: Allerdings bestehen erhebliche KI Sicherheitsrisiken.
+Source: https://b.com
+
+Title: Unrelated News C
+Content: SpaceX hat drei Raketen erfolgreich gestartet.
+Source: https://c.com"""
 
     pruned = prune_corpus(corpus, topic="KI")
     assert "News A" in pruned
     assert "News B" in pruned
+    # Unrelated news should be completely pruned away
+    assert "Unrelated News C" not in pruned
+    assert "SpaceX" not in pruned
 
 
 def test_resolve_local_m4_models():

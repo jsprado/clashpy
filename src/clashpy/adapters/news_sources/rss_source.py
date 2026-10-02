@@ -166,8 +166,7 @@ class RSSNewsSource:
                         if pattern.search(getattr(entry, "title", "") or "")
                         or pattern.search(getattr(entry, "summary", "") or "")
                     ]
-                    # Prefer topic-matched entries if available, otherwise take feed top entries
-                    feed_entries = matched if matched else feed_valid_entries
+                    feed_entries = matched
                 else:
                     feed_entries = feed_valid_entries
 

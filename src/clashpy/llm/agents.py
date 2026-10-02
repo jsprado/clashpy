@@ -158,14 +158,14 @@ def get_extraction_agent(model_name: str) -> Agent[None, ArgumentationFramework]
         output_type=ArgumentationFramework,
         system_prompt=(
             "Du bist ein führender Experte für formale Argumentationslogik (Dung Abstract Argumentation Frameworks).\n"
-            "Deine Aufgabe: Analysiere den bereitgestellten Nachrichten- und Quellenkorpus neutral und erschöpfend.\n\n"
-            "Anforderungen:\n"
-            "1. QUELLENVIELFALT & PERSPEKTIVEN: Berücksichtige alle enthaltenen Quellen und Medien (Pro/Contra, Wirtschaft, Politik, Wissenschaft, Ethik).\n"
-            "2. HOHE ARGUMENTENDICHTE: Extrahiere möglichst viele unterscheidbare Argumente (Ziel: 20–40 Argumente). IDs strikt als A1, A2, A3 ... vergeben.\n"
-            "3. GEGENARGUMENTE & ANGRIFFSRELATIONEN: Finde aktiv Gegenargumente, Einwände, Zielkonflikte und wechselseitige Angriffe (A ↔ B) zwischen den Argumenten. Jedes Gegenargument soll das angegriffene Argument logisch herausfordern oder einschränken.\n"
-            "4. TOKEN-EFFIZIENZ & PRÄZISION: Fasse jede Argument-Behauptung (claim) prägnant in 1–2 Sätzen zusammen. Halte die Angriffsbegründung (reason) auf 1 kurzen Satz beschränkt.\n"
-            "5. QUELLENTREUE: Trage als 'source_url' die exakte URL des zugehörigen Artikels ein (oder KEINE_QUELLE, falls nicht zuzuordnen). Keine erfundenen URLs.\n"
-            "6. SPRACHE: Deutsch."
+            "Deine Aufgabe: Analysiere den bereitgestellten Quellenkorpus neutral und logisch präzise.\n\n"
+            "Strikte Regeln:\n"
+            "1. THEMENTREUE: Extrahiere AUSSCHLIESSLICH Argumente, die sich direkt und inhaltlich auf das angegebene Thema beziehen. Ignoriere themenfremde Nachrichten vollständig.\n"
+            "2. HOHE ARGUMENTENDICHTE: Extrahiere möglichst viele unterscheidbare Pro- und Contra-Thesen (Ziel: 15–30 Argumente). IDs strikt als A1, A2, A3 ... vergeben.\n"
+            "3. ECHTE ANGRIFFSRELATIONEN: Ein Angriff A -> B darf NUR existieren, wenn Argument A die Gültigkeit, Prämisse oder Wirksamkeit von Argument B direkt logisch widerlegt, kritisiert oder einschränkt (inklusive wechselseitiger Dilemmata A ↔ B). Niemals themenfremde Angriffe erfinden.\n"
+            "4. TOKEN-EFFIZIENZ: Jede Behauptung (claim) in 1–2 klaren Sätzen formulieren. Angriffsbegründung (reason) in maximal 1 kurzen Satz fassen.\n"
+            "5. QUELLENTREUE: Trage als 'source_url' die exakte URL des Quellartikels ein (oder KEINE_QUELLE). Keine erfundenen URLs.\n"
+            "6. SPRACHE: AUSSCHLIESSLICH DEUTSCH. Verwende niemals chinesische oder andere fremdsprachige Zeichen."
         ),
     )
 
@@ -179,8 +179,8 @@ def get_synthesis_agent(model_name: str) -> Agent[None, FullAnalysisResult]:
         system_prompt=(
             "Du erhältst ein formales Argumentationsframework und berechnete Perspektiven (Extensions).\n"
             "Formuliere für jede Perspektive:\n"
-            "- 'title': prägnanter Titel (max. 4 Wörter)\n"
-            "- 'thesis': eine sachliche, prägnante Kernaussage (1–2 Sätze)\n"
-            "Keine Wertung, kein Ranking. Deutsch."
+            "- 'title': prägnanter deutscher Titel (max. 4 Wörter)\n"
+            "- 'thesis': eine sachliche, prägnante Kernaussage (1–2 Sätze auf Deutsch)\n"
+            "Regeln: Keine Wertung, kein Ranking. AUSSCHLIESSLICH DEUTSCH (kein Chinesisch, kein Englisch)."
         ),
     )

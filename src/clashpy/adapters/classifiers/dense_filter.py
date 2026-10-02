@@ -132,7 +132,7 @@ def score_sentence_argument_density(sentence: str, topic: str = "") -> float:
 
     # 2. Topic keyword relevance
     if topic:
-        topic_tokens = [t.lower() for t in re.findall(r"\w+", topic) if len(t) > 2]
+        topic_tokens = [t.lower() for t in re.findall(r"\w+", topic) if len(t) >= 2]
         for token in topic_tokens:
             if token in lower:
                 score += 2.0
@@ -172,6 +172,15 @@ def prune_article_text(
             content_lines.append(line)
 
     full_content = " ".join(content_lines)
+
+    # If topic is provided, ensure the article has at least minimal topical relevance
+    if topic:
+        topic_tokens = [t.lower() for t in re.findall(r"\w+", topic) if len(t) >= 2]
+        combined_lower = (title + " " + full_content).lower()
+        has_topic_match = any(token in combined_lower for token in topic_tokens)
+        if not has_topic_match:
+            return ""
+
     # Split content into sentences
     raw_sentences = re.split(r"(?<=[.!?])\s+", full_content)
 
