@@ -50,14 +50,33 @@ def _resolve_model(model_name: str):
         provider = OpenAIProvider(base_url=base_url, api_key="not-needed")
         return OpenAIChatModel(raw_name, provider=provider)
 
-    # Qwen AliCloud DashScope (Compatible OpenAI Endpoint)
-    if model_name.startswith("dashscope:") or model_name.startswith("alicloud:"):
+    # Qwen Cloud / Alibaba DashScope (Compatible OpenAI Endpoint)
+    if (
+        model_name.startswith("qwencloud:")
+        or model_name.startswith("qwen:")
+        or model_name.startswith("dashscope:")
+        or model_name.startswith("alicloud:")
+        or model_name.startswith("alibaba:")
+    ):
         from pydantic_ai.models.openai import OpenAIChatModel
         from pydantic_ai.providers.openai import OpenAIProvider
 
-        raw_name = model_name.split(":", 1)[1]
-        api_key = os.getenv("DASHSCOPE_API_KEY") or os.getenv("ALICLOUD_API_KEY") or ""
-        base_url = "https://dashscope-intl.aliyuncs.com/compatible-mode/v1"
+        raw_name = model_name.split(":", 1)[1] if ":" in model_name else "qwen-plus"
+        if not raw_name or raw_name.lower() in ("default", "qwen", "cloud"):
+            raw_name = "qwen-plus"
+
+        api_key = (
+            os.getenv("QWEN_API_KEY")
+            or os.getenv("DASHSCOPE_API_KEY")
+            or os.getenv("ALICLOUD_API_KEY")
+            or os.getenv("ALIBABA_API_KEY")
+            or os.getenv("OPENAI_API_KEY")
+            or "sk-placeholder"
+        )
+        base_url = os.getenv(
+            "QWEN_BASE_URL",
+            "https://dashscope-intl.aliyuncs.com/compatible-mode/v1",
+        )
         provider = OpenAIProvider(base_url=base_url, api_key=api_key)
         return OpenAIChatModel(raw_name, provider=provider)
 
@@ -67,7 +86,7 @@ def _resolve_model(model_name: str):
         from pydantic_ai.providers.openai import OpenAIProvider
 
         raw_name = model_name.split(":", 1)[1]
-        api_key = os.getenv("DEEPINFRA_API_KEY") or os.getenv("DEEPINFRA_TOKEN") or ""
+        api_key = os.getenv("DEEPINFRA_API_KEY") or os.getenv("DEEPINFRA_TOKEN") or "sk-placeholder"
         base_url = "https://api.deepinfra.com/v1/openai"
         provider = OpenAIProvider(base_url=base_url, api_key=api_key)
         return OpenAIChatModel(raw_name, provider=provider)
