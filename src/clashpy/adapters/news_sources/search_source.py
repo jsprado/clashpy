@@ -58,9 +58,9 @@ class GoogleNewsSearchSource:
         self.time_window = time_window
         self.request_timeout = request_timeout
 
-    def _build_search_url(self, query: str) -> str:
+    def _build_search_url(self, query: str, use_time_window: bool = True) -> str:
         clean_query = query.strip()
-        if self.time_window:
+        if use_time_window and self.time_window:
             scoped_query = f"{clean_query} when:{self.time_window}"
         else:
             scoped_query = clean_query
@@ -72,20 +72,21 @@ class GoogleNewsSearchSource:
         ceid = f"{self.country}:{self.language}"
         return f"https://news.google.com/rss/search?q={encoded}&hl={hl}&gl={gl}&ceid={ceid}"
 
-    def fetch(self, topic: str, max_items: int = 50) -> str:
-        if not topic.strip():
-            return ""
+    def _build_search_url_en(self, query: str, use_time_window: bool = True) -> str:
+        clean_query = query.strip()
+        if use_time_window and self.time_window:
+            scoped_query = f"{clean_query} when:{self.time_window}"
+        else:
+            scoped_query = clean_query
 
-        # Fetch in primary language and English for multi-perspective coverage
-        search_urls = [
-            self._build_search_url(topic),
-            f"https://news.google.com/rss/search?q={quote_plus(topic + ' when:' + self.time_window)}&hl=en-US&gl=US&ceid=US:en",
-        ]
+        encoded = quote_plus(scoped_query)
+        return f"https://news.google.com/rss/search?q={encoded}&hl=en-US&gl=US&ceid=US:en"
 
+    def _fetch_from_urls(self, urls: list[str]) -> list[list]:
         entries_by_url: list[list] = []
         seen_links = set()
 
-        for url in search_urls:
+        for url in urls:
             try:
                 request = Request(url, headers={"User-Agent": DEFAULT_USER_AGENT})
                 response = urlopen(request, timeout=self.request_timeout)
@@ -111,6 +112,36 @@ class GoogleNewsSearchSource:
                     entries_by_url.append(url_entries)
             except Exception:
                 continue
+
+        return entries_by_url
+
+    def fetch(self, topic: str, max_items: int = 50) -> str:
+        if not topic.strip():
+            return ""
+
+        # 1. Fetch in primary language and English with time_window if configured
+        search_urls = [
+            self._build_search_url(topic, use_time_window=True),
+            self._build_search_url_en(topic, use_time_window=True),
+        ]
+        entries_by_url = self._fetch_from_urls(search_urls)
+
+        # 2. Fallback: if time_window yielded no results, query without time restriction
+        if not entries_by_url and self.time_window:
+            fallback_urls = [
+                self._build_search_url(topic, use_time_window=False),
+                self._build_search_url_en(topic, use_time_window=False),
+            ]
+            entries_by_url = self._fetch_from_urls(fallback_urls)
+
+        # 3. Fallback: if still empty and topic contains hyphens/slashes/underscores, query cleaned topic
+        if not entries_by_url and any(ch in topic for ch in ("-", "_", "/")):
+            clean_topic = re.sub(r"[\-_/]+", " ", topic).strip()
+            fallback_urls = [
+                self._build_search_url(clean_topic, use_time_window=False),
+                self._build_search_url_en(clean_topic, use_time_window=False),
+            ]
+            entries_by_url = self._fetch_from_urls(fallback_urls)
 
         if not entries_by_url:
             return ""

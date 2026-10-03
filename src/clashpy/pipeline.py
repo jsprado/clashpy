@@ -199,14 +199,15 @@ def run_pipeline(
                 f"news:{news_source.name}", news_key, ttl=news_ttl
             )
 
-        if raw_news is None:
+        if raw_news is None or not (isinstance(raw_news, str) and raw_news.strip()):
             print(f"→ News-Cache MISS/REFRESH ({news_source.name})")
             raw_news = news_source.fetch(topic, max_items=max_news_items)
-            cache.set_json(f"news:{news_source.name}", news_key, raw_news)
+            if raw_news and raw_news.strip():
+                cache.set_json(f"news:{news_source.name}", news_key, raw_news)
         else:
             print(f"→ News-Cache HIT ({news_source.name})")
 
-        if not raw_news.strip():
+        if not raw_news or not raw_news.strip():
             raise NoNewsDataError(
                 "No usable news data was retrieved. Check the topic and feed URLs."
             )

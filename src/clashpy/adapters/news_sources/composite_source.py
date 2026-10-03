@@ -12,7 +12,10 @@ from pathlib import Path
 
 from clashpy.adapters.news_sources.base import NewsSource
 from clashpy.adapters.news_sources.rss_source import RSSNewsSource
-from clashpy.adapters.news_sources.search_source import GoogleNewsSearchSource
+from clashpy.adapters.news_sources.search_source import (
+    DuckDuckGoNewsSource,
+    GoogleNewsSearchSource,
+)
 from clashpy.adapters.news_sources.sources_config import SourceConfig, load_sources_from_yaml
 
 
@@ -52,6 +55,15 @@ class CompositeNewsSource:
             search_blob = searcher.fetch(topic, max_items=max(30, max_items))
             if search_blob.strip():
                 search_articles = [a.strip() for a in search_blob.split("\n\n") if a.strip()]
+            else:
+                # Secondary search fallback via DuckDuckGo
+                try:
+                    ddg_searcher = DuckDuckGoNewsSource(request_timeout=self.request_timeout)
+                    ddg_blob = ddg_searcher.fetch(topic, max_items=max(30, max_items))
+                    if ddg_blob.strip():
+                        search_articles = [a.strip() for a in ddg_blob.split("\n\n") if a.strip()]
+                except Exception:
+                    pass
 
         # 2. Curated international, national, business, and tech RSS feeds from YAML
         if self.sources:

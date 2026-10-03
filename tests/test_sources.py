@@ -74,3 +74,26 @@ def test_composite_news_source_initialization():
     )
     assert composite.name == "composite"
     assert len(composite.sources) > 0
+
+
+def test_google_news_search_fallback_when_empty():
+    source = GoogleNewsSearchSource(language="de", country="DE", time_window="30d")
+    call_urls = []
+
+    def mock_fetch(urls):
+        call_urls.extend(urls)
+        # First call (with time_window) returns empty, second call returns an entry
+        if any("when%3A30d" in u or "when:30d" in u for u in urls):
+            return []
+        from types import SimpleNamespace
+        entry = SimpleNamespace(
+            title="Israel Gaza Konflikt Debatte",
+            summary="Diskussion über die Schuldfrage.",
+            link="https://example.com/article",
+        )
+        return [[entry]]
+
+    source._fetch_from_urls = mock_fetch
+    result = source.fetch("Israel-Gaza-Konflikt Schuldfrage")
+    assert "Israel Gaza Konflikt Debatte" in result
+    assert len(call_urls) >= 4
