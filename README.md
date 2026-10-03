@@ -84,7 +84,7 @@ clashpy/
 
 - **Collaborative Multi-Agent Debate Engine**: Employs specialized adversarial sub-agents (**Advocatus** for supportive claims, **Skeptiker** for risks and counter-theses, and **Cross-Examiner** for strict Dung attack inference) to guarantee balanced 50:50 perspective diversity without single-prompt bias.
 - **Sub-Millisecond Dense Argument Pre-Filter**: Scans news corpora locally on CPU/Neural Engine before LLM invocation, stripping boilerplate and noise down to information-dense argument premises (~75% token reduction).
-- **Apple Silicon (Metal GPU) Native Execution**: Runs 100% locally and offline on Apple Silicon (M1–M4) / Metal GPU via Ollama (`--model apple` or `--model ollama:qwen2.5:7b`) with zero token costs and sub-second TTFT.
+- **Apple Silicon (Metal GPU) Native Execution**: Runs 100% locally and offline on Apple Silicon / Metal GPU via Ollama (`--model apple` or `--model ollama:qwen2.5:7b`) with zero token costs and sub-second TTFT.
 - **Multi-Feed Ingestion & Bias Mitigation**: Automatically aggregates across multiple distinct RSS news feeds (BBC, Reuters, Al Jazeera, NYT, Tagesschau, Zeit, Heise) defined in `sources.yaml` to eliminate single-source editorial bias.
 - **Topic-Targeted Deep Search (Google News Search)**: Allows targeted topic queries across the past 7–30 days (`--search` / `--search-time 30d`) instead of relying solely on transient frontpage headlines.
 - **Multi-Perspective Source Filtering in Cytoscape.js**: Filter arguments interactively by media category (*International Leitmedien*, *Nationale Leitmedien*, *Tech & Fachpresse*, *Wirtschaft & Policy*, *Deep Search*).
@@ -149,7 +149,7 @@ uv run clashpy "4-Day Work Week" [OPTIONS]
 
 ## Local Offline Execution (Apple Silicon / Ollama)
 
-Run `clashpy` 100% locally with zero external API calls and zero token costs on any Apple Silicon Mac (M1, M2, M3, M4):
+Run `clashpy` 100% locally with zero external API calls and zero token costs on any Apple Silicon Mac:
 
 ```bash
 # 1. Start Ollama with Qwen 2.5 on Apple Silicon Metal
