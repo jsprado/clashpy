@@ -12,7 +12,7 @@ Automated Argumentation Reasoning Engine
 
 # clashpy
 
-> **From unstructured news to formally derived conflict structures.**  
+> **From unstructured data to formally derived conflict structures.**  
 A lightweight, modular proof-of-concept for automated argumentation mining and formal reasoning. It ingests live news streams, extracts claims and attacks via LLMs, and derives perspectives using Dung's Abstract Argumentation Frameworks.
 
 ---
