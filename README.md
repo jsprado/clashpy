@@ -134,7 +134,10 @@ uv run clashpy "4-Day Work Week" [OPTIONS]
 | `--source` | Single feed URL or comma-separated list of RSS feeds (overrides YAML/Search) | `None` |
 | `--solver` | Chosen solver algorithm (`naive` or `pygarg`) | `naive` |
 | `--semantics` | Formal semantics (`PR`, `ST`, `CO`, `GR`) | `PR` (Preferred) |
-| `--model` | LLM model identifier (supports Google, OpenAI, Anthropic, Ollama, etc.) | `google:gemini-3.5-flash` |
+| `--model` | Global default LLM model identifier (supports Google, OpenAI, Anthropic, Ollama, etc.) | `google:gemini-3.5-flash` |
+| `--extract-model` | LLM model used specifically for argument extraction (e.g. `ollama:llama3.1:8b`) | Defaults to `--model` |
+| `--synthesis-model` | LLM model used specifically for the synthesis report (e.g. `google:gemini-3.5-flash`) | Defaults to `--model` |
+| `--hybrid` | Shortcut for hybrid mode: local Ollama model for extraction + cloud LLM for synthesis | `False` |
 | `--export-md` | Export structured Markdown analysis report to `output/` | Disabled |
 | `--export-mmd` | Export Mermaid diagram to `output/` | Disabled |
 | `--export-html` | Export interactive Cytoscape.js HTML visualization dashboard to `output/` | Disabled |
@@ -147,21 +150,37 @@ uv run clashpy "4-Day Work Week" [OPTIONS]
 
 ---
 
-## Local Offline Execution (Apple Silicon / Ollama)
+## Local Offline Execution & Hybrid Token Reduction
 
-Run `clashpy` 100% locally with zero external API calls and zero token costs on any Apple Silicon Mac:
+### 1. Hybrid Mode (Maximum Token & Cost Savings)
+Extract voluminous argument graphs locally on Apple Silicon (0 Cloud tokens) and only send the compact computed extension results to a Cloud LLM for final synthesis:
 
 ```bash
-# 1. Start Ollama with Qwen 2.5 on Apple Silicon Metal
+# Shortcut: local Ollama (Llama 3.1 / Qwen 2.5) + Google Gemini for synthesis
+uv run clashpy "Israel-Gaza-Konflikt Schuldfrage" --hybrid --export-html --export-md
+
+# Or explicitly select distinct models for extraction and synthesis:
+uv run clashpy "Israel-Gaza-Konflikt Schuldfrage" \
+  --extract-model "ollama:llama3.1:8b" \
+  --synthesis-model "google:gemini-3.5-flash" \
+  --export-html
+```
+
+### 2. Full 100% Local Offline Execution (Zero API Costs & Total Privacy)
+Run `clashpy` completely offline with zero external API calls:
+
+```bash
+# 1. Start Ollama with Qwen 2.5 / Llama 3.1 on Apple Silicon Metal
 ollama run qwen2.5:7b
 
-# 2. Run clashpy using the local Apple Silicon model alias
+# 2. Run clashpy using the local model alias
 uv run clashpy "4-Day Work Week" --model apple --export-html --export-md
 ```
 
 ### Apple Silicon Optimization Highlights:
 * **Sub-millisecond Pre-Filter (`dense_filter`):** Scans news corpus locally on CPU/Neural Engine, pruning boilerplate and noise down to high-density argument sentences (~75% token reduction).
-* **Metal GPU Acceleration:** Generates structured argument graphs locally in seconds with Qwen 2.5 (7B or 14B).
+* **Metal GPU Acceleration:** Generates structured argument graphs locally in seconds with Qwen 2.5 or Llama 3.1.
+* **Hybrid Split Architecture:** Saves up to ~95% of cloud token costs by offloading the token-heavy extraction phase to local hardware.
 
 ---
 

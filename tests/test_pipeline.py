@@ -29,6 +29,8 @@ def test_pipeline_with_test_model(tmp_path: Path):
         solver=solver,
         cache_db=cache_db,
         model_name="test",
+        extract_model="test",
+        synthesis_model="test",
         semantics=Semantics.PREFERRED,
         with_synthesis=False,
     )

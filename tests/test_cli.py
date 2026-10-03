@@ -76,3 +76,27 @@ def test_suppress_cpython314_http_response_bug():
     with patch("sys.__unraisablehook__") as mock_default:
         _suppress_cpython314_http_response_bug(other_unraisable)
         mock_default.assert_called_once_with(other_unraisable)
+
+
+def test_parse_args_hybrid_and_model_flags():
+    from clashpy.cli import parse_args
+    with patch("sys.argv", ["clashpy", "Topic", "--hybrid"]):
+        args = parse_args()
+        assert args.hybrid is True
+        assert args.extract_model is None
+        assert args.synthesis_model is None
+
+    with patch(
+        "sys.argv",
+        [
+            "clashpy",
+            "Topic",
+            "--extract-model",
+            "ollama:llama3.1:8b",
+            "--synthesis-model",
+            "google:gemini-3.5-flash",
+        ],
+    ):
+        args = parse_args()
+        assert args.extract_model == "ollama:llama3.1:8b"
+        assert args.synthesis_model == "google:gemini-3.5-flash"

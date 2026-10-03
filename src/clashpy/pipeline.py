@@ -175,7 +175,9 @@ def run_pipeline(
     news_source: NewsSource,
     solver: Solver,
     cache_db: Path,
-    model_name: str,
+    model_name: str = "google:gemini-3.5-flash",
+    extract_model: str | None = None,
+    synthesis_model: str | None = None,
     semantics: Semantics = Semantics.PREFERRED,
     max_news_items: int = 30,
     news_ttl: timedelta = timedelta(minutes=15),
@@ -183,6 +185,9 @@ def run_pipeline(
     with_synthesis: bool = True,
     dense_filter: bool = True,
 ) -> PipelineResult:
+    actual_extract_model = extract_model or model_name
+    actual_synthesis_model = synthesis_model or model_name
+
     with DuckDBCache(cache_db) as cache:
         # -- 1. News Ingestion ----------------------------------------
         news_key = stable_hash(
@@ -220,7 +225,7 @@ def run_pipeline(
             news_payload = raw_news
 
         # -- 3. Framework Extraction ----------------------------------
-        af = _extract_framework(cache, news_payload, model_name, topic, force_refresh)
+        af = _extract_framework(cache, news_payload, actual_extract_model, topic, force_refresh)
 
         # -- 4. Extension Solving -------------------------------------
         extensions = _solve_extensions(cache, af, solver, semantics, force_refresh)
@@ -235,7 +240,7 @@ def run_pipeline(
         # -- 6. Synthesis (optional) ----------------------------------
         synthesis = None
         if with_synthesis:
-            synthesis = _synthesize(cache, af, extensions, model_name, force_refresh)
+            synthesis = _synthesize(cache, af, extensions, actual_synthesis_model, force_refresh)
 
         return PipelineResult(
             af=af,

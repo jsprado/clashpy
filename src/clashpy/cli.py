@@ -106,7 +106,26 @@ def parse_args() -> argparse.Namespace:
         default="30d",
         help="Search time horizon, e.g. '7d', '14d', '30d' (default: 30d)",
     )
-    parser.add_argument("--model", default=DEFAULT_MODEL)
+    parser.add_argument(
+        "--model",
+        default=DEFAULT_MODEL,
+        help="Global default LLM model for extraction and synthesis (default: google:gemini-3.5-flash)",
+    )
+    parser.add_argument(
+        "--extract-model",
+        default=None,
+        help="LLM for argument extraction (e.g. 'ollama:llama3.1:8b', 'ollama:qwen2.5:7b'). Defaults to --model.",
+    )
+    parser.add_argument(
+        "--synthesis-model",
+        default=None,
+        help="LLM for synthesis report generation (e.g. 'google:gemini-3.5-flash'). Defaults to --model.",
+    )
+    parser.add_argument(
+        "--hybrid",
+        action="store_true",
+        help="Hybrid mode shortcut: use local Ollama model for extraction and cloud model for synthesis.",
+    )
     parser.add_argument(
         "--solver",
         choices=["naive", "pygarg"],
@@ -238,12 +257,24 @@ def _run() -> None:
 
     source_desc = f"{news_source.name} (yaml={args.source_yaml}, search={args.search})" if not args.source else args.source
 
+    extract_model = args.extract_model
+    synthesis_model = args.synthesis_model
+
+    if args.hybrid:
+        if not extract_model:
+            local_default = os.getenv("OLLAMA_MODEL", "llama3.1:8b")
+            extract_model = local_default if local_default.startswith("ollama:") else f"ollama:{local_default}"
+        if not synthesis_model:
+            synthesis_model = args.model or DEFAULT_MODEL
+
     result = run_pipeline(
         topic=topic,
         news_source=news_source,
         solver=solver,
         cache_db=Path(args.cache_db),
         model_name=args.model,
+        extract_model=extract_model,
+        synthesis_model=synthesis_model,
         semantics=Semantics(args.semantics),
         max_news_items=args.max_articles,
         news_ttl=timedelta(minutes=args.news_ttl_minutes),
@@ -258,6 +289,9 @@ def _run() -> None:
     print("=" * 70)
     print(f"Topic:         {result.af.topic}")
     print(f"Solver:        {solver.name} ({args.semantics})")
+    print(f"Extraction LLM:{extract_model or args.model}")
+    if not args.no_synthesis:
+        print(f"Synthesis LLM: {synthesis_model or args.model}")
     print(f"Arguments:     {len(result.af.arguments)}")
     print(f"Attacks:       {len(result.af.attacks)}")
     print(f"Extensions:    {len(result.extensions)}")
@@ -313,6 +347,12 @@ def _run() -> None:
         html_path = _resolve_export_path(
             args.export_html, "af_graph.html", output_dir, now_str
         )
+        model_display = (
+            f"Extraction: {extract_model or args.model} | Synthesis: {synthesis_model or args.model}"
+            if (extract_model or synthesis_model)
+            and ((extract_model or args.model) != (synthesis_model or args.model))
+            else args.model
+        )
         html_content = generate_cytoscape_html(
             af=result.af,
             extensions=result.extensions,
@@ -323,8 +363,7 @@ def _run() -> None:
             synthesis=result.synthesis,
             solver_name=solver.name,
             semantics_name=args.semantics,
-            model_name=args.model,
-            source_name=args.source,
+            model_name=model_display,
         )
         html_path.write_text(html_content, encoding="utf-8")
         print(f"Interactive Cytoscape.js HTML written to: {html_path}")
