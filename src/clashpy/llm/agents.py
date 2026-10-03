@@ -180,7 +180,7 @@ def get_pro_agent(model_name: str) -> Agent[None, ArgumentList]:
             "die FÜR das angegebene Thema sprechen (Chancen, gesellschaftlicher Nutzen, Effizienzgewinne, "
             "positive Studienergebnisse, Vorteile, Innovationen).\n\n"
             "Regeln:\n"
-            "1. Extrahiere 6 bis 15 distinkte, prägnante Pro-Thesen.\n"
+            "1. Extrahiere 10 bis 25 distinkte, prägnante Pro-Thesen (hohe Argumentendichte).\n"
             "2. Formuliere jede Behauptung (claim) präzise in 1–2 Sätzen auf Deutsch.\n"
             "3. Trage als 'source_url' die exakte URL des zugehörigen Quellartikels ein (oder KEINE_QUELLE).\n"
             "4. Vergib vorläufige IDs: P1, P2, P3 ...\n"
@@ -203,7 +203,7 @@ def get_contra_agent(model_name: str) -> Agent[None, ArgumentList]:
             "die GEGEN das angegebene Thema sprechen (Risiken, finanzielle/ökonomische Kosten, "
             "Umsetzungshürden, Gegenstudien, ethische/rechtliche Bedenken, Verlierer).\n\n"
             "Regeln:\n"
-            "1. Extrahiere 6 bis 15 distinkte, prägnante Contra-Thesen.\n"
+            "1. Extrahiere 10 bis 25 distinkte, prägnante Contra-Thesen (hohe Argumentendichte).\n"
             "2. Formuliere jede Behauptung (claim) präzise in 1–2 Sätzen auf Deutsch.\n"
             "3. Trage als 'source_url' die exakte URL des zugehörigen Quellartikels ein (oder KEINE_QUELLE).\n"
             "4. Vergib vorläufige IDs: C1, C2, C3 ...\n"
@@ -232,6 +232,22 @@ def get_cross_examiner_agent(model_name: str) -> Agent[None, AttackList]:
             "5. AUSSCHLIESSLICH DEUTSCH."
         ),
     )
+
+
+def _is_redundant_claim(claim: str, existing_claims: list[str], threshold: float = 0.65) -> bool:
+    """Checks if a claim is semantically near-identical to an already accepted claim."""
+    tokens1 = set(re.findall(r"\w+", claim.lower()))
+    if not tokens1:
+        return False
+    for existing in existing_claims:
+        tokens2 = set(re.findall(r"\w+", existing.lower()))
+        if not tokens2:
+            continue
+        intersection = tokens1.intersection(tokens2)
+        union = tokens1.union(tokens2)
+        if len(intersection) / len(union) >= threshold:
+            return True
+    return False
 
 
 def extract_framework_collaborative(
@@ -264,16 +280,18 @@ def extract_framework_collaborative(
     # Step 2: Unify and re-index all arguments into clean A1, A2, A3 ...
     raw_args = list(pro_result.arguments) + list(contra_result.arguments)
     unified_arguments: list[Argument] = []
-    seen_claims: set[str] = set()
+    accepted_claims: list[str] = []
 
     for idx, raw_arg in enumerate(raw_args, 1):
         clean_claim = raw_arg.claim.strip()
-        # Basic normalization for deduplication
-        norm_key = re.sub(r"\W+", " ", clean_claim.lower()).strip()
-        if norm_key in seen_claims:
+        if not clean_claim or len(clean_claim) < 10:
             continue
-        seen_claims.add(norm_key)
 
+        # Check for exact or near-duplicate claims (Jaccard similarity > 0.65)
+        if _is_redundant_claim(clean_claim, accepted_claims, threshold=0.65):
+            continue
+
+        accepted_claims.append(clean_claim)
         unified_id = f"A{len(unified_arguments) + 1}"
         unified_arguments.append(
             Argument(
@@ -345,7 +363,7 @@ def get_extraction_agent(model_name: str) -> Agent[None, ArgumentationFramework]
             "Deine Aufgabe: Analysiere den bereitgestellten Quellenkorpus neutral und logisch präzise.\n\n"
             "Strikte Regeln:\n"
             "1. THEMENTREUE: Extrahiere AUSSCHLIESSLICH Argumente, die sich direkt und inhaltlich auf das angegebene Thema beziehen. Ignoriere themenfremde Nachrichten vollständig.\n"
-            "2. HOHE ARGUMENTENDICHTE: Extrahiere möglichst viele unterscheidbare Pro- und Contra-Thesen (Ziel: 15–30 Argumente). IDs strikt als A1, A2, A3 ... vergeben.\n"
+            "2. HOHE ARGUMENTENDICHTE: Extrahiere möglichst viele unterscheidbare Pro- und Contra-Thesen (Ziel: 20–40 Argumente). IDs strikt als A1, A2, A3 ... vergeben.\n"
             "3. ECHTE ANGRIFFSRELATIONEN: Ein Angriff A -> B darf NUR existieren, wenn Argument A die Gültigkeit, Prämisse oder Wirksamkeit von Argument B direkt logisch widerlegt, kritisiert oder einschränkt (inklusive wechselseitiger Dilemmata A ↔ B). Niemals themenfremde Angriffe erfinden.\n"
             "4. TOKEN-EFFIZIENZ: Jede Behauptung (claim) in 1–2 klaren Sätzen formulieren. Angriffsbegründung (reason) in maximal 1 kurzen Satz fassen.\n"
             "5. QUELLENTREUE: Trage als 'source_url' die exakte URL des Quellartikels ein (oder KEINE_QUELLE). Keine erfundenen URLs.\n"

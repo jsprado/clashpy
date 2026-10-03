@@ -147,7 +147,7 @@ def score_sentence_argument_density(sentence: str, topic: str = "") -> float:
 def prune_article_text(
     raw_article_text: str,
     topic: str = "",
-    max_sentences_per_article: int = 3,
+    max_sentences_per_article: int = 4,
     min_score_threshold: float = 2.0,
 ) -> str:
     """
@@ -210,7 +210,7 @@ def prune_article_text(
 def prune_corpus(
     corpus_text: str,
     topic: str = "",
-    max_sentences_per_article: int = 3,
+    max_sentences_per_article: int = 4,
 ) -> str:
     """
     Prunes an entire multi-source corpus, reducing token volume by 70-85% while

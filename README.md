@@ -177,10 +177,26 @@ ollama run qwen2.5:7b
 uv run clashpy "4-Day Work Week" --model apple --export-html --export-md
 ```
 
+### 3. LM Studio & Apple MLX Integration
+If you run local models via **LM Studio** or **Apple MLX**:
+
+```bash
+# LM Studio (start local server on port 1234):
+uv run clashpy "4-Day Work Week" --extract-model lmstudio --synthesis-model google:gemini-3.5-flash --export-html
+
+# Apple MLX (start local mlx_lm.server on port 8080):
+uv run clashpy "4-Day Work Week" --extract-model mlx --synthesis-model google:gemini-3.5-flash --export-html
+```
+
+> **Important Note on Local Model Selection:**
+> For discourse and argumentation analysis, always use general-purpose **Instruct models** (e.g. `Qwen2.5-7B-Instruct`, `Qwen2.5-14B-Instruct`, or `Meta-Llama-3.1-8B-Instruct`). Avoid specialized `-coder` models (such as `qwen2.5-coder`), as they are tuned strictly for code syntax and lack the reasoning depth required for adversarial argumentation logic.
+
 ### Apple Silicon Optimization Highlights:
 * **Sub-millisecond Pre-Filter (`dense_filter`):** Scans news corpus locally on CPU/Neural Engine, pruning boilerplate and noise down to high-density argument sentences (~75% token reduction).
 * **Metal GPU Acceleration:** Generates structured argument graphs locally in seconds with Qwen 2.5 or Llama 3.1.
 * **Hybrid Split Architecture:** Saves up to ~95% of cloud token costs by offloading the token-heavy extraction phase to local hardware.
+* **Semantic Deduplication:** Built-in token-overlap filtering automatically eliminates near-duplicate claims and repetitive model outputs.
+* **High Argument Capacity:** Extracts 20–40+ distinct Pro/Contra arguments per topic. Use `--solver pygarg` for instant SAT solving on large frameworks (>35 arguments).
 
 ---
 
