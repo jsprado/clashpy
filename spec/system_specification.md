@@ -9,7 +9,7 @@ It bridges modern Large Language Models (LLM) with formal mathematical artificia
 - **Hexagonal Architecture (Ports & Adapters)**: Clear decoupling between domain core logic, data ingestion sources, formal solvers, and LLM orchestration.
 - **Collaborative Multi-Agent Debate Engine**: Dissects discourse extraction into specialized adversarial roles (**Advocatus** for supportive claims, **Skeptiker** for counter-theses, and **Cross-Examiner** for strict Dung attack inference) to guarantee balanced 50:50 perspective diversity.
 - **Sub-Millisecond Dense Argument Pre-Filter**: High-speed local classifier running on CPU/Neural Engine to strip noise, cookies, and boilerplate, cutting LLM token volume by ~75%.
-- **Local & Offline Execution (Apple Silicon M4 / Metal)**: Zero-cost offline execution with local LLMs (Qwen 2.5 7B/14B via Ollama) and sub-second TTFT.
+- **Local & Offline Execution (Apple Silicon / Metal)**: Zero-cost offline execution with local LLMs (Qwen 2.5 7B/14B via Ollama) and sub-second TTFT.
 - **Determinism & Cost Control**: Complete SHA-256 payload caching via an embedded analytical database (DuckDB).
 - **Open/Closed Principle**: New solvers (e.g. SAT, ASP) or ingestion sources can be added without modifying the core pipeline orchestrator.
 - **Portability & CLI-first**: Seamless execution via standalone CLI, script, or library imports.
@@ -73,10 +73,10 @@ graph TD
     PreFilter --> DenseFilter[Sub-ms Lexical Density Pruner]
     
     subgraph "Multi-Agent Debate Team"
-        LLMPort --> AdvocatusAgent[🟢 Advocatus: Pro-Thesen]
-        LLMPort --> SkeptikerAgent[🔴 Skeptiker: Contra-Thesen]
-        LLMPort --> CrossExaminer[⚔️ Cross-Examiner: Dung Attacks]
-        LLMPort --> SynthesisAgent[🧠 Synthesis: Perspectives]
+        LLMPort --> AdvocatusAgent[Advocatus: Pro-Thesen]
+        LLMPort --> SkeptikerAgent[Skeptiker: Contra-Thesen]
+        LLMPort --> CrossExaminer[Cross-Examiner: Dung Attacks]
+        LLMPort --> SynthesisAgent[Synthesis: Perspectives]
     end
     
     SolverPort --> NaiveSolver[Naive Backtracking Solver max=35]
@@ -225,7 +225,7 @@ uv run clashpy [TOPIC] [OPTIONS]
 | Flag | Description | Default |
 | :--- | :--- | :--- |
 | `topic` / `--topic` | Inquiry or debate topic | `""` |
-| `--model` | LLM model identifier (supports Google, OpenAI, Anthropic, Ollama/M4, DeepInfra) | `google:gemini-3.5-flash` |
+| `--model` | LLM model identifier (supports Google, OpenAI, Anthropic, Ollama/Apple Silicon, DeepInfra) | `google:gemini-3.5-flash` |
 | `--solver` | Solver algorithm (`naive` or `pygarg`) | `naive` |
 | `--semantics` | Formal semantics (`PR`, `ST`, `CO`, `GR`) | `PR` (Preferred) |
 | `--naive-max-arguments` | Max arguments for naive solver | `35` |

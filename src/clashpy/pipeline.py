@@ -211,7 +211,7 @@ def run_pipeline(
                 "No usable news data was retrieved. Check the topic and feed URLs."
             )
 
-        # -- 2. Local Dense Pre-Filter (M4 Token Reduction) -----------
+        # -- 2. Local Dense Pre-Filter (Apple Silicon Token Reduction) -
         if dense_filter:
             from clashpy.adapters.classifiers.dense_filter import prune_corpus
             news_payload = prune_corpus(raw_news, topic=topic)

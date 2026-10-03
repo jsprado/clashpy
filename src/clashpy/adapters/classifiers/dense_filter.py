@@ -1,7 +1,7 @@
 """
 High-Speed Local Argument Density Classifier & Text Pruner.
 
-Runs locally on Apple Silicon (M4) in sub-milliseconds without external API calls.
+Runs locally on Apple Silicon (M-Series / Metal) in sub-milliseconds without external API calls.
 Filters noise, boilerplate, and low-information sentences, retaining only high-density
 argumentative claims and counter-theses before passing text to the LLM.
 """

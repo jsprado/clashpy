@@ -46,10 +46,10 @@ def _resolve_model(model_name: str):
         from pydantic_ai.models.google import GoogleModel
         return GoogleModel(model_name)
 
-    # Apple Silicon M4 / Local Ollama shortcuts
+    # Apple Silicon (M-Series / Metal) / Local Ollama shortcuts
     if (
         model_name.startswith("ollama:")
-        or model_lower in ("ollama", "local", "m4", "offline", "apple-silicon")
+        or model_lower in ("ollama", "local", "apple", "apple-silicon", "m4", "m3", "m2", "m1", "offline")
     ):
         from pydantic_ai.models.openai import OpenAIChatModel
         from pydantic_ai.providers.openai import OpenAIProvider

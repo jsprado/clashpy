@@ -23,8 +23,11 @@ A lightweight, modular proof-of-concept for automated argumentation mining and f
 # 1. Sync dependencies with uv
 uv sync
 
-# 2. Run analysis directly (with Cytoscape.js interactive HTML & Mermaid)
-uv run clashpy "4-Day Work Week" --solver naive --export-md --export-mmd --export-html --export-cytoscape
+# 2a. Run analysis with Cloud LLM (Gemini / Qwen / OpenAI)
+uv run clashpy "4-Day Work Week" --export-html --export-md
+
+# 2b. Run 100% locally & offline on Apple Silicon (M-Series / Ollama)
+uv run clashpy "4-Day Work Week" --model apple --export-html --export-md
 ```
 
 ---
@@ -81,7 +84,7 @@ clashpy/
 
 - **Collaborative Multi-Agent Debate Engine**: Employs specialized adversarial sub-agents (**Advocatus** for supportive claims, **Skeptiker** for risks and counter-theses, and **Cross-Examiner** for strict Dung attack inference) to guarantee balanced 50:50 perspective diversity without single-prompt bias.
 - **Sub-Millisecond Dense Argument Pre-Filter**: Scans news corpora locally on CPU/Neural Engine before LLM invocation, stripping boilerplate and noise down to information-dense argument premises (~75% token reduction).
-- **Apple Silicon M4 Native Execution**: Runs 100% locally and offline on Mac mini M4 / Metal GPU via Ollama (`--model m4` or `--model ollama:qwen2.5:7b`) with zero token costs and sub-second TTFT.
+- **Apple Silicon (Metal GPU) Native Execution**: Runs 100% locally and offline on Apple Silicon (M1–M4) / Metal GPU via Ollama (`--model apple` or `--model ollama:qwen2.5:7b`) with zero token costs and sub-second TTFT.
 - **Multi-Feed Ingestion & Bias Mitigation**: Automatically aggregates across multiple distinct RSS news feeds (BBC, Reuters, Al Jazeera, NYT, Tagesschau, Zeit, Heise) defined in `sources.yaml` to eliminate single-source editorial bias.
 - **Topic-Targeted Deep Search (Google News Search)**: Allows targeted topic queries across the past 7–30 days (`--search` / `--search-time 30d`) instead of relying solely on transient frontpage headlines.
 - **Multi-Perspective Source Filtering in Cytoscape.js**: Filter arguments interactively by media category (*International Leitmedien*, *Nationale Leitmedien*, *Tech & Fachpresse*, *Wirtschaft & Policy*, *Deep Search*).
@@ -144,19 +147,19 @@ uv run clashpy "4-Day Work Week" [OPTIONS]
 
 ---
 
-## Local Offline Execution (Apple Silicon M4 / Ollama)
+## Local Offline Execution (Apple Silicon / Ollama)
 
-Run `clashpy` 100% locally with zero external API calls and zero token costs:
+Run `clashpy` 100% locally with zero external API calls and zero token costs on any Apple Silicon Mac (M1, M2, M3, M4):
 
 ```bash
 # 1. Start Ollama with Qwen 2.5 on Apple Silicon Metal
 ollama run qwen2.5:7b
 
-# 2. Run clashpy using the local M4 model alias
-uv run clashpy "4-Day Work Week" --model m4 --export-html --export-md
+# 2. Run clashpy using the local Apple Silicon model alias
+uv run clashpy "4-Day Work Week" --model apple --export-html --export-md
 ```
 
-### Apple Silicon M4 Optimization Highlights:
+### Apple Silicon Optimization Highlights:
 * **Sub-millisecond Pre-Filter (`dense_filter`):** Scans news corpus locally on CPU/Neural Engine, pruning boilerplate and noise down to high-density argument sentences (~75% token reduction).
 * **Metal GPU Acceleration:** Generates structured argument graphs locally in seconds with Qwen 2.5 (7B or 14B).
 
@@ -206,7 +209,7 @@ Thanks to `pydantic-ai`, `clashpy` natively supports all major LLM providers sim
 
 | Provider | Example Model String | Required API Key / Env Variable |
 | :--- | :--- | :--- |
-| **Apple Silicon M4 (Lokal & Offline)** | `--model m4` or `ollama:qwen2.5:7b` | Keine (Ollama lokal auf Metal GPU) |
+| **Apple Silicon (Lokal & Offline)** | `--model apple` or `ollama:qwen2.5:7b` | Keine (Ollama lokal auf Metal GPU) |
 | **Google Gemini** (Default) | `google:gemini-3.5-flash` | `GOOGLE_API_KEY` |
 | **Qwen 2.5 (DeepInfra - Ultra-Günstig)** | `deepinfra:Qwen/Qwen2.5-72B-Instruct` | `DEEPINFRA_API_KEY` (~$0.13 / 1M Tokens) |
 | **Qwen 2.5 (Groq - Ultra-Schnell)** | `groq:qwen-2.5-32b` | `GROQ_API_KEY` (Free Tier / Cent-Beträge) |
