@@ -19,6 +19,14 @@ class Attack(BaseModel):
     reason: str
 
 
+class ArgumentList(BaseModel):
+    arguments: List[Argument]
+
+
+class AttackList(BaseModel):
+    attacks: List[Attack]
+
+
 class ArgumentationFramework(BaseModel):
     topic: str
     arguments: List[Argument]

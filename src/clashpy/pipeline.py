@@ -47,13 +47,15 @@ def _extract_framework(
     model_name: str,
     target_topic: str,
     force_refresh: bool,
+    collaborative: bool = True,
 ) -> ArgumentationFramework:
     key = stable_hash(
         PIPELINE_SCHEMA_VERSION,
-        "framework",
+        "framework_v2",
         model_name,
         raw_news,
         target_topic.strip().lower(),
+        collaborative,
     )
 
     if not force_refresh:
@@ -62,20 +64,29 @@ def _extract_framework(
             print("→ Framework-Cache HIT – skipping extraction LLM call")
             return ArgumentationFramework.model_validate(cached)
 
-    print("→ Framework-Cache MISS – invoking extraction LLM")
-    prompt = (
-        f"Das gewünschte Thema ist: {target_topic}\n\n"
-        f"Hier sind die Nachrichten und Daten:\n\n{raw_news}"
-        if target_topic
-        else f"Hier sind die Nachrichten und Daten:\n\n{raw_news}"
-    )
+    print("→ Framework-Cache MISS – invoking multi-agent debate extraction (Advocatus ⚔️ Skeptiker ⚔️ Cross-Examiner)")
     try:
-        result = get_extraction_agent(model_name).run_sync(prompt)
+        if collaborative:
+            from clashpy.llm.agents import extract_framework_collaborative
+
+            af = extract_framework_collaborative(
+                news_text=raw_news,
+                topic=target_topic,
+                model_name=model_name,
+            )
+        else:
+            prompt = (
+                f"Das gewünschte Thema ist: {target_topic}\n\n"
+                f"Hier sind die Nachrichten und Daten:\n\n{raw_news}"
+                if target_topic
+                else f"Hier sind die Nachrichten und Daten:\n\n{raw_news}"
+            )
+            result = get_extraction_agent(model_name).run_sync(prompt)
+            af = result.output
     except Exception as exc:
         raise ProviderError(
             f"LLM extraction failed for model '{model_name}': {exc}"
         ) from exc
-    af = result.output
 
     if target_topic:
         af.topic = target_topic

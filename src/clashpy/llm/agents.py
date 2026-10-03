@@ -8,12 +8,21 @@ lru_cache avoids recreating models during iterative executions in the same proce
 
 from __future__ import annotations
 
+from concurrent.futures import ThreadPoolExecutor
 import functools
 import os
+import re
 
 from pydantic_ai import Agent
 
-from clashpy.core.models import ArgumentationFramework, FullAnalysisResult
+from clashpy.core.models import (
+    Argument,
+    ArgumentationFramework,
+    ArgumentList,
+    Attack,
+    AttackList,
+    FullAnalysisResult,
+)
 
 
 def _resolve_model(model_name: str):
@@ -147,6 +156,159 @@ def _resolve_model(model_name: str):
         return "openrouter:qwen/qwen-2.5-72b-instruct"
 
     return model_name
+
+
+@functools.lru_cache(maxsize=4)
+def get_pro_agent(model_name: str) -> Agent[None, ArgumentList]:
+    """Advocatus Agent: Specialized in identifying supportive arguments, benefits, and evidence."""
+    model = _resolve_model(model_name)
+    return Agent(
+        model,
+        output_type=ArgumentList,
+        system_prompt=(
+            "Du bist der 'Advocatus' (Pro-Perspektiven-Analyst).\n"
+            "Deine Aufgabe: Untersuche den bereitgestellten Quellenkorpus gezielt nach Argumenten, "
+            "die FÜR das angegebene Thema sprechen (Chancen, gesellschaftlicher Nutzen, Effizienzgewinne, "
+            "positive Studienergebnisse, Vorteile, Innovationen).\n\n"
+            "Regeln:\n"
+            "1. Extrahiere 6 bis 15 distinkte, prägnante Pro-Thesen.\n"
+            "2. Formuliere jede Behauptung (claim) präzise in 1–2 Sätzen auf Deutsch.\n"
+            "3. Trage als 'source_url' die exakte URL des zugehörigen Quellartikels ein (oder KEINE_QUELLE).\n"
+            "4. Vergib vorläufige IDs: P1, P2, P3 ...\n"
+            "5. AUSSCHLIESSLICH DEUTSCH."
+        ),
+    )
+
+
+@functools.lru_cache(maxsize=4)
+def get_contra_agent(model_name: str) -> Agent[None, ArgumentList]:
+    """Skeptiker Agent: Specialized in identifying counterarguments, risks, and critical constraints."""
+    model = _resolve_model(model_name)
+    return Agent(
+        model,
+        output_type=ArgumentList,
+        system_prompt=(
+            "Du bist der 'Skeptiker' (Contra-Perspektiven-Analyst).\n"
+            "Deine Aufgabe: Untersuche den bereitgestellten Quellenkorpus gezielt nach Argumenten, "
+            "die GEGEN das angegebene Thema sprechen (Risiken, finanzielle/ökonomische Kosten, "
+            "Umsetzungshürden, Gegenstudien, ethische/rechtliche Bedenken, Verlierer).\n\n"
+            "Regeln:\n"
+            "1. Extrahiere 6 bis 15 distinkte, prägnante Contra-Thesen.\n"
+            "2. Formuliere jede Behauptung (claim) präzise in 1–2 Sätzen auf Deutsch.\n"
+            "3. Trage als 'source_url' die exakte URL des zugehörigen Quellartikels ein (oder KEINE_QUELLE).\n"
+            "4. Vergib vorläufige IDs: C1, C2, C3 ...\n"
+            "5. AUSSCHLIESSLICH DEUTSCH."
+        ),
+    )
+
+
+@functools.lru_cache(maxsize=4)
+def get_cross_examiner_agent(model_name: str) -> Agent[None, AttackList]:
+    """Cross-Examiner Agent: Analyzes the unified argument pool to construct valid Dung attack relations."""
+    model = _resolve_model(model_name)
+    return Agent(
+        model,
+        output_type=AttackList,
+        system_prompt=(
+            "Du bist der 'Cross-Examiner' (formaler Inferenz- und Widerlegungs-Experte für Dungs Argumentation Frameworks).\n"
+            "Du erhältst eine durchnummerierte Liste aller identifizierten Pro- und Contra-Argumente (A1, A2, A3...).\n"
+            "Deine Aufgabe: Finde alle echten, logischen Angriffs- und Konfliktrelationen (Attacks) zwischen diesen Argumenten.\n\n"
+            "Strikte Inferenzregeln:\n"
+            "1. Ein gerichteter Angriff (A -> B) existiert GENAU DANN, wenn Argument A die Prämisse, Gültigkeit oder Wirksamkeit von Argument B direkt logisch angreift, widerlegt, einschränkt oder als Fehlschluss entlarvt.\n"
+            "2. DILEMMA-ACHSEN: Wenn zwei Argumente in direktem, unlösbarem Zielkonflikt zueinander stehen, generiere ZWEI Angriffe (A -> B UND B -> A: wechselseitiger Angriff).\n"
+            "3. IDs: Verwende AUSSCHLIESSLICH die exakten IDs aus der Argumentenliste (z. B. attacker_id='A2', target_id='A1'). Keine erfundenen IDs.\n"
+            "4. Begründe jeden Angriff prägnant in 1 kurzen Satz ('reason').\n"
+            "5. AUSSCHLIESSLICH DEUTSCH."
+        ),
+    )
+
+
+def extract_framework_collaborative(
+    news_text: str,
+    topic: str,
+    model_name: str,
+) -> ArgumentationFramework:
+    """
+    Executes the collaborative multi-agent debate workflow:
+    1. Parallel extraction: Advocatus (Pro) + Skeptiker (Contra)
+    2. Deduplication & indexing (A1, A2, A3 ...)
+    3. Cross-Examiner refutation round for Dung attack relations (A -> B)
+    """
+    pro_prompt = f"Thema: {topic}\n\nQuellenkorpus:\n{news_text}"
+    contra_prompt = f"Thema: {topic}\n\nQuellenkorpus:\n{news_text}"
+
+    # Step 1: Run Pro and Contra agents in parallel
+    with ThreadPoolExecutor(max_workers=2) as executor:
+        future_pro = executor.submit(get_pro_agent(model_name).run_sync, pro_prompt)
+        future_contra = executor.submit(get_contra_agent(model_name).run_sync, contra_prompt)
+
+        pro_result = future_pro.result().output
+        contra_result = future_contra.result().output
+
+    # Step 2: Unify and re-index all arguments into clean A1, A2, A3 ...
+    raw_args = list(pro_result.arguments) + list(contra_result.arguments)
+    unified_arguments: list[Argument] = []
+    seen_claims: set[str] = set()
+
+    for idx, raw_arg in enumerate(raw_args, 1):
+        clean_claim = raw_arg.claim.strip()
+        # Basic normalization for deduplication
+        norm_key = re.sub(r"\W+", " ", clean_claim.lower()).strip()
+        if norm_key in seen_claims:
+            continue
+        seen_claims.add(norm_key)
+
+        unified_id = f"A{len(unified_arguments) + 1}"
+        unified_arguments.append(
+            Argument(
+                id=unified_id,
+                claim=clean_claim,
+                source_url=raw_arg.source_url.strip() or "KEINE_QUELLE",
+            )
+        )
+
+    if not unified_arguments:
+        return ArgumentationFramework(topic=topic, arguments=[], attacks=[])
+
+    # Step 3: Adversarial Cross-Examination round
+    arg_list_text = "\n".join(
+        f"- {arg.id}: {arg.claim} [Quelle: {arg.source_url}]"
+        for arg in unified_arguments
+    )
+    cross_prompt = (
+        f"Thema: {topic}\n\n"
+        f"Hier sind alle identifizierten Argumente:\n{arg_list_text}\n\n"
+        "Identifiziere alle logischen Angriffsrelationen und wechselseitigen Dilemmata zwischen diesen Argumenten."
+    )
+
+    attacks_res = get_cross_examiner_agent(model_name).run_sync(cross_prompt).output
+    known_ids = {arg.id for arg in unified_arguments}
+
+    # Validate and filter attacks to known IDs without self-attacks
+    valid_attacks: list[Attack] = []
+    seen_attacks: set[tuple[str, str]] = set()
+
+    for att in attacks_res.attacks:
+        if (
+            att.attacker_id in known_ids
+            and att.target_id in known_ids
+            and att.attacker_id != att.target_id
+            and (att.attacker_id, att.target_id) not in seen_attacks
+        ):
+            seen_attacks.add((att.attacker_id, att.target_id))
+            valid_attacks.append(
+                Attack(
+                    attacker_id=att.attacker_id,
+                    target_id=att.target_id,
+                    reason=att.reason.strip(),
+                )
+            )
+
+    return ArgumentationFramework(
+        topic=topic,
+        arguments=unified_arguments,
+        attacks=valid_attacks,
+    )
 
 
 @functools.lru_cache(maxsize=4)
