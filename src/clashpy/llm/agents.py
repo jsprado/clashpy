@@ -165,6 +165,7 @@ def get_pro_agent(model_name: str) -> Agent[None, ArgumentList]:
     return Agent(
         model,
         output_type=ArgumentList,
+        retries=3,
         system_prompt=(
             "Du bist der 'Advocatus' (Pro-Perspektiven-Analyst).\n"
             "Deine Aufgabe: Untersuche den bereitgestellten Quellenkorpus gezielt nach Argumenten, "
@@ -187,6 +188,7 @@ def get_contra_agent(model_name: str) -> Agent[None, ArgumentList]:
     return Agent(
         model,
         output_type=ArgumentList,
+        retries=3,
         system_prompt=(
             "Du bist der 'Skeptiker' (Contra-Perspektiven-Analyst).\n"
             "Deine Aufgabe: Untersuche den bereitgestellten Quellenkorpus gezielt nach Argumenten, "
@@ -209,6 +211,7 @@ def get_cross_examiner_agent(model_name: str) -> Agent[None, AttackList]:
     return Agent(
         model,
         output_type=AttackList,
+        retries=3,
         system_prompt=(
             "Du bist der 'Cross-Examiner' (formaler Inferenz- und Widerlegungs-Experte für Dungs Argumentation Frameworks).\n"
             "Du erhältst eine durchnummerierte Liste aller identifizierten Pro- und Contra-Argumente (A1, A2, A3...).\n"
@@ -237,13 +240,18 @@ def extract_framework_collaborative(
     pro_prompt = f"Thema: {topic}\n\nQuellenkorpus:\n{news_text}"
     contra_prompt = f"Thema: {topic}\n\nQuellenkorpus:\n{news_text}"
 
-    # Step 1: Run Pro and Contra agents in parallel
-    with ThreadPoolExecutor(max_workers=2) as executor:
-        future_pro = executor.submit(get_pro_agent(model_name).run_sync, pro_prompt)
-        future_contra = executor.submit(get_contra_agent(model_name).run_sync, contra_prompt)
+    try:
+        # Step 1: Run Pro and Contra agents in parallel
+        with ThreadPoolExecutor(max_workers=2) as executor:
+            future_pro = executor.submit(get_pro_agent(model_name).run_sync, pro_prompt)
+            future_contra = executor.submit(get_contra_agent(model_name).run_sync, contra_prompt)
 
-        pro_result = future_pro.result().output
-        contra_result = future_contra.result().output
+            pro_result = future_pro.result().output
+            contra_result = future_contra.result().output
+    except Exception:
+        # Fallback to single extraction agent if parallel agent invocation encounters validation retries
+        fallback_prompt = f"Thema: {topic}\n\nQuellenkorpus:\n{news_text}"
+        return get_extraction_agent(model_name).run_sync(fallback_prompt).output
 
     # Step 2: Unify and re-index all arguments into clean A1, A2, A3 ...
     raw_args = list(pro_result.arguments) + list(contra_result.arguments)
@@ -281,14 +289,19 @@ def extract_framework_collaborative(
         "Identifiziere alle logischen Angriffsrelationen und wechselseitigen Dilemmata zwischen diesen Argumenten."
     )
 
-    attacks_res = get_cross_examiner_agent(model_name).run_sync(cross_prompt).output
+    try:
+        attacks_res = get_cross_examiner_agent(model_name).run_sync(cross_prompt).output
+        raw_attacks = attacks_res.attacks
+    except Exception:
+        raw_attacks = []
+
     known_ids = {arg.id for arg in unified_arguments}
 
     # Validate and filter attacks to known IDs without self-attacks
     valid_attacks: list[Attack] = []
     seen_attacks: set[tuple[str, str]] = set()
 
-    for att in attacks_res.attacks:
+    for att in raw_attacks:
         if (
             att.attacker_id in known_ids
             and att.target_id in known_ids
@@ -318,6 +331,7 @@ def get_extraction_agent(model_name: str) -> Agent[None, ArgumentationFramework]
     return Agent(
         model,
         output_type=ArgumentationFramework,
+        retries=3,
         system_prompt=(
             "Du bist ein führender Experte für formale Argumentationslogik (Dung Abstract Argumentation Frameworks).\n"
             "Deine Aufgabe: Analysiere den bereitgestellten Quellenkorpus neutral und logisch präzise.\n\n"
@@ -338,6 +352,7 @@ def get_synthesis_agent(model_name: str) -> Agent[None, FullAnalysisResult]:
     return Agent(
         model,
         output_type=FullAnalysisResult,
+        retries=3,
         system_prompt=(
             "Du erhältst ein formales Argumentationsframework und berechnete Perspektiven (Extensions).\n"
             "Formuliere für jede Perspektive:\n"
