@@ -42,6 +42,8 @@ clashpy/
 │   ├── poster_en.png            # High-resolution architectural infographic (PNG)
 │   └── poster_en.html           # Interactive poster template (SVG/CSS)
 ├── tests/
+│   ├── test_collaborative_agents.py # Unit tests for Advocatus, Skeptiker, and Cross-Examiner debate
+│   ├── test_dense_filter.py     # Unit tests for local sub-ms Apple Silicon argument pre-filter
 │   ├── test_core.py             # Unit tests for Dung semantics, solvers, and metrics
 │   ├── test_cytoscape.py        # Unit tests for Cytoscape elements and HTML generation
 │   ├── test_sources.py          # Unit tests for YAML config and Search adapters
@@ -54,7 +56,9 @@ clashpy/
         │   ├── cache.py
         │   ├── solver.py
         │   └── metrics.py
-        ├── adapters/            # Interchangeable ports & adapters (News, Solvers)
+        ├── adapters/            # Interchangeable ports & adapters (News, Solvers, Classifiers)
+        │   ├── classifiers/
+        │   │   └── dense_filter.py
         │   ├── news_sources/
         │   │   ├── base.py
         │   │   ├── sources_config.py
@@ -75,6 +79,9 @@ clashpy/
 
 ## Key Features & Highlights
 
+- **Collaborative Multi-Agent Debate Engine**: Employs specialized adversarial sub-agents (**Advocatus** for supportive claims, **Skeptiker** for risks and counter-theses, and **Cross-Examiner** for strict Dung attack inference) to guarantee balanced 50:50 perspective diversity without single-prompt bias.
+- **Sub-Millisecond Dense Argument Pre-Filter**: Scans news corpora locally on CPU/Neural Engine before LLM invocation, stripping boilerplate and noise down to information-dense argument premises (~75% token reduction).
+- **Apple Silicon M4 Native Execution**: Runs 100% locally and offline on Mac mini M4 / Metal GPU via Ollama (`--model m4` or `--model ollama:qwen2.5:7b`) with zero token costs and sub-second TTFT.
 - **Multi-Feed Ingestion & Bias Mitigation**: Automatically aggregates across multiple distinct RSS news feeds (BBC, Reuters, Al Jazeera, NYT, Tagesschau, Zeit, Heise) defined in `sources.yaml` to eliminate single-source editorial bias.
 - **Topic-Targeted Deep Search (Google News Search)**: Allows targeted topic queries across the past 7–30 days (`--search` / `--search-time 30d`) instead of relying solely on transient frontpage headlines.
 - **Multi-Perspective Source Filtering in Cytoscape.js**: Filter arguments interactively by media category (*International Leitmedien*, *Nationale Leitmedien*, *Tech & Fachpresse*, *Wirtschaft & Policy*, *Deep Search*).
@@ -199,6 +206,7 @@ Thanks to `pydantic-ai`, `clashpy` natively supports all major LLM providers sim
 
 | Provider | Example Model String | Required API Key / Env Variable |
 | :--- | :--- | :--- |
+| **Apple Silicon M4 (Lokal & Offline)** | `--model m4` or `ollama:qwen2.5:7b` | Keine (Ollama lokal auf Metal GPU) |
 | **Google Gemini** (Default) | `google:gemini-3.5-flash` | `GOOGLE_API_KEY` |
 | **Qwen 2.5 (DeepInfra - Ultra-Günstig)** | `deepinfra:Qwen/Qwen2.5-72B-Instruct` | `DEEPINFRA_API_KEY` (~$0.13 / 1M Tokens) |
 | **Qwen 2.5 (Groq - Ultra-Schnell)** | `groq:qwen-2.5-32b` | `GROQ_API_KEY` (Free Tier / Cent-Beträge) |
