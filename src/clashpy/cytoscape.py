@@ -1213,7 +1213,7 @@ HTML_TEMPLATE = jinja2.Template("""<!DOCTYPE html>
         return `
           <div class="attack-item">
             <div class="attack-item-header">
-              <span>⚔️ ${escapeHtml(d.id)} attacks ${tgt}</span>
+              <span>${escapeHtml(d.id)} attacks ${tgt}</span>
             </div>
             <div class="attack-reason">${reason}</div>
           </div>
