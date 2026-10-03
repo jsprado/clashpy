@@ -70,4 +70,5 @@ class GroupThesis(BaseModel):
 
 
 class FullAnalysisResult(BaseModel):
+    summary: str = ""
     theses: List[GroupThesis]

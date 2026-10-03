@@ -392,8 +392,9 @@ def _run() -> None:
             args.export_md, "af_analyse.md", output_dir, now_str
         )
 
+        topic_display = result.af.topic.strip() or "Allgemeiner Nachrichtendiskurs"
         md_lines = [
-            f"# Argumentation Analysis: {result.af.topic}",
+            f"# Argumentation Analysis: {topic_display}",
             f"\n*Generated on: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}*\n",
             "## Summary",
             f"- **Solver:** {solver.name} ({args.semantics})",
@@ -445,8 +446,16 @@ def _run() -> None:
 
         if result.synthesis:
             md_lines.append("\n## Perspectives & Synthesis\n")
+            if result.synthesis.summary:
+                summary_heading = (
+                    f"**Gesamtzusammenfassung ({result.af.topic}):**\n"
+                    if result.af.topic.strip()
+                    else "**Gesamtzusammenfassung:**\n"
+                )
+                md_lines.append(summary_heading)
+                md_lines.append(f"{result.synthesis.summary}\n\n")
             for thesis in result.synthesis.theses:
-                md_lines.append(f"### Perspective {thesis.group_id}: {thesis.title}")
+                md_lines.append(f"### Perspektive {thesis.group_id}: {thesis.title}")
                 md_lines.append(f"{thesis.thesis}\n")
 
         md_lines.extend(

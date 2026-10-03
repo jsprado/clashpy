@@ -261,8 +261,13 @@ def extract_framework_collaborative(
     2. Deduplication & indexing (A1, A2, A3 ...)
     3. Cross-Examiner refutation round for Dung attack relations (A -> B)
     """
-    pro_prompt = f"Thema: {topic}\n\nQuellenkorpus:\n{news_text}"
-    contra_prompt = f"Thema: {topic}\n\nQuellenkorpus:\n{news_text}"
+    topic_clean = topic.strip()
+    if topic_clean:
+        pro_prompt = f"Thema: {topic_clean}\n\nQuellenkorpus:\n{news_text}"
+        contra_prompt = f"Thema: {topic_clean}\n\nQuellenkorpus:\n{news_text}"
+    else:
+        pro_prompt = f"Untersuche die Chancen und Pro-Positionen im folgenden Quellenkorpus:\n\nQuellenkorpus:\n{news_text}"
+        contra_prompt = f"Untersuche die Risiken und Contra-Positionen im folgenden Quellenkorpus:\n\nQuellenkorpus:\n{news_text}"
 
     try:
         # Step 1: Run Pro and Contra agents in parallel
@@ -274,7 +279,11 @@ def extract_framework_collaborative(
             contra_result = future_contra.result().output
     except Exception:
         # Fallback to single extraction agent if parallel agent invocation encounters validation retries
-        fallback_prompt = f"Thema: {topic}\n\nQuellenkorpus:\n{news_text}"
+        fallback_prompt = (
+            f"Thema: {topic_clean}\n\nQuellenkorpus:\n{news_text}"
+            if topic_clean
+            else f"Quellenkorpus:\n{news_text}"
+        )
         return get_extraction_agent(model_name).run_sync(fallback_prompt).output
 
     # Step 2: Unify and re-index all arguments into clean A1, A2, A3 ...
@@ -309,8 +318,9 @@ def extract_framework_collaborative(
         f"- {arg.id}: {arg.claim} [Quelle: {arg.source_url}]"
         for arg in unified_arguments
     )
+    topic_header = f"Thema: {topic_clean}\n\n" if topic_clean else ""
     cross_prompt = (
-        f"Thema: {topic}\n\n"
+        f"{topic_header}"
         f"Hier sind alle identifizierten Argumente:\n{arg_list_text}\n\n"
         "Identifiziere alle logischen Angriffsrelationen und wechselseitigen Dilemmata zwischen diesen Argumenten."
     )
@@ -380,10 +390,16 @@ def get_synthesis_agent(model_name: str) -> Agent[None, FullAnalysisResult]:
         output_type=FullAnalysisResult,
         retries=3,
         system_prompt=(
-            "Du erhältst ein formales Argumentationsframework und berechnete Perspektiven (Extensions).\n"
-            "Formuliere für jede Perspektive:\n"
-            "- 'title': prägnanter deutscher Titel (max. 4 Wörter)\n"
-            "- 'thesis': eine sachliche, prägnante Kernaussage (1–2 Sätze auf Deutsch)\n"
-            "Regeln: Keine Wertung, kein Ranking. AUSSCHLIESSLICH DEUTSCH (kein Chinesisch, kein Englisch)."
+            "Du bist ein neutraler Synthese-Analyst für formale Argumentationsanalysen.\n"
+            "Du erhältst das zentrale Thema, eine Liste von formalen Argumenten und die daraus mathematisch berechneten Perspektiven (Extensions).\n\n"
+            "Deine Aufgaben:\n"
+            "1. 'summary': Formuliere eine prägnante, neutrale Gesamtzusammenfassung (2–4 Sätze auf Deutsch), die das konkrete Thema explizit benennt und das Spannungsfeld der Kernkonflikte zusammenfasst.\n"
+            "2. 'theses': Formuliere für JEDE berechnete Perspektive (Gruppe):\n"
+            "   - 'title': aussagekräftiger Titel, der den thematischen Schwerpunkt dieser Perspektive bezogen auf das Thema beschreibt (max. 5 Wörter)\n"
+            "   - 'thesis': prägnante, differenzierte Kernaussage (2–3 Sätze auf Deutsch), die klar darlegt, welche Position diese Gruppe bezüglich des Themas einnimmt und wie sie ihre Sichtweise begründet.\n\n"
+            "Strikte Regeln:\n"
+            "- THEMENBEZUG: Das konkrete Thema MUSS in der Zusammenfassung und in den Thesen klar erkennbar sein.\n"
+            "- NEUTRALITÄT: Keine Wertung, kein Parteiergreifen, kein Ranking.\n"
+            "- AUSSCHLIESSLICH DEUTSCH (kein Englisch, kein Chinesisch)."
         ),
     )

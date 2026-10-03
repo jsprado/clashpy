@@ -717,7 +717,7 @@ HTML_TEMPLATE = jinja2.Template("""<!DOCTYPE html>
   <header>
     <div class="brand-title">
       <span class="logo-badge">clashpy ⚡</span>
-      <h1 title="{{ topic | e }}">{{ topic | e }}</h1>
+      <h1 title="{{ (topic | e) if (topic and topic.strip()) else 'Aktueller Nachrichtendiskurs' }}">{{ (topic | e) if (topic and topic.strip()) else 'Aktueller Nachrichtendiskurs' }}</h1>
     </div>
 
     <div class="meta-badges">
@@ -876,12 +876,17 @@ HTML_TEMPLATE = jinja2.Template("""<!DOCTYPE html>
         </div>
       </div>
 
-      {% if synthesis and synthesis.theses %}
+      {% if synthesis and (synthesis.summary or synthesis.theses) %}
       <div class="section-box perspectives-box">
-        <div class="section-title">AI Synthesis Perspectives</div>
+        <div class="section-title">Themen-Synthese{% if topic and topic.strip() %}: {{ topic | e }}{% endif %}</div>
+        {% if synthesis.summary %}
+        <div class="thesis-summary" style="margin-bottom: 12px; font-size: 13px; line-height: 1.5; color: #cbd5e1; background: rgba(255,255,255,0.04); padding: 10px; border-radius: 6px; border-left: 3px solid #6366f1;">
+          <strong>Gesamtzusammenfassung:</strong><br>{{ synthesis.summary | e }}
+        </div>
+        {% endif %}
         {% for t in synthesis.theses %}
         <div class="thesis-card">
-          <div class="thesis-title">Perspective {{ t.group_id }}: {{ t.title | e }}</div>
+          <div class="thesis-title">Perspektive {{ t.group_id }}: {{ t.title | e }}</div>
           <div class="thesis-body">{{ t.thesis | e }}</div>
         </div>
         {% endfor %}

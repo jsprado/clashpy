@@ -140,8 +140,9 @@ def _synthesize(
         for i, group in enumerate(extensions, 1)
     )
     arguments_input = "\n".join(f"- {arg.id}: {arg.claim}" for arg in af.arguments)
+    topic_header = f"Thema: {af.topic}\n\n" if af.topic.strip() else ""
     prompt = (
-        f"Thema: {af.topic}\n\n"
+        f"{topic_header}"
         f"Argumente:\n{arguments_input}\n\n"
         f"Berechnete Perspektiven:\n{groups_input}"
     )

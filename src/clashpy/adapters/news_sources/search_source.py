@@ -165,12 +165,22 @@ class GoogleNewsSearchSource:
             link = (getattr(entry, "link", "") or "").strip()
             content = summary if summary and summary.lower() != title.lower() else title
 
+            # Extract the original publisher domain / URL from the RSS entry
+            source_info = getattr(entry, "source", None) or {}
+            publisher_url = ""
+            if isinstance(source_info, dict):
+                publisher_url = str(source_info.get("href", "") or "").strip()
+            elif hasattr(source_info, "href"):
+                publisher_url = str(getattr(source_info, "href", "") or "").strip()
+
+            actual_source = publisher_url if publisher_url else link
+
             formatted_items.append(
                 "\n".join(
                     [
                         f"Title: {title}",
                         f"Content: {content}",
-                        f"Source: {link}",
+                        f"Source: {actual_source}",
                     ]
                 )
             )
