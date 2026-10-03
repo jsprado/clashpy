@@ -64,7 +64,7 @@ def _extract_framework(
             print("→ Framework-Cache HIT – skipping extraction LLM call")
             return ArgumentationFramework.model_validate(cached)
 
-    print("→ Framework-Cache MISS – invoking multi-agent debate extraction (Advocatus ⚔️ Skeptiker ⚔️ Cross-Examiner)")
+    print("→ Framework-Cache MISS – invoking multi-agent debate extraction (Advocatus, Skeptiker, Cross-Examiner)")
     try:
         if collaborative:
             from clashpy.llm.agents import extract_framework_collaborative
