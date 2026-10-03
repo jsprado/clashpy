@@ -268,7 +268,7 @@ To illustrate the output of `clashpy`, see the comprehensive analysis of the deb
 | **Core Consensus** | `████` | **`1.00`** | In **all** Preferred Extensions | **Unattacked / Defended Baseline**: Valid in every computed perspective |
 | **Contested** | `██░░` | **`0.01 – 0.99`** | In **some** Extensions | **Ideological Conflict**: Valid only under specific assumptions / trade-offs |
 | **Excluded** | `░░░░` | **`0.00`** | In **no** Extension | **Refuted / Dominated**: Defeated by counter-arguments |
-| **Dilemma Axis** | `⇋` | **`A ↔ B`** | Symmetric mutual attack | **Irreconcilable Trade-off**: Core structural dilemma of the debate |
+| **Dilemma Axis** | `<->` | **`A ↔ B`** | Symmetric mutual attack | **Irreconcilable Trade-off**: Core structural dilemma of the debate |
 
 ---
 
@@ -344,7 +344,7 @@ graph TD
   *AI Synthesis:* AI efficiency ($A3$) and talent retention ($A4$) offset reduced hours and burnout costs ($A1$), while commute cuts ($A6$) lower emissions under modernized laws ($A8$).
 - **Perspective 2 (Cost Realism & Inequity):** `{A2, A5, A7, A8}`  
   *AI Synthesis:* Cost shocks ($A2$) and shift limits ($A5$) risk labor market inequality, while leisure rebounds ($A7$) diminish climate gains. Legal reforms ($A8$) must allow sector flexibility.
-- **⇋ Detected Dilemma Axis:** `A2 ↔ A3` – Fundamental conflict between *Automation & Productivity Offset Potential* vs. *Physical Operational Capacity Limits in Frontline Shift Work*.
+- **Detected Dilemma Axis (`A2 ↔ A3`):** Fundamental conflict between *Automation & Productivity Offset Potential* vs. *Physical Operational Capacity Limits in Frontline Shift Work*.
 
 ---
 
