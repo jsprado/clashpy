@@ -261,14 +261,14 @@ To illustrate the output of `clashpy`, see the comprehensive analysis of the deb
 
 ### Semantic Status Legend & Formal Acceptance
 
-`clashpy` calculates mathematical acceptance scores based on Dung's Preferred Semantics:
+`clashpy` evaluates mathematical acceptance scores based on Dung's Preferred Semantics:
 
-| Status Badge | Acceptance Score | Dung Semantics Definition | Discourse Implication |
+| Status | Score ($s$) | Dung Semantics Definition | Discourse Implication |
 | :--- | :---: | :--- | :--- |
-| <img src="https://img.shields.io/badge/CORE%20CONSENSUS-1.00-10b981?style=for-the-badge&logo=checkmarx&logoColor=white" height="22" alt="Core Consensus" /> | **`1.00`** | Present in **100%** of Preferred Extensions | **Unattacked / Defended Baseline**: Valid in every perspective |
-| <img src="https://img.shields.io/badge/CONTESTED-0.50-f59e0b?style=for-the-badge&logo=gitkraken&logoColor=white" height="22" alt="Contested" /> | **`0.01 – 0.99`** | Present in **some** Extensions | **Ideological Conflict**: Valid under specific assumptions / perspectives |
-| <img src="https://img.shields.io/badge/EXCLUDED-0.00-ef4444?style=for-the-badge&logo=probot&logoColor=white" height="22" alt="Excluded" /> | **`0.00`** | Present in **0%** of Extensions | **Refuted / Dominated**: Defeated by counter-arguments |
-| <img src="https://img.shields.io/badge/DILEMMA%20AXIS-A%20%E2%86%94%20B-f43f5e?style=for-the-badge" height="22" alt="Dilemma Axis" /> | **`A ↔ B`** | Symmetric mutual attack pair | **Irreconcilable Trade-off**: Core dilemma of the debate |
+| 🟢 **Core Consensus** | `1.00` | In **all** Preferred Extensions | **Unattacked / Defended Baseline**: Valid in every computed perspective |
+| 🟡 **Contested** | `0.01 – 0.99` | In **some** Extensions | **Ideological Conflict**: Valid only under specific assumptions / trade-offs |
+| 🔴 **Excluded** | `0.00` | In **no** Extension | **Refuted / Dominated**: Defeated by counter-arguments |
+| ⬌ **Dilemma Axis** | `A ↔ B` | Symmetric mutual attack | **Irreconcilable Trade-off**: Core structural dilemma of the debate |
 
 ---
 
@@ -301,23 +301,22 @@ Dilemma Axes:  1
 
 ```mermaid
 graph TD
-    classDef core fill:#064e3b,stroke:#10b981,stroke-width:2.5px,color:#ecfdf5;
-    classDef contested fill:#451a03,stroke:#f59e0b,stroke-width:2px,color:#fef3c7;
-    classDef excluded fill:#450a0a,stroke:#ef4444,stroke-width:2px,color:#fee2e2;
+    classDef core fill:#064e3b,stroke:#10b981,stroke-width:1.8px,color:#ecfdf5;
+    classDef contested fill:#3b2306,stroke:#f59e0b,stroke-width:1.8px,color:#fef3c7;
+    classDef excluded fill:#3b0f0f,stroke:#ef4444,stroke-width:1.8px,color:#fee2e2;
     
-    A1["🟢 A1 (Health & Focus):<br/>Cuts burnout and sick leave while raising hourly cognitive productivity"]:::contested
-    A2["🟡 A2 (Cost Shock & Inflation):<br/>Equal pay spikes unit labor costs, threatening business viability"]:::contested
-    A3["🟡 A3 (AI & Efficiency):<br/>AI automation and streamlined workflows fully offset 20% fewer hours"]:::contested
-    A4["🟡 A4 (Talent Magnet):<br/>Attracts top talent, lowers employee turnover and costly hiring cycles"]:::contested
-    A5["🟡 A5 (Sector Inequity):<br/>Unfeasible for shift and care work, creating an unfair two-tier divide"]:::contested
-    A6["🟡 A6 (Carbon Reduction):<br/>Cutting one commute day reduces office energy and transport emissions"]:::contested
-    A7["🟡 A7 (Rebound Emissions):<br/>Extra leisure triggers carbon-heavy travel and recreational spending"]:::contested
-    A8["🟢 A8 (Legal Reform):<br/>Labor laws must be modernized to enable flexible, outcome-based work"]:::core
+    A1["A1: Health & Focus<br/>Cuts burnout & raises productivity"]:::contested
+    A2["A2: Cost Shock<br/>Spikes unit labor costs"]:::contested
+    A3["A3: AI Automation<br/>Offsets 20% fewer hours"]:::contested
+    A4["A4: Talent Magnet<br/>Lowers employee turnover"]:::contested
+    A5["A5: Sector Inequity<br/>Unfeasible for shift work"]:::contested
+    A6["A6: Carbon Reduction<br/>Lowers commute emissions"]:::contested
+    A7["A7: Rebound Travel<br/>Extra leisure triggers emissions"]:::contested
+    A8["A8: Legal Reform<br/>Modernizes labor frameworks"]:::core
 
     A2 -->|Attacks| A1
     A3 -->|Refutes| A2
-    A2 -.->|⚡ Dilemma| A3
-    A3 -.->|⚡ Dilemma| A2
+    A2 <-->|Dilemma| A3
     A4 -->|Counters| A2
     A5 -->|Challenges| A4
     A3 -->|Mitigates| A5
@@ -328,16 +327,16 @@ graph TD
 
 ### Topological Classification & Metrics
 
-| ID | Argument Claim | Status Pill | Score | Graph Role & Dynamics |
+| ID | Argument Claim | Classification | Score | Graph Role & Dynamics |
 | :--- | :--- | :---: | :---: | :--- |
-| **A1** | **Health & Focus:** Reduces burnout and raises cognitive productivity. | `🟡 CONTESTED` | **`0.50`** | Attacked by $A2$; defended by $A3$ & $A4$; neutralizes $A7$. |
-| **A2** | **Cost & Inflation:** Equal pay spikes unit labor costs and hurts viability. | `🟡 CONTESTED` | **`0.50`** | Attacks $A1$, $A3$, $A6$; attacked by $A3$ & $A4$. |
-| **A3** | **AI & Efficiency:** Automation and meeting reduction offset 20% fewer hours. | `🟡 CONTESTED` | **`0.50`** | Symmetric dilemma with $A2$ ($A2 \leftrightarrow A3$); offsets $A5$. |
-| **A4** | **Talent Magnet:** Attracts top talent and cuts turnover and recruiting overhead. | `🟡 CONTESTED` | **`0.50`** | Counterattacks $A2$; attacked by $A5$, defended by $A3$. |
-| **A5** | **Sector Inequity:** Unfeasible for frontline shifts, creating a 2-tier labor market. | `🟡 CONTESTED` | **`0.50`** | Attacks $A4$; challenged by digital administrative relief $A3$. |
-| **A6** | **Carbon Reduction:** Cutting one commute day reduces transport emissions. | `🟡 CONTESTED` | **`0.50`** | Attacked by $A2$ and $A7$; defended by health & rest focus $A1$. |
-| **A7** | **Rebound Emissions:** Extra leisure triggers carbon-heavy travel and spending. | `🟡 CONTESTED` | **`0.50`** | Attacks $A6$; counterattacked by rest-oriented lifestyle $A1$. |
-| **A8** | **Legal Reform:** Labor laws must be modernized for flexible working models. | `🟢 CORE` | **`1.00`** | **Mathematical Consensus:** Unattacked, accepted in all extensions. |
+| **A1** | **Health & Focus:** Reduces burnout and raises cognitive productivity. | 🟡 Contested | `0.50` | Attacked by $A2$; defended by $A3$ & $A4$; neutralizes $A7$. |
+| **A2** | **Cost & Inflation:** Equal pay spikes unit labor costs and hurts viability. | 🟡 Contested | `0.50` | Attacks $A1$, $A3$, $A6$; attacked by $A3$ & $A4$. |
+| **A3** | **AI & Efficiency:** Automation and meeting reduction offset 20% fewer hours. | 🟡 Contested | `0.50` | Symmetric dilemma with $A2$ ($A2 \leftrightarrow A3$); offsets $A5$. |
+| **A4** | **Talent Magnet:** Attracts top talent and cuts turnover and recruiting overhead. | 🟡 Contested | `0.50` | Counterattacks $A2$; attacked by $A5$, defended by $A3$. |
+| **A5** | **Sector Inequity:** Unfeasible for frontline shifts, creating a 2-tier labor market. | 🟡 Contested | `0.50` | Attacks $A4$; challenged by digital administrative relief $A3$. |
+| **A6** | **Carbon Reduction:** Cutting one commute day reduces transport emissions. | 🟡 Contested | `0.50` | Attacked by $A2$ and $A7$; defended by health & rest focus $A1$. |
+| **A7** | **Rebound Emissions:** Extra leisure triggers carbon-heavy travel and spending. | 🟡 Contested | `0.50` | Attacks $A6$; counterattacked by rest-oriented lifestyle $A1$. |
+| **A8** | **Legal Reform:** Labor laws must be modernized for flexible working models. | 🟢 Core | `1.00` | **Mathematical Consensus:** Unattacked, accepted in all extensions. |
 
 ### Computed Perspectives (Preferred Extensions)
 

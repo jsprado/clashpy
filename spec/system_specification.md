@@ -7,8 +7,11 @@ It bridges modern Large Language Models (LLM) with formal mathematical artificia
 
 ### Core Architectural Principles
 - **Hexagonal Architecture (Ports & Adapters)**: Clear decoupling between domain core logic, data ingestion sources, formal solvers, and LLM orchestration.
-- **Open/Closed Principle**: New solvers (e.g. SAT, ASP) or ingestion sources can be added without modifying the core pipeline orchestrator.
+- **Collaborative Multi-Agent Debate Engine**: Dissects discourse extraction into specialized adversarial roles (**Advocatus** for supportive claims, **Skeptiker** for counter-theses, and **Cross-Examiner** for strict Dung attack inference) to guarantee balanced 50:50 perspective diversity.
+- **Sub-Millisecond Dense Argument Pre-Filter**: High-speed local classifier running on CPU/Neural Engine to strip noise, cookies, and boilerplate, cutting LLM token volume by ~75%.
+- **Local & Offline Execution (Apple Silicon M4 / Metal)**: Zero-cost offline execution with local LLMs (Qwen 2.5 7B/14B via Ollama) and sub-second TTFT.
 - **Determinism & Cost Control**: Complete SHA-256 payload caching via an embedded analytical database (DuckDB).
+- **Open/Closed Principle**: New solvers (e.g. SAT, ASP) or ingestion sources can be added without modifying the core pipeline orchestrator.
 - **Portability & CLI-first**: Seamless execution via standalone CLI, script, or library imports.
 
 ### Mandatory Technology Constraints
@@ -61,48 +64,68 @@ graph TD
     
     subgraph "Adapters / Ports"
         Pipeline --> NewsPort[NewsSource Port]
+        Pipeline --> PreFilter[Local Dense Argument Pre-Filter]
         Pipeline --> SolverPort[Solver Port]
-        Pipeline --> LLMPort[LLM / Agent Port]
+        Pipeline --> LLMPort[Collaborative Multi-Agent Debate Port]
     end
     
-    NewsPort --> RSSAdapter[RSS / Atom Ingestion]
-    SolverPort --> NaiveSolver[Naive Backtracking Solver]
-    SolverPort --> PygargSolver[SAT-based Pygarg Solver]
-    LLMPort --> PydanticAI[Pydantic-AI / Gemini]
+    NewsPort --> CompositeAdapter[Composite Ingestion: YAML RSS + Google News Search]
+    PreFilter --> DenseFilter[Sub-ms Lexical Density Pruner]
     
-    %% EXTENSION POINTS:
-    %% NewsPort -.-> WebSearchAdapter[Tavily / Google News / API]
-    %% SolverPort -.-> AspartixSolver[ASP Solver]
+    subgraph "Multi-Agent Debate Team"
+        LLMPort --> AdvocatusAgent[🟢 Advocatus: Pro-Thesen]
+        LLMPort --> SkeptikerAgent[🔴 Skeptiker: Contra-Thesen]
+        LLMPort --> CrossExaminer[⚔️ Cross-Examiner: Dung Attacks]
+        LLMPort --> SynthesisAgent[🧠 Synthesis: Perspectives]
+    end
+    
+    SolverPort --> NaiveSolver[Naive Backtracking Solver max=35]
+    SolverPort --> PygargSolver[SAT-based Pygarg Solver]
 ```
 
 ### 3.1 Directory Structure
 ```
 clashpy/
 ├── pyproject.toml
+├── sources.yaml                 # Multi-perspective news sources (International, National, Tech, Business)
 ├── spec/
-│   └── system_specification.md
+│   └── system_specification.md  # Comprehensive technical specification
 ├── docs/
-│   ├── poster_en.pdf
-│   ├── poster_en.png
-│   └── poster_en.html
+│   ├── poster_en.pdf            # High-resolution architectural infographic (PDF)
+│   ├── poster_en.png            # High-resolution architectural infographic (PNG)
+│   └── poster_en.html           # Interactive poster template (SVG/CSS)
 ├── tests/
-│   └── test_core.py
+│   ├── test_collaborative_agents.py # Unit tests for Advocatus, Skeptiker & Cross-Examiner
+│   ├── test_dense_filter.py     # Unit tests for sub-ms dense argument pre-filter
+│   ├── test_core.py             # Unit tests for Dung semantics, solvers, and metrics
+│   ├── test_cytoscape.py        # Unit tests for Cytoscape elements and HTML generation
+│   ├── test_sources.py          # Unit tests for YAML config and Search adapters
+│   └── test_rss_source.py       # Unit tests for parallel RSS ingestion and timeouts
 └── src/
     └── clashpy/
-        ├── core/
-        │   ├── models.py       # Pydantic domain models (Argument, Attack, AF)
-        │   ├── hashing.py      # Deterministic key generation & secret resolution
-        │   ├── cache.py        # Generic DuckDB cache interface
-        │   ├── solver.py       # Abstract solver protocol & naive backtracking
-        │   └── metrics.py      # Acceptance scores, degrees, dilemma axes
-        ├── adapters/
-        │   ├── news_sources/   # Ingestion adapters (RSS)
-        │   └── solvers/        # External solver adapters (Pygarg SAT)
-        ├── llm/
-        │   └── agents.py       # Lazy LLM agent definitions (Pydantic-AI)
-        ├── pipeline.py         # End-to-end workflow orchestration
-        ├── cli.py              # Command-line interface
-        └── doc_generator.py    # Automated doc & visual poster generator
+        ├── core/                # Domain models, DuckDB cache, hashing, solvers & metrics
+        │   ├── models.py        # Pydantic domain models (Argument, Attack, AF, Lists)
+        │   ├── hashing.py       # Deterministic key generation & secret resolution
+        │   ├── cache.py         # Generic DuckDB cache interface
+        │   ├── solver.py        # Abstract solver protocol & naive backtracking (max=35)
+        │   └── metrics.py       # Acceptance scores, degrees, dilemma axes
+        ├── adapters/            # Interchangeable ports & adapters (News, Solvers, Classifiers)
+        │   ├── classifiers/
+        │   │   └── dense_filter.py # Local CPU/Neural Engine argument density classifier
+        │   ├── news_sources/
+        │   │   ├── base.py
+        │   │   ├── sources_config.py
+        │   │   ├── search_source.py
+        │   │   ├── composite_source.py
+        │   │   └── rss_source.py
+        │   └── solvers/
+        │       └── pygarg_solver.py
+        ├── llm/                 # Lazy-initialized collaborative debate agent factories
+        │   └── agents.py
+        ├── cytoscape.py         # Cytoscape.js graph converter, JSON & HTML dashboard
+        ├── pipeline.py          # End-to-end workflow orchestration
+        ├── cli.py               # Command-line interface & export router
+        └── doc_generator.py     # Automated visual poster & doc generator
 ```
 
 ---
@@ -126,6 +149,12 @@ class Attack(BaseModel):
     attacker_id: str
     target_id: str
     reason: str             # Contextual reason for conflict
+
+class ArgumentList(BaseModel):
+    arguments: List[Argument]
+
+class AttackList(BaseModel):
+    attacks: List[Attack]
 
 class ArgumentationFramework(BaseModel):
     topic: str
@@ -155,35 +184,34 @@ class FullAnalysisResult(BaseModel):
 
 ## 5. Component Specifications
 
-### 5.1 Caching & Secret Management (`core/cache.py`, `core/hashing.py`)
-- **Deterministic Hashing**: `stable_hash(*parts)` produces SHA-256 digests over sorted JSON payloads.
-- **DuckDB Cache**:
-  - Table: `cache_entries (namespace VARCHAR, cache_key VARCHAR, created_at TIMESTAMP, payload VARCHAR, payload_meta VARCHAR, PRIMARY KEY (namespace, cache_key))`.
-  - Methods: `get_json(namespace, key, ttl)`, `set_json(namespace, key, value, meta)`.
-- **Secret Resolution**:
-  - Automatically loads keys from `os.environ`, `.env`, and OS Keyring (`service_name="db.syst.datahub"`).
+### 5.1 Ingestion & Topic-Targeted Search (`adapters/news_sources/`)
+- **Composite News Ingestion (`composite_source.py`)**: Merges curated multi-category RSS feeds (international, national, business, tech) from `sources.yaml` with deep topic-targeted searches (Google News DE + EN).
+- **Fair Round-Robin Interleaving**: Prevents single-feed dominance by sampling articles reihum across all responsive feeds.
+- **Strict Topical Gating**: Discards off-topic articles lacking inquiry keywords to prevent irrelevant news contamination.
 
-### 5.2 Ingestion Protocol (`adapters/news_sources/base.py`)
-```python
-class NewsSource(Protocol):
-    name: str
-    def fetch(self, topic: str, max_items: int = 30) -> str: ...
-```
+### 5.2 Local Argument Density Pre-Filter (`adapters/classifiers/dense_filter.py`)
+- **Sub-Millisecond Classification**: Runs on CPU/Neural Engine prior to LLM calls.
+- **Multilingual Discourse Markers**: Scans for causal (*"weil", "studie belegt", "evidence"*), contrastive (*"jedoch", "kritisiert", "however"*), and impact terms (*"risiko", "kosten", "productivity"*).
+- **Boilerplate Pruning**: Strips cookies, disclaimers, and newsletter noise, reducing prompt tokens by ~75%.
 
-### 5.3 Solver Protocol (`core/solver.py`)
-```python
-class Solver(Protocol):
-    name: str
-    def extensions(self, af: ArgumentationFramework, semantics: Semantics) -> List[Set[str]]: ...
-```
+### 5.3 Collaborative Multi-Agent Debate Architecture (`llm/agents.py`)
+- **Advocatus Agent (Pro)**: Parallel extraction of supportive theses and positive evidence.
+- **Skeptiker Agent (Contra)**: Parallel extraction of counterarguments, risks, and economic/ethical constraints.
+- **Deduplicator & Indexer**: Unifies and normalizes claims into structured identifiers (`A1, A2, A3...`).
+- **Cross-Examiner Agent**: Pairwise verification of logical refutations ($A \rightarrow B$) and mutual dilemma axes ($A \leftrightarrow B$).
+- **Synthesis Agent**: Generates concise, objective perspective summaries without ranking.
 
-### 5.4 Graph Metrics (`core/metrics.py`)
+### 5.4 Solvers & Capacity (`core/solver.py`, `adapters/solvers/`)
+- **Naive Backtracking Solver**: Built-in exponential solver with conflict-free pruning; supports up to 35 arguments (`--naive-max-arguments 35`).
+- **Pygarg Solver (`adapters/solvers/pygarg_solver.py`)**: High-performance SAT-based solver for large-scale graphs (50+ arguments) supporting all ICCMA semantics.
+
+### 5.5 Graph Metrics & Topology (`core/metrics.py`)
 1. **Argument Acceptance Score**:
    $$Score(a) = \frac{|\{E \in \mathcal{E} \mid a \in E\}|}{|\mathcal{E}|}$$
 2. **Classification**:
    - `core`: $Score = 1.0$ (universal consensus across extensions).
-   - `contested`: $0.0 < Score < 1.0$ (subject to debate).
-   - `excluded`: $Score = 0.0$ (rejected in all perspectives).
+   - `contested`: $0.0 < Score < 1.0$ (perspective-dependent debate).
+   - `excluded`: $Score = 0.0$ (dominated / refuted).
 3. **Dilemma Axes**: Detects mutual attacks ($A \leftrightarrow B$) denoting fundamental trade-offs.
 
 ---
@@ -193,14 +221,24 @@ class Solver(Protocol):
 ```bash
 uv run clashpy [TOPIC] [OPTIONS]
 ```
-- `--solver {naive,pygarg}`: Select solver engine (Default: `naive`).
-- `--semantics {CF,AD,CO,PR,GR,ST,ID,SST}`: Target semantics (Default: `PR`).
-- `--model MODEL`: Target LLM model identifier.
-- `--export-md [FILE]`: Export analysis report with Mermaid graph to `output/`.
-- `--export-mmd [FILE]`: Export pure Mermaid diagram to `output/`.
-- `--export-html [FILE]`: Export interactive Cytoscape.js HTML visualization dashboard to `output/`.
-- `--export-cytoscape [FILE]`: Export Cytoscape.js graph JSON payload to `output/`.
-- `--output-json [FILE]`: Dump raw JSON payload.
+
+| Flag | Description | Default |
+| :--- | :--- | :--- |
+| `topic` / `--topic` | Inquiry or debate topic | `""` |
+| `--model` | LLM model identifier (supports Google, OpenAI, Anthropic, Ollama/M4, DeepInfra) | `google:gemini-3.5-flash` |
+| `--solver` | Solver algorithm (`naive` or `pygarg`) | `naive` |
+| `--semantics` | Formal semantics (`PR`, `ST`, `CO`, `GR`) | `PR` (Preferred) |
+| `--naive-max-arguments` | Max arguments for naive solver | `35` |
+| `--max-articles` | Max news articles aggregated for extraction | `60` |
+| `--dense-filter` / `--no-dense-filter` | Enable/disable sub-ms local argument density pre-filter | `True` |
+| `--search` / `--no-search` | Enable/disable deep Google News topic search | `True` |
+| `--search-time` | Search horizon (e.g. `7d`, `14d`, `30d`) | `30d` |
+| `--export-md [FILE]` | Export structured Markdown analysis report to `output/` | Disabled |
+| `--export-html [FILE]` | Export interactive Cytoscape.js HTML visualization dashboard | Disabled |
+| `--export-cytoscape [FILE]` | Export Cytoscape.js graph JSON payload to `output/` | Disabled |
+| `--export-mmd [FILE]` | Export Mermaid graph to `output/` | Disabled |
+| `--output-json [FILE]` | Export complete raw JSON analysis payload | Disabled |
+| `--refresh` | Bypass DuckDB cache and force fresh execution | `False` |
 
 ---
 
