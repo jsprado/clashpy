@@ -77,11 +77,19 @@ def _resolve_model(model_name: str):
         return OpenAIChatModel(raw_name, provider=provider)
 
     # Local LM Studio
-    if model_name.startswith("lmstudio:"):
+    if (
+        model_name.startswith("lmstudio:")
+        or model_name.startswith("llmstudio:")
+        or model_lower in ("lmstudio", "llmstudio")
+    ):
         from pydantic_ai.models.openai import OpenAIChatModel
         from pydantic_ai.providers.openai import OpenAIProvider
 
-        raw_name = model_name.split(":", 1)[1] or "local-model"
+        if ":" in model_name:
+            raw_name = model_name.split(":", 1)[1] or "local-model"
+        else:
+            raw_name = os.getenv("LMSTUDIO_MODEL", "local-model")
+
         base_url = os.getenv("LMSTUDIO_BASE_URL", "http://localhost:1234/v1")
         if not base_url.endswith("/v1") and not base_url.endswith("/v1/"):
             base_url = base_url.rstrip("/") + "/v1"
