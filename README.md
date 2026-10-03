@@ -157,10 +157,10 @@ Extract voluminous argument graphs locally on Apple Silicon (0 Cloud tokens) and
 
 ```bash
 # Shortcut: local Ollama (Llama 3.1 / Qwen 2.5) + Google Gemini for synthesis
-uv run clashpy "Israel-Gaza-Konflikt Schuldfrage" --hybrid --export-html --export-md
+uv run clashpy "4-Day Work Week" --hybrid --export-html --export-md
 
 # Or explicitly select distinct models for extraction and synthesis:
-uv run clashpy "Israel-Gaza-Konflikt Schuldfrage" \
+uv run clashpy "4-Day Work Week" \
   --extract-model "ollama:llama3.1:8b" \
   --synthesis-model "google:gemini-3.5-flash" \
   --export-html
@@ -245,13 +245,13 @@ Thanks to `pydantic-ai`, `clashpy` natively supports all major LLM providers sim
 
 ```bash
 # 1. Qwen 2.5 72B via DeepInfra (Unschlagbar günstig: ~$0.13 pro 1M Tokens)
-DEEPINFRA_API_KEY="..." uv run clashpy "Israel Gaza" --model deepinfra:Qwen/Qwen2.5-72B-Instruct
+DEEPINFRA_API_KEY="..." uv run clashpy "4-Day Work Week" --model deepinfra:Qwen/Qwen2.5-72B-Instruct
 
 # 2. Qwen 2.5 32B via Groq (Extrem schnell, Free-Tier / minimale Kosten)
-GROQ_API_KEY="..." uv run clashpy "Israel Gaza" --model groq:qwen-2.5-32b
+GROQ_API_KEY="..." uv run clashpy "4-Day Work Week" --model groq:qwen-2.5-32b
 
 # 3. Qwen 2.5 via OpenRouter
-OPENROUTER_API_KEY="..." uv run clashpy "Israel Gaza" --model openrouter:qwen/qwen-2.5-72b-instruct
+OPENROUTER_API_KEY="..." uv run clashpy "4-Day Work Week" --model openrouter:qwen/qwen-2.5-72b-instruct
 
 # 4. Qwen 2.5 lokal über Ollama (100% kostenlos & offline)
 uv run clashpy "Israel Gaza" --model ollama:qwen2.5:7b
